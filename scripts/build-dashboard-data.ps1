@@ -170,11 +170,30 @@ try {
     if ($header) { $headers[$header] = Get-ColNumber $cell.r }
   }
 
-  $requiredHeaders = @("INICIO", "ESTACAO COMPLETA", "CLUSTER", "ENDERECO", "LATITUDE", "LONGITUDE", "EMPRESA", "DETENTORA", "DETALHES PENDENCIA", "STATUS", "ETAPA", "OBS:", "RESPONSABILIDADE ATUAL")
+  $requiredHeaders = @("INICIO", "ESTACAO COMPLETA", "CLUSTER", "ENDERECO", "EMPRESA", "DETENTORA", "DETALHES PENDENCIA", "STATUS", "ETAPA", "OBS:", "RESPONSABILIDADE ATUAL")
   foreach ($header in $requiredHeaders) {
     if (-not $headers.ContainsKey($header)) {
       throw "Coluna obrigatoria ausente na primeira aba: $header"
     }
+  }
+
+  function Get-CellByHeader {
+    param($Cells, $Headers, [string]$Header)
+    if (-not $Headers.ContainsKey($Header)) { return $null }
+    return $Cells[$Headers[$Header]]
+  }
+
+  function Convert-OptionalDouble {
+    param($Value)
+    if ([string]::IsNullOrWhiteSpace([string]$Value)) { return $null }
+
+    $text = ([string]$Value).Trim().Replace(",", ".")
+    $number = 0.0
+    if ([double]::TryParse($text, [Globalization.NumberStyles]::Any, [Globalization.CultureInfo]::InvariantCulture, [ref]$number)) {
+      return $number
+    }
+
+    return $null
   }
 
   $dataRows = @()
@@ -199,8 +218,8 @@ try {
       site = $site
       cluster = ([string]$cells[$headers["CLUSTER"]]).Trim()
       address = ([string]$cells[$headers["ENDERECO"]]).Trim()
-      lat = if ($cells[$headers["LATITUDE"]]) { [double]::Parse([string]$cells[$headers["LATITUDE"]], [Globalization.CultureInfo]::InvariantCulture) } else { $null }
-      lng = if ($cells[$headers["LONGITUDE"]]) { [double]::Parse([string]$cells[$headers["LONGITUDE"]], [Globalization.CultureInfo]::InvariantCulture) } else { $null }
+      lat = Convert-OptionalDouble (Get-CellByHeader $cells $headers "LATITUDE")
+      lng = Convert-OptionalDouble (Get-CellByHeader $cells $headers "LONGITUDE")
       company = ([string]$cells[$headers["EMPRESA"]]).Trim()
       holder = ([string]$cells[$headers["DETENTORA"]]).Trim()
       details = ([string]$cells[$headers["DETALHES PENDENCIA"]]).Trim()
@@ -245,10 +264,14 @@ try {
     details = [ordered]@{}
   }
 
-  $outputFullPath = Join-Path (Get-Location) $OutputPath
+  $outputFullPath = if ([System.IO.Path]::IsPathRooted($OutputPath)) {
+    $OutputPath
+  } else {
+    Join-Path (Get-Location) $OutputPath
+  }
   $outputDir = Split-Path $outputFullPath -Parent
   New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
-  $json = $payload | ConvertTo-Json -Depth 8
+  $json = ($payload | ConvertTo-Json -Depth 8) -replace "`r`n", "`n"
   $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
   [System.IO.File]::WriteAllText($outputFullPath, $json, $utf8NoBom)
 

@@ -86,12 +86,12 @@
       inset: 0;
       pointer-events: none;
       z-index: -2;
-      background-image: url("assets/fundo-mg.png?v=sem-nevoa");
+      background-image: url("assets/dashboard-bg-operacional.png?v=1");
       background-size: cover;
-      background-position: center 42%;
+      background-position: center center;
       background-repeat: no-repeat;
-      filter: saturate(.90) contrast(.97);
-      opacity: .28;
+      filter: saturate(.98) contrast(1.02);
+      opacity: .39;
       transform: scale(1.018);
       transform-origin: center;
     }
@@ -3078,7 +3078,7 @@
     @media (max-width: 1060px) {
       body:before {
         background-position: 58% center;
-        opacity: .20;
+        opacity: .28;
       }
       .topbar { grid-template-columns: 1fr; }
       .nav-stack, .tabs, .meeting-chip { justify-self: start; }
@@ -3119,7 +3119,7 @@
     @media (max-width: 760px) {
       body:before {
         background-position: 62% center;
-        opacity: .15;
+        opacity: .21;
       }
       .app { padding: var(--space-3); }
       .topbar {
@@ -3263,8 +3263,8 @@
       }
 
       body:before {
-        opacity: .18;
-        filter: saturate(.72) contrast(.92) brightness(.45);
+        opacity: .25;
+        filter: saturate(.82) contrast(.98) brightness(.52);
         mix-blend-mode: screen;
       }
 
