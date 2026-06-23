@@ -4,37 +4,33 @@
   "axes": {
     "clarity": {
       "score": 4,
-      "notes": "Cada aba tem um objetivo claro: Painel para executivos, Operacional para ação. A expansão da Próxima ação agora é direta no texto, sem botões extras. O header translúcido no light foi ajustado para não bloquear a imagem de fundo."
+      "notes": "O bloco Distribuicao por status agora comunica proporcao em leitura imediata, com total central e legenda operacional por status."
     },
     "hierarchy": {
       "score": 4,
-      "notes": "KPIs em faixa, radar central e listas laterais mantêm a hierarquia. Na Operacional, Demanda continua como âncora visual da linha e a coluna Próxima ação expande sem quebrar o grid."
+      "notes": "O donut cria um ponto focal claro no primeiro card da tela de bloqueios, enquanto a lista de clusters permanece em barras para comparacao secundaria."
     },
     "typography": {
       "score": 4,
-      "notes": "Escala legível para projeção; tipografia segue o manual da marca (Arial/DIN). Textos menores do resumo operacional e da legenda permanecem legíveis em desktop."
+      "notes": "Numero central, legenda e percentuais usam escala compacta e numerais tabulares, mantendo leitura limpa em painel executivo."
     },
     "motion": {
-      "score": 5,
-      "notes": "Transição de menu preservada com duração aprovada; shrink-to-pill via IntersectionObserver; nenhum listener de scroll cru."
+      "score": 4,
+      "notes": "Nao foram adicionadas animacoes novas; o grafico muda de formato sem criar movimento concorrente com o restante do dashboard."
     },
     "brand": {
       "score": 4,
-      "notes": "Paleta Claro/Eqs aplicada nos KPIs, status e logotipos. Tom executivo, cor usada como sinal de status e responsabilidade, sem gradientes genéricos."
+      "notes": "As cores seguem os tokens de status existentes e aparecem como segmentos/pontos, sem fundos genericos ou excesso de saturacao."
     },
     "execution": {
-      "score": 4,
-      "notes": "A expansão da Próxima ação usa estado simples por id. Removido CSS morto das versões anteriores (action-detail-row/card). Header light teve camadas claras reduzidas para igualar a translucidez do dark."
-    },
-    "accessibility": {
       "score": 5,
-      "notes": "Filtros com aria-pressed, contadores em aria-live, expansão com aria-expanded/aria-controls, foco visível e redução de movimento respeitada."
+      "notes": "Alteracao concentrada no #view-bloqueios e na chamada de render do statusChart, com dashboard.html sincronizado com index.html."
     }
   },
   "blockers": [],
   "warnings": [
-    "Tabela operacional mantém min-width: 880px; sem scroll interno, telas abaixo de ~900px podem exigir scroll horizontal da página.",
-    "Célula de Próxima ação é renderizada como texto estático e depois substituída por botão via JS; em conexões lentas pode haver um flash sutil."
+    "A validacao visual renderizada nao foi executada nesta passada; a checagem foi estatica por diff e consistencia entre HTMLs.",
+    "Existem alteracoes pendentes anteriores no repositorio, incluindo dados, scripts e assets, que nao foram revertidas."
   ],
-  "verdict": "pronto para publicar"
+  "verdict": "pronto para revisao visual"
 }
