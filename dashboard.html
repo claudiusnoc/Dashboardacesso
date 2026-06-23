@@ -1,0 +1,5418 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Controle Executivo de Acessos | Claro MG</title>
+  <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet">
+  <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+  <style>
+    :root {
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 24px;
+      --space-6: 32px;
+      --font-ui: Aptos, "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+      --font-display: Bahnschrift, "DIN Condensed", "DIN Alternate", "Arial Narrow", Arial, sans-serif;
+      --font-command: "Segoe UI Semibold", Aptos, "Segoe UI", system-ui, sans-serif;
+      --text-xs: .75rem;
+      --text-sm: .8125rem;
+      --text-md: .9375rem;
+      --text-base: 1.0625rem;
+      --text-lg: 1.1875rem;
+      --text-xl: 1.75rem;
+      --page: #f0f3f7;
+      --surface: #ffffff;
+      --surface-soft: #fbfcfe;
+      --ink: #111827;
+      --ink-2: #263244;
+      --muted: #56637a;
+      --quiet: #7c8799;
+      --line: #dfe4ec;
+      --line-soft: #edf0f5;
+      --claro: #D52B1E;
+      --claro-strong: #A8201A;
+      --claro-soft: #fff0f0;
+      --eqs: #151923;
+      --eqs-soft: #eef1f5;
+      --navy: #151923;
+      --blue: #285a9c;
+      --blue-soft: #eaf1fb;
+      --green: #157a52;
+      --green-soft: #e9f7f0;
+      --amber: #b86e0d;
+      --amber-soft: #fff3dc;
+      --slate: #667085;
+      --slate-soft: #f0f3f7;
+      --fg: var(--ink);
+      --border: var(--line);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --shadow-tight: 0 4px 8px rgba(17, 24, 39, .06);
+      --focus: 0 0 0 3px rgba(213, 43, 30, .22);
+      --ease-out: cubic-bezier(.22, 1, .36, 1);
+      --presentation-zoom: .75;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    section[id] { scroll-margin-top: var(--space-5); }
+
+    body {
+      position: relative;
+      isolation: isolate;
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-ui);
+      font-size: var(--text-base);
+      font-kerning: normal;
+      font-variant-numeric: tabular-nums;
+      color: var(--ink);
+      background: var(--page);
+      letter-spacing: 0;
+      overflow-x: hidden;
+    }
+
+    strong, b, th {
+      font-family: var(--font-command);
+    }
+
+    body:before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+      background-image: url("assets/fundo-mg.png?v=sem-nevoa");
+      background-size: cover;
+      background-position: center 42%;
+      background-repeat: no-repeat;
+      filter: saturate(.90) contrast(.97);
+      opacity: .28;
+      transform: scale(1.018);
+      transform-origin: center;
+    }
+
+    button, input, select { font: inherit; }
+
+    button {
+      touch-action: manipulation;
+    }
+
+    a { color: inherit; }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: var(--space-4) var(--space-5) var(--space-6);
+    }
+
+    @supports (zoom: 1) {
+      @media (min-width: 1180px) {
+        .app {
+          zoom: var(--presentation-zoom);
+        }
+      }
+    }
+
+    @supports not (zoom: 1) {
+      @media (min-width: 1180px) {
+        .app {
+          transform: scale(var(--presentation-zoom));
+          transform-origin: top center;
+        }
+      }
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(250px, 1fr) auto minmax(250px, 1fr);
+      gap: 18px;
+      align-items: center;
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+      width: calc(100% + 2 * var(--space-3));
+      max-width: calc(100% + 2 * var(--space-3));
+      margin-inline: calc(-1 * var(--space-3));
+      margin-top: 0;
+      padding: 12px var(--space-5);
+      background: rgba(255, 255, 255, .42);
+      backdrop-filter: blur(28px) saturate(1.2);
+      -webkit-backdrop-filter: blur(28px) saturate(1.2);
+      border: 1px solid rgba(21, 25, 35, .08);
+      border-radius: 18px;
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, .18) inset,
+        0 -1px 0 rgba(21, 25, 35, .10) inset,
+        0 18px 44px rgba(21, 25, 35, .14);
+      isolation: isolate;
+      transform-origin: top center;
+      transition:
+        width 520ms var(--ease-out),
+        max-width 520ms var(--ease-out),
+        margin-inline 520ms var(--ease-out),
+        top 520ms var(--ease-out),
+        padding 420ms var(--ease-out),
+        border-radius 460ms var(--ease-out),
+        transform 420ms var(--ease-out),
+        box-shadow 360ms var(--ease-out),
+        background 360ms var(--ease-out),
+        border-color 360ms var(--ease-out),
+        backdrop-filter 360ms var(--ease-out);
+    }
+
+    .topbar.is-condensed {
+      top: 12px;
+      width: min(1180px, calc(100% - 32px));
+      max-width: min(1180px, calc(100% - 32px));
+      margin-inline: calc((100% - min(1180px, calc(100% - 32px))) / 2);
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .32);
+      backdrop-filter: blur(38px) saturate(1.25);
+      -webkit-backdrop-filter: blur(38px) saturate(1.25);
+      border-color: rgba(21, 25, 35, .08);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, .16) inset,
+        0 -1px 0 rgba(21, 25, 35, .12) inset,
+        0 22px 56px rgba(21, 25, 35, .16);
+    }
+
+    .topbar::before,
+    .topbar::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      border-radius: inherit;
+    }
+
+    .topbar::before {
+      inset: 0;
+      z-index: 0;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .01) 42%, rgba(255, 255, 255, .04)),
+        linear-gradient(180deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, 0) 55%, rgba(21, 25, 35, .05));
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, .10) inset,
+        0 -1px 0 rgba(21, 25, 35, .10) inset;
+      opacity: .22;
+    }
+
+    .topbar.is-condensed::before {
+      opacity: .28;
+    }
+
+    .topbar::after {
+      left: 18px;
+      right: 18px;
+      bottom: -14px;
+      height: 28px;
+      z-index: -1;
+      background: linear-gradient(180deg, rgba(21, 25, 35, .14), rgba(21, 25, 35, 0));
+      filter: blur(12px);
+      opacity: .28;
+    }
+
+
+
+    .topbar > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 54px;
+      min-width: 160px;
+      padding: 6px 10px;
+      border: 0;
+      border-radius: 12px;
+      background: #fff;
+      flex: 0 0 auto;
+    }
+
+    .brand-logo img {
+      display: block;
+      max-width: 136px;
+      max-height: 46px;
+      object-fit: contain;
+    }
+
+    .brand-copy {
+      display: grid;
+      gap: 1px;
+      min-width: 0;
+      line-height: 1.3;
+    }
+
+    .brand-copy span {
+      color: var(--muted);
+      font-size: var(--text-sm);
+      font-family: var(--font-command);
+      font-weight: 650;
+      letter-spacing: .015em;
+    }
+
+    .nav-stack {
+      display: grid;
+      justify-items: center;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      justify-self: center;
+      padding: 4px;
+      border-radius: 999px;
+      background: rgba(241, 245, 251, .72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .tabs button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font-size: var(--text-sm);
+      font-family: var(--font-command);
+      font-weight: 750;
+      letter-spacing: .01em;
+      cursor: pointer;
+      white-space: nowrap;
+      position: relative;
+      z-index: 1;
+      transition:
+        color 180ms var(--ease-out);
+    }
+
+    .tabs button:hover {
+      color: var(--ink);
+    }
+
+    .tabs button[aria-selected="true"] {
+      background: transparent;
+      color: #fff;
+    }
+
+    .tabs button:active {
+      transform: scale(.97);
+    }
+
+    @keyframes tab-ripple {
+      0%   {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: .35;
+      }
+      60%  {
+        transform: translate(-50%, -50%) scale(3.2);
+        opacity: .12;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(4.5);
+        opacity: 0;
+      }
+    }
+
+    .tab-ripple {
+      position: absolute;
+      top: var(--ry);
+      left: var(--rx);
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .55);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      pointer-events: none;
+      z-index: 2;
+      animation: tab-ripple 540ms cubic-bezier(.22, 1, .36, 1) forwards;
+    }
+
+    .meeting-chip {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: var(--text-sm);
+      font-family: var(--font-command);
+      font-weight: 650;
+      letter-spacing: .01em;
+      text-align: right;
+    }
+
+    .brand .brand-logo {
+      min-width: 174px;
+      height: 58px;
+    }
+
+    .brand .brand-logo img {
+      max-width: 148px;
+      max-height: 50px;
+    }
+
+    .topbar.is-condensed .brand .brand-logo {
+      min-width: 142px;
+      height: 44px;
+      border-radius: 999px;
+    }
+
+    .topbar.is-condensed .brand .brand-logo img {
+      max-width: 122px;
+      max-height: 38px;
+    }
+
+    .topbar.is-condensed .brand-copy span {
+      font-size: var(--text-xs);
+      line-height: 1.15;
+    }
+
+    .topbar.is-condensed .tabs {
+      padding: 3px;
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, .62) inset,
+        0 8px 20px rgba(20, 27, 45, .08);
+    }
+
+    .topbar.is-condensed .tabs button {
+      min-height: 28px;
+      padding-inline: 12px;
+      font-size: var(--text-xs);
+    }
+
+    .topbar.is-condensed .theme-toggle {
+      width: 34px;
+      height: 34px;
+    }
+
+    .topbar.is-condensed .meeting-chip {
+      gap: 8px;
+      font-size: var(--text-xs);
+    }
+
+    .topbar.is-condensed .meeting-chip .eqs-mark {
+      min-width: 74px;
+      height: 36px;
+      padding-inline: 8px;
+    }
+
+    .meeting-chip .brand-logo {
+      min-width: 124px;
+      height: 46px;
+      padding: 5px 9px;
+      border: 1px solid rgba(21, 25, 35, .08);
+      background: rgba(255, 255, 255, .84);
+    }
+
+    .meeting-chip .brand-logo.eqs-mark {
+      min-width: 132px;
+      padding: 0;
+      border-color: transparent;
+      background: transparent;
+    }
+
+    .meeting-chip .brand-logo img {
+      max-width: 104px;
+      max-height: 36px;
+    }
+
+    .meeting-chip .eqs-mark img {
+      max-width: 118px;
+      max-height: 34px;
+    }
+
+    .meeting-chip .eqs-mark .logo-dark {
+      display: none;
+    }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      color: var(--ink-2);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      transition:
+        background 180ms var(--ease-out),
+        border-color 180ms var(--ease-out),
+        color 180ms var(--ease-out),
+        transform 120ms var(--ease-out);
+      flex: 0 0 auto;
+    }
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, .75);
+      border-color: var(--line);
+      color: var(--ink);
+      transform: scale(1.06);
+    }
+    .theme-toggle:active {
+      transform: scale(.94);
+    }
+    .theme-toggle svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+    .theme-toggle .icon-sun { display: none; }
+    .theme-toggle .icon-moon { display: block; }
+
+    :root[data-theme="dark"] .theme-toggle {
+      background: rgba(255, 255, 255, .08);
+      border-color: rgba(255, 255, 255, .10);
+      color: #f0c040;
+    }
+    :root[data-theme="dark"] .theme-toggle:hover {
+      background: rgba(255, 255, 255, .14);
+      border-color: rgba(255, 255, 255, .18);
+      color: #f5d060;
+    }
+    :root[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+    .status-light {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--eqs);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-weight: 900;
+    }
+
+    .page-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin: var(--space-5) 0 var(--space-4);
+    }
+
+    .title-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(2.125rem, 2.6vw, 2.75rem);
+      line-height: 1.06;
+      font-stretch: condensed;
+      font-weight: 800;
+      letter-spacing: -.005em;
+      text-wrap: balance;
+    }
+
+    .title-note {
+      max-width: 620px;
+      color: var(--muted);
+      font-size: var(--text-base);
+      line-height: 1.42;
+      text-align: right;
+    }
+
+    .title-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(270px, 292px) minmax(0, 1fr) minmax(320px, 350px);
+      grid-template-areas: "summary overview actions";
+      gap: var(--space-4);
+      align-items: start;
+    }
+
+    .executive-board {
+      display: grid;
+      grid-template-columns: minmax(560px, 1.35fr) minmax(340px, .78fr);
+      grid-template-areas: "radar side";
+      gap: var(--space-4);
+      align-items: start;
+    }
+
+    .radar-panel {
+      grid-area: radar;
+      min-height: 0;
+      align-self: start;
+    }
+
+    .radar-panel .panel-head {
+      padding-bottom: 8px;
+      border-bottom: 0;
+    }
+
+    .executive-side {
+      grid-area: side;
+      display: grid;
+      gap: var(--space-4);
+      align-content: start;
+    }
+
+    .decision-panel,
+    .focus-panel {
+      min-height: 0;
+    }
+
+    /* ── Radar: Mapa SVG de MG ───────────────────── */
+    .radar-map-wrap {
+      padding: 0 14px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: -8px;
+    }
+
+    .radar-map-canvas {
+      width: 100%;
+      min-height: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      position: relative;
+      overflow: visible;
+      padding-top: 0;
+    }
+
+
+
+    .mg-real-map {
+      width: 100%;
+      height: clamp(260px, 28vw, 360px);
+      min-height: 260px;
+      border-radius: 12px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(255, 255, 255, .36), transparent 62%),
+        color-mix(in srgb, var(--surface) 78%, var(--page) 22%);
+      box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--fg) 16%, transparent),
+        0 12px 28px rgba(15, 23, 42, .12);
+      isolation: isolate;
+    }
+
+    .mg-map-fallback {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-content: center;
+      gap: 4px;
+      text-align: center;
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--surface) 86%, transparent);
+      color: var(--muted);
+      padding: 24px;
+      z-index: 4;
+    }
+
+    .mg-map-fallback[hidden] { display: none; }
+
+    .mg-map-fallback strong {
+      color: var(--fg);
+      font-family: var(--font-command);
+      font-size: var(--text-sm);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .mg-map-fallback span {
+      max-width: 260px;
+      font-size: var(--text-xs);
+      line-height: 1.35;
+    }
+
+    .mg-live-marker {
+      --marker-size: 18px;
+      width: var(--marker-size);
+      height: var(--marker-size);
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      border: 2px solid color-mix(in srgb, var(--surface) 92%, transparent);
+      background: var(--marker-color, var(--claro));
+      color: #fff;
+      box-shadow:
+        0 0 0 1px rgba(15, 23, 42, .20),
+        0 7px 16px rgba(15, 23, 42, .24);
+      cursor: pointer;
+      transform: translateZ(0);
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    }
+
+    .mg-live-marker.is-single {
+      border-width: 2px;
+      box-shadow:
+        0 0 0 1px rgba(15, 23, 42, .22),
+        0 5px 12px rgba(15, 23, 42, .24);
+    }
+
+    .mg-live-marker.is-single::after {
+      content: "";
+      width: 38%;
+      height: 38%;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .72);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, .18);
+    }
+
+    .mg-live-marker.is-group {
+      box-shadow:
+        0 0 0 1px rgba(15, 23, 42, .22),
+        0 8px 18px rgba(15, 23, 42, .28),
+        0 0 0 5px color-mix(in srgb, var(--marker-color) 16%, transparent);
+    }
+
+    .mg-live-marker span {
+      font-family: var(--font-command);
+      font-size: 9px;
+      line-height: 1;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, .35);
+      pointer-events: none;
+    }
+
+    .mg-live-marker.is-single span {
+      display: none;
+    }
+
+    .mg-live-marker:hover,
+    .mg-live-marker:focus-visible {
+      transform: scale(1.12);
+      outline: none;
+      border-color: #fff;
+      box-shadow:
+        0 0 0 3px rgba(213, 43, 30, .16),
+        0 10px 22px rgba(15, 23, 42, .30);
+      z-index: 5;
+    }
+
+    .maplibregl-ctrl-bottom-left,
+    .maplibregl-ctrl-bottom-right {
+      opacity: .58;
+      transform: scale(.82);
+      transform-origin: bottom right;
+    }
+
+    .maplibregl-ctrl-attrib,
+    .maplibregl-ctrl button {
+      font-family: var(--font-ui);
+    }
+
+    .mg-map {
+      width: 100%;
+      max-width: min(560px, 100%);
+      height: auto;
+      display: block;
+      overflow: visible;
+      margin-top: -4px;
+      margin-bottom: -8px;
+    }
+
+    .mg-outline {
+      fill: color-mix(in srgb, var(--surface) 88%, #ffffff 12%);
+      stroke: color-mix(in srgb, var(--fg) 28%, var(--border) 72%);
+      stroke-width: 1.7;
+      stroke-linejoin: round;
+      transition: fill 0.3s ease, stroke 0.3s ease, filter 0.3s ease;
+    }
+
+    :root:not([data-theme="dark"]) .mg-outline {
+      stroke: color-mix(in srgb, var(--fg) 42%, var(--border) 58%);
+      stroke-width: 2.25;
+      filter:
+        drop-shadow(0 1px 0 rgba(255, 255, 255, .86))
+        drop-shadow(0 5px 11px rgba(15, 23, 42, .16))
+        drop-shadow(0 0 3px rgba(15, 23, 42, .16));
+    }
+
+    .mg-leader {
+      stroke: color-mix(in srgb, var(--muted) 54%, transparent);
+      stroke-width: 1.15;
+      stroke-linecap: round;
+      pointer-events: none;
+    }
+
+    .mg-marker {
+      cursor: pointer;
+      stroke: var(--surface);
+      stroke-width: 3;
+      filter: drop-shadow(0 4px 9px rgba(15, 23, 42, 0.28));
+      transition: filter 0.2s ease, stroke-width 0.2s ease;
+      outline: none;
+    }
+
+    .mg-marker:hover,
+    .mg-marker-group:focus-visible .mg-marker {
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));
+      stroke-width: 3.5;
+    }
+
+    .mg-marker-pulse {
+      animation: mgPulse 2.8s ease-in-out infinite;
+    }
+
+    @keyframes mgPulse {
+      0%, 100% { opacity: 1; transform: scale(1); transform-origin: center; }
+      50% { opacity: 0.75; }
+    }
+
+    .mg-marker-label {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      fill: var(--fg);
+      stroke: var(--surface);
+      stroke-width: 3px;
+      paint-order: stroke fill;
+      pointer-events: none;
+      text-anchor: middle;
+    }
+
+    .mg-tooltip {
+      position: absolute;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 9px 8px;
+      box-shadow: 0 5px 16px rgba(15, 23, 42, 0.16);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      font-size: 11px;
+      line-height: 1.15;
+      pointer-events: none;
+      z-index: 100;
+      width: max-content;
+      min-width: 124px;
+      max-width: 168px;
+      transform: translate(-50%, calc(-100% - 5px));
+      margin-top: 0;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .mg-tooltip[hidden] { display: none; }
+
+    .mg-tooltip-title {
+      font-weight: 800;
+      font-size: 10px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--fg);
+      margin-bottom: 2px;
+    }
+
+    .mg-tooltip-total {
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 5px;
+      font-size: 11px;
+    }
+
+    .mg-tooltip-status-list {
+      display: grid;
+      gap: 2px;
+      line-height: 1.1;
+    }
+
+    .mg-tooltip-status-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      color: var(--fg);
+      font-size: 10.5px;
+      min-height: 12px;
+    }
+
+    .mg-tooltip-status-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      white-space: nowrap;
+    }
+
+    .mg-tooltip-status-count {
+      font-weight: 800;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .mg-tooltip .tt-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex: 0 0 6px;
+    }
+
+    .radar-legend {
+      display: flex;
+      gap: 12px;
+      padding: 2px 4px 0;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .radar-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .radar-legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+      box-shadow: 0 0 0 2px var(--surface);
+    }
+
+    .radar-map-note {
+      font-size: var(--text-xs);
+      color: var(--quiet);
+      font-weight: 500;
+      padding: 0 4px;
+      letter-spacing: .02em;
+      display: none;
+    }
+
+    .radar-map-empty {
+      color: var(--muted);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      text-align: center;
+      padding: 70px 20px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .mg-marker-pulse { animation: none; }
+      .mg-marker { transition: none; }
+      .mg-tooltip { transition: none; }
+    }
+
+    .decision-list,
+    .focus-list {
+      display: grid;
+      gap: var(--space-2);
+      padding: 0 14px 16px;
+    }
+
+    .decision-row,
+    .focus-row {
+      display: grid;
+      gap: 4px;
+      min-height: 58px;
+      padding: 12px;
+      border-radius: 10px;
+      background: var(--surface-soft);
+    }
+
+    .decision-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+    }
+
+    .decision-row strong,
+    .focus-row strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
+      font-family: var(--font-command);
+      font-size: var(--text-sm);
+      font-weight: 750;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .decision-row span,
+    .focus-row span {
+      color: var(--muted);
+      font-size: var(--text-xs);
+      line-height: 1.25;
+    }
+
+    .decision-count {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--claro);
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-stretch: condensed;
+      font-weight: 800;
+    }
+
+    .focus-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+    }
+
+    .focus-row .pill {
+      justify-self: end;
+    }
+
+    .focus-row .pill,
+    #view-bloqueios .doc > .pill,
+    #view-bloqueios .bar-label {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--muted);
+      font-weight: 760;
+    }
+
+    .focus-row .pill,
+    #view-bloqueios .doc > .pill {
+      justify-content: flex-start;
+      gap: 7px;
+      min-height: 24px;
+      padding-inline: 2px 0;
+    }
+
+    .focus-row .pill::before,
+    #view-bloqueios .doc > .pill::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      flex: 0 0 7px;
+      border-radius: 999px;
+      background: var(--slate);
+      box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 9%, transparent);
+    }
+
+    .focus-row .pill.liberado::before,
+    #view-bloqueios .doc > .pill.liberado::before { background: var(--green); }
+    .focus-row .pill.pendente::before,
+    #view-bloqueios .doc > .pill.pendente::before { background: var(--amber); }
+    .focus-row .pill.tratativa::before,
+    #view-bloqueios .doc > .pill.tratativa::before { background: var(--blue); }
+    .focus-row .pill.sem::before,
+    #view-bloqueios .doc > .pill.sem::before { background: var(--slate); }
+
+    #view-bloqueios .bar-label {
+      width: fit-content;
+      max-width: 100%;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: var(--text-xs);
+      line-height: 1.2;
+    }
+
+    .view-stack {
+      position: relative;
+      isolation: isolate;
+      overflow: visible;
+      transition: min-height 260ms var(--ease-out);
+    }
+
+    .view-stack.is-transitioning {
+      overflow: clip;
+    }
+
+    .view-section {
+      display: none;
+      opacity: 0;
+      transform: translate3d(var(--view-enter-x, 0), 0, 0);
+      transform-origin: 50% 18px;
+      will-change: transform, opacity;
+    }
+
+    .view-section.is-active,
+    .view-section.is-leaving {
+      display: block;
+    }
+
+    .view-section.is-active {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .view-section.is-entering {
+      animation: view-enter 544ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .view-section.is-leaving {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      pointer-events: none;
+      z-index: 0;
+      animation: view-exit 480ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .view-section.is-active:not(.is-leaving) {
+      position: relative;
+      z-index: 1;
+    }
+
+    .view-section.is-active:not(.is-entering):not(.is-leaving) {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+
+    .view-stack[data-direction="forward"] .view-section.is-entering {
+      --view-enter-x: 72px;
+    }
+
+    .view-stack[data-direction="forward"] .view-section.is-leaving {
+      --view-exit-x: -48px;
+    }
+
+    .view-stack[data-direction="backward"] .view-section.is-entering {
+      --view-enter-x: -72px;
+    }
+
+    .view-stack[data-direction="backward"] .view-section.is-leaving {
+      --view-exit-x: 48px;
+    }
+
+    @keyframes view-enter {
+      from {
+        opacity: 0;
+        transform: translate3d(var(--view-enter-x, 72px), 0, 0);
+      }
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    @keyframes view-exit {
+      from {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+      to {
+        opacity: .18;
+        transform: translate3d(var(--view-exit-x, -48px), 0, 0);
+      }
+    }
+
+    /* Animação de troca de abas no cabeçalho */
+    .tabs-indicator {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 100%;
+      border-radius: 999px;
+      background: rgba(21, 25, 35, .84);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .08),
+        0 2px 12px rgba(20, 27, 45, .18);
+      z-index: 0;
+      transition: left 320ms cubic-bezier(.34, 1.56, .64, 1),
+                  width 320ms cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    @keyframes topbar-flash {
+      0%,
+      100% {
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, .86) inset,
+          0 -1px 0 rgba(255, 255, 255, .42) inset,
+          0 0 0 1px rgba(255, 255, 255, .22) inset,
+          0 16px 46px rgba(21, 25, 35, .16),
+          0 3px 12px rgba(21, 25, 35, .10);
+      }
+      35% {
+        box-shadow:
+          0 0 0 4px rgba(213, 43, 30, .14),
+          0 1px 0 rgba(255, 255, 255, .88) inset,
+          0 -1px 0 rgba(255, 255, 255, .42) inset,
+          0 0 0 1px rgba(255, 255, 255, .26) inset,
+          0 20px 52px rgba(21, 25, 35, .18),
+          0 3px 14px rgba(21, 25, 35, .12);
+      }
+    }
+
+    .topbar.flash {
+      animation: topbar-flash 520ms var(--ease-out);
+    }
+
+    @keyframes title-switch-out {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(-8px); }
+    }
+
+    @keyframes title-switch-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-title.switching h1,
+    .page-title.switching .title-note {
+      animation: title-switch-out 130ms var(--ease-out) forwards;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tabs-indicator,
+      .topbar.flash,
+      .view-stack,
+      .view-section,
+      .view-section.is-entering,
+      .view-section.is-leaving,
+      .page-title.switching h1,
+      .page-title.switching .title-note,
+      .tab-ripple {
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+        filter: none !important;
+      }
+
+      .tabs,
+      .tabs button[aria-selected="true"],
+      .tabs-indicator {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+
+      .tabs {
+        background: var(--surface-soft);
+      }
+
+      .tabs button[aria-selected="true"] {
+        background: var(--eqs);
+        box-shadow: 0 2px 8px rgba(20, 27, 45, .18);
+      }
+
+      .tabs-indicator {
+        background: var(--eqs);
+        box-shadow: none;
+      }
+
+      .topbar {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: rgba(255, 255, 255, .98);
+        transition: none !important;
+      }
+
+      .topbar::before,
+      .topbar::after {
+        display: none;
+      }
+
+      .panel,
+      .site-card {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+
+      .panel {
+        background: rgba(255, 255, 255, .98);
+        border-color: var(--line);
+        box-shadow: var(--shadow-tight);
+      }
+
+      .site-card {
+        background: #fff;
+        border-color: var(--line-soft);
+        box-shadow: none;
+      }
+
+      .page-footer {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: rgba(255, 255, 255, .98);
+        border-color: var(--line-soft);
+        box-shadow: var(--shadow-tight);
+      }
+
+      .page-footer::before,
+      .page-footer::after { display: none; }
+
+      .theme-toggle {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: rgba(255, 255, 255, .9);
+        border-color: var(--line);
+        transition: none !important;
+      }
+    }
+
+    @keyframes block-in {
+      from {
+        opacity: 0;
+        transform: translateY(6px) scale(.995);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .summary-card { grid-area: summary; }
+    .overview { grid-area: overview; }
+    .actions-panel { grid-area: actions; }
+
+    .panel {
+      min-width: 0;
+      border: 1px solid rgba(255, 255, 255, .45);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .68);
+      backdrop-filter: blur(18px) saturate(1.15);
+      -webkit-backdrop-filter: blur(18px) saturate(1.15);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, .5) inset,
+        0 12px 40px rgba(21, 25, 35, .14),
+        0 2px 6px rgba(21, 25, 35, .06);
+    }
+
+    .panel.pad { padding: 18px; }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px 12px;
+      border-bottom: 1px solid var(--eqs-soft);
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: var(--eqs-soft);
+      color: var(--eqs);
+      flex: 0 0 auto;
+      padding: 5px;
+    }
+    .icon svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--text-base);
+      line-height: 1.2;
+      font-stretch: condensed;
+      font-weight: 800;
+      letter-spacing: .015em;
+      text-transform: uppercase;
+    }
+
+    .view-link {
+      border: 0;
+      background: transparent;
+      color: var(--claro);
+      font-size: var(--text-xs);
+      font-family: var(--font-command);
+      font-weight: 750;
+      letter-spacing: .025em;
+      cursor: pointer;
+    }
+
+    .view-count {
+      color: var(--claro);
+      font-size: var(--text-xs);
+      font-family: var(--font-command);
+      font-weight: 750;
+      letter-spacing: .025em;
+      white-space: nowrap;
+    }
+
+    .summary-card {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .summary-main {
+      display: grid;
+      grid-template-columns: 74px 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .score-ring {
+      --pct: 30;
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle closest-side, #fff 68%, transparent 70%),
+        conic-gradient(var(--claro) calc(var(--pct) * 1%), var(--eqs-soft) 0);
+      color: var(--claro);
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-stretch: condensed;
+      font-weight: 900;
+    }
+
+    .summary-main strong {
+      display: block;
+      font-family: var(--font-command);
+      font-size: 17px;
+      font-weight: 750;
+      line-height: 1.2;
+    }
+
+    .summary-main span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: var(--text-xs);
+      line-height: 1.35;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2);
+    }
+
+    .quick-actions button {
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--ink-2);
+      font-size: var(--text-sm);
+      font-family: var(--font-command);
+      font-weight: 750;
+      cursor: pointer;
+      transition:
+        background-color 180ms var(--ease-out),
+        color 180ms var(--ease-out),
+        border-color 180ms var(--ease-out),
+        transform 140ms var(--ease-out);
+    }
+
+    .quick-actions button.primary {
+      border-color: transparent;
+      background: var(--claro);
+      color: #fff;
+    }
+
+    .quick-actions button:hover {
+      border-color: var(--line);
+      transform: translateY(-1px);
+    }
+
+    .quick-actions button.primary:hover {
+      border-color: transparent;
+      background: var(--claro-strong);
+    }
+
+    .quick-actions button:active {
+      transform: scale(.98);
+    }
+
+    .info-list {
+      display: grid;
+      gap: var(--space-2);
+      padding-top: 4px;
+      border-top: 1px solid var(--line-soft);
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 105px 1fr;
+      gap: 10px;
+      align-items: center;
+      min-height: 28px;
+      color: var(--muted);
+      font-size: var(--text-sm);
+    }
+
+    .info-row strong {
+      color: var(--ink);
+      font-family: var(--font-command);
+      font-weight: 750;
+      text-align: right;
+    }
+
+    .filters {
+      display: grid;
+      gap: var(--space-3);
+      margin-top: var(--space-3);
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: var(--text-xs);
+      font-family: var(--font-command);
+      font-weight: 750;
+      letter-spacing: .035em;
+      text-transform: uppercase;
+    }
+
+    select, input {
+      width: 100%;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--ink);
+      padding: 0 11px;
+      outline: none;
+    }
+
+    input[type="search"]::-webkit-search-cancel-button {
+      cursor: pointer;
+    }
+
+    select:focus, input:focus, button:focus-visible, a:focus-visible {
+      outline: none;
+      box-shadow: var(--focus);
+    }
+
+    .reset {
+      min-height: 38px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--eqs);
+      color: #fff;
+      font-size: var(--text-sm);
+      font-family: var(--font-command);
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    .reset:hover {
+      background: #0f131c;
+    }
+
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+    }
+
+    .kpi {
+      --kpi-active: var(--claro);
+      position: relative;
+      width: 100%;
+      min-height: 96px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: inherit;
+      cursor: pointer;
+      overflow: hidden;
+      text-align: left;
+    }
+
+    .kpi:hover {
+      border-color: var(--line);
+    }
+
+    .kpi.is-active {
+      border-color: color-mix(in srgb, var(--kpi-active) 34%, var(--line));
+      box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--kpi-active) 10%, transparent),
+        0 8px 22px color-mix(in srgb, var(--kpi-active) 7%, transparent);
+    }
+
+    .kpi.is-active small {
+      color: var(--fg);
+      font-weight: 700;
+    }
+
+    .kpi:active {
+      transform: scale(.99);
+    }
+
+    .kpi:after {
+      content: "";
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--slate);
+    }
+
+    .kpi.green:after { background: var(--green); }
+    .kpi.amber:after { background: var(--amber); }
+    .kpi.blue:after { background: var(--blue); }
+    .kpi.red:after { background: var(--claro); }
+
+    .kpi.green { --kpi-active: var(--green); }
+    .kpi.amber { --kpi-active: var(--amber); }
+    .kpi.blue { --kpi-active: var(--blue); }
+    .kpi.red { --kpi-active: var(--claro); }
+
+    .kpi span {
+      display: block;
+      color: var(--muted);
+      font-size: var(--text-xs);
+      font-family: var(--font-command);
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .kpi strong {
+      display: block;
+      margin-top: 9px;
+      font-family: var(--font-display);
+      font-size: 2rem;
+      line-height: 1;
+      font-stretch: condensed;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .kpi small {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: var(--text-xs);
+      line-height: 1.3;
+    }
+
+    .overview {
+      display: grid;
+      gap: var(--space-4);
+      container-type: inline-size;
+    }
+
+    .content-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, .9fr);
+      gap: var(--space-4);
+    }
+
+    .bloqueios-charts {
+      display: grid;
+      gap: var(--space-4);
+      align-content: start;
+    }
+
+    #view-bloqueios .content-row {
+      grid-template-columns: minmax(250px, .68fr) minmax(0, 1.32fr);
+      align-items: start;
+    }
+
+    #view-bloqueios .bloqueios-charts {
+      gap: var(--space-3);
+    }
+
+    #view-bloqueios .panel {
+      box-shadow: none;
+    }
+
+    #view-bloqueios .panel-head {
+      min-height: 48px;
+      padding: 14px 16px;
+    }
+
+    #view-bloqueios .panel-title {
+      gap: 10px;
+    }
+
+    #view-bloqueios .bloqueios-charts .icon {
+      display: none;
+    }
+
+    #view-bloqueios .panel-title h2 {
+      font-size: var(--text-md);
+    }
+
+    .bar-list {
+      display: grid;
+      gap: var(--space-2);
+      padding: 0 18px 18px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: minmax(95px, 170px) 1fr 34px;
+      gap: 10px;
+      align-items: center;
+      min-height: 28px;
+      font-size: var(--text-sm);
+    }
+
+    .bar-label {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--ink-2);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .bar-track {
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: var(--line-soft);
+    }
+
+    .bar-fill {
+      height: 100%;
+      min-width: 4px;
+      border-radius: 999px;
+      width: 0%;
+    }
+
+    .bar-value {
+      text-align: right;
+      font-size: var(--text-sm);
+      font-weight: 800;
+    }
+
+    #view-bloqueios .bar-list {
+      gap: 6px;
+      padding: 0 16px 16px;
+    }
+
+    #view-bloqueios .bar-row {
+      grid-template-columns: minmax(76px, 128px) 1fr 26px;
+      gap: 8px;
+      min-height: 24px;
+      font-size: var(--text-xs);
+    }
+
+    #view-bloqueios .bar-track {
+      height: 7px;
+      background: color-mix(in oklab, var(--line-soft) 76%, transparent);
+    }
+
+    #view-bloqueios .bar-fill {
+      opacity: .72;
+    }
+
+    #view-bloqueios .bar-value {
+      color: var(--muted);
+      font-size: var(--text-xs);
+      font-weight: 800;
+    }
+
+    .documents {
+      display: grid;
+      gap: var(--space-3);
+      padding: 0 14px 16px;
+    }
+
+    .doc-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .doc-group h3 {
+      margin: 0;
+      padding-left: 4px;
+      color: var(--ink-2);
+      font-size: var(--text-sm);
+    }
+
+    .doc {
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr);
+      gap: var(--space-2) var(--space-3);
+      align-items: center;
+      min-height: 48px;
+      padding: var(--space-2);
+      border-radius: 10px;
+      background: var(--surface-soft);
+    }
+
+    .doc > .pill {
+      grid-column: 2;
+      justify-self: start;
+      max-width: 100%;
+      white-space: normal;
+    }
+
+    .doc-ico {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: var(--eqs-soft);
+      color: var(--eqs);
+      font-size: var(--text-md);
+      font-weight: 900;
+    }
+
+    .doc strong {
+      display: block;
+      color: var(--ink);
+      font-size: var(--text-sm);
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .doc span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: var(--text-xs);
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    #view-bloqueios .documents {
+      gap: 8px;
+      padding: 0 16px 16px;
+    }
+
+    #view-bloqueios .doc-group {
+      gap: 6px;
+    }
+
+    #view-bloqueios .doc-group h3 {
+      padding-left: 0;
+      color: var(--muted);
+      font-size: var(--text-xs);
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    #view-bloqueios .doc {
+      grid-template-columns: 5px minmax(0, 1fr) auto;
+      gap: 10px 12px;
+      min-height: 44px;
+      padding: 10px 0;
+      border-top: 1px solid var(--line-soft);
+      border-radius: 0;
+      background: transparent;
+    }
+
+    #view-bloqueios .doc:first-of-type {
+      border-top-color: transparent;
+    }
+
+    #view-bloqueios .doc-ico {
+      width: 5px;
+      height: 34px;
+      border-radius: 999px;
+      background: var(--line);
+      color: transparent;
+      font-size: 0;
+      overflow: hidden;
+    }
+
+    #view-bloqueios .doc strong {
+      font-size: var(--text-sm);
+    }
+
+    #view-bloqueios .doc span {
+      margin-top: 1px;
+    }
+
+    #view-bloqueios .doc > .pill {
+      grid-column: auto;
+      justify-self: end;
+      align-self: center;
+      max-width: 148px;
+    }
+
+    #view-painel .executive-board {
+      grid-template-columns: minmax(590px, 1.45fr) minmax(300px, .72fr);
+      gap: var(--space-3);
+    }
+
+    #view-painel .panel {
+      position: relative;
+      z-index: 2;
+      box-shadow: none;
+    }
+
+    #view-painel .radar-panel {
+      z-index: 1;
+    }
+
+    #view-painel .executive-side {
+      position: relative;
+      z-index: 3;
+    }
+
+    #view-painel .radar-panel .panel-head,
+    #view-painel .decision-panel .panel-head,
+    #view-painel .focus-panel .panel-head {
+      min-height: 48px;
+      padding: 14px 16px 10px;
+      border-bottom-color: var(--line-soft);
+    }
+
+    #view-painel .panel-title {
+      gap: 10px;
+    }
+
+    #view-painel .panel-title .icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      color: var(--muted);
+      background: color-mix(in srgb, var(--surface-soft) 78%, transparent);
+    }
+
+    #view-painel .panel-title h2 {
+      font-size: var(--text-md);
+      letter-spacing: .01em;
+    }
+
+    #view-painel .view-count {
+      color: var(--muted);
+      background: transparent;
+      border-color: transparent;
+      padding-inline: 0;
+    }
+
+    #view-painel .panel-lens {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 16px 10px;
+      padding: 8px 10px;
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--surface-soft) 78%, transparent);
+      color: var(--muted);
+      font-size: var(--text-xs);
+      font-weight: 760;
+    }
+
+    #view-painel .panel-lens strong {
+      color: var(--ink);
+      font-weight: 840;
+    }
+
+    #view-painel .panel-lens button {
+      border: 0;
+      background: transparent;
+      color: var(--claro);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    #view-painel .panel-lens[hidden] {
+      display: none;
+    }
+
+    #view-painel .radar-map-wrap {
+      padding: 0 12px 12px;
+      gap: 6px;
+      margin-top: -2px;
+    }
+
+    #view-painel .mg-real-map {
+      height: clamp(280px, 30vw, 380px);
+      border-radius: 10px;
+      box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--fg) 12%, transparent),
+        0 8px 18px rgba(15, 23, 42, .08);
+    }
+
+    #view-painel .radar-legend {
+      gap: 8px 12px;
+      padding: 3px 2px 0;
+    }
+
+    #view-painel .radar-legend-item {
+      font-size: 10.5px;
+      font-weight: 760;
+      letter-spacing: .05em;
+      color: var(--quiet);
+    }
+
+    #view-painel .radar-legend-swatch {
+      width: 8px;
+      height: 8px;
+      opacity: .78;
+      box-shadow: none;
+    }
+
+    #view-painel .decision-list,
+    #view-painel .focus-list {
+      gap: 0;
+      padding: 0 16px 14px;
+    }
+
+    #view-painel .decision-row,
+    #view-painel .focus-row {
+      min-height: 48px;
+      padding: 10px 0;
+      border-top: 1px solid var(--line-soft);
+      border-radius: 0;
+      background: transparent;
+    }
+
+    #view-painel .decision-row:first-child,
+    #view-painel .focus-row:first-child {
+      border-top-color: transparent;
+    }
+
+    #view-painel .decision-row strong,
+    #view-painel .focus-row strong {
+      margin-bottom: 2px;
+      font-size: var(--text-sm);
+      font-weight: 730;
+    }
+
+    #view-painel .decision-row span,
+    #view-painel .focus-row span {
+      color: var(--quiet);
+    }
+
+    #view-painel .decision-count {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      box-shadow: inset 0 0 0 1px var(--line-soft);
+      font-size: .9rem;
+    }
+
+    #view-painel .view-link {
+      color: var(--muted);
+      background: transparent;
+      border-color: var(--line-soft);
+      box-shadow: none;
+    }
+
+    #view-painel .view-link:hover {
+      color: var(--ink);
+      border-color: var(--line);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      color: var(--slate);
+      background: var(--slate-soft);
+      font-size: var(--text-xs);
+      font-weight: 800;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+
+    .pill.liberado { color: var(--green); background: var(--green-soft); }
+    .pill.pendente { color: var(--amber); background: var(--amber-soft); }
+    .pill.tratativa { color: var(--blue); background: var(--blue-soft); }
+    .pill.sem { color: var(--slate); background: var(--slate-soft); }
+    .pill.red { color: var(--claro); background: var(--claro-soft); }
+
+    #view-painel .focus-row .pill,
+    #view-geral .site-card .pill {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      color: var(--muted);
+    }
+
+    #view-painel .focus-row .pill::before,
+    #view-geral .site-card .pill::before {
+      box-shadow: none;
+    }
+
+    .timeline {
+      margin-top: 16px;
+      overflow: hidden;
+    }
+
+    .timeline .panel-head {
+      align-items: center;
+      min-height: 54px;
+      background: var(--surface);
+    }
+
+    .timeline .toolbar {
+      border-top: 1px solid var(--line-soft);
+      background: color-mix(in srgb, var(--surface-soft) 76%, transparent);
+    }
+
+    .timeline .panel-title h2 {
+      letter-spacing: .01em;
+    }
+
+    .timeline .view-count {
+      min-height: 26px;
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface-soft);
+      color: var(--muted);
+    }
+
+    .site-overview {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+      padding: 0 18px 18px;
+    }
+
+    .status-command {
+      display: grid;
+      gap: var(--space-3);
+      padding: 0 18px 16px;
+    }
+
+    .status-command-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--space-4);
+      padding-top: 2px;
+    }
+
+    .status-command-head strong {
+      display: block;
+      color: var(--ink);
+      font-family: var(--font-display);
+      font-size: var(--text-sm);
+      font-stretch: condensed;
+      font-weight: 800;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      line-height: 1.25;
+    }
+
+    .status-command-head span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: var(--text-xs);
+      line-height: 1.3;
+    }
+
+    .status-scope {
+      color: var(--ink-2);
+      font-size: var(--text-xs);
+      font-family: var(--font-command);
+      font-weight: 750;
+      letter-spacing: .025em;
+      white-space: nowrap;
+    }
+
+    .status-rail {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      padding: var(--space-2);
+      border: 1px solid var(--line-soft);
+      border-radius: 12px;
+      background: var(--surface-soft);
+    }
+
+    .status-chip {
+      display: inline-grid;
+      grid-template-columns: 4px auto auto;
+      grid-template-areas:
+        "mark count label"
+        "mark count hint";
+      align-items: center;
+      gap: 0 9px;
+      min-height: 46px;
+      min-width: 154px;
+      padding: 8px 11px;
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--surface) 82%, transparent);
+      color: var(--ink-2);
+      cursor: pointer;
+      text-align: left;
+      transition:
+        background-color 180ms var(--ease-out),
+        border-color 180ms var(--ease-out),
+        color 180ms var(--ease-out),
+        transform 140ms var(--ease-out);
+    }
+
+    .status-chip::before {
+      content: "";
+      grid-area: mark;
+      align-self: stretch;
+      width: 3px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--muted) 42%, transparent);
+    }
+
+    .status-chip.liberado::before { background: var(--green); }
+    .status-chip.pendente::before { background: var(--amber); }
+    .status-chip.tratativa::before { background: var(--blue); }
+    .status-chip.sem::before { background: var(--slate); }
+
+    .status-chip:hover {
+      border-color: var(--line);
+      transform: translateY(-1px);
+    }
+
+    .status-chip[aria-pressed="true"] {
+      border-color: rgba(23, 36, 58, .18);
+      background: color-mix(in srgb, var(--navy) 94%, var(--surface));
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(20, 27, 45, .10);
+    }
+
+    .status-chip-count {
+      grid-area: count;
+      min-width: 28px;
+      color: inherit;
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-stretch: condensed;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .status-chip-label {
+      grid-area: label;
+      font-family: var(--font-command);
+      font-size: var(--text-xs);
+      font-weight: 750;
+      line-height: 1.15;
+      letter-spacing: .075em;
+      text-transform: uppercase;
+    }
+
+    .status-chip-hint {
+      grid-area: hint;
+      color: var(--muted);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .status-chip[aria-pressed="true"] .status-chip-hint {
+      color: rgba(255, 255, 255, .74);
+    }
+
+    .site-card {
+      display: grid;
+      grid-template-columns: minmax(170px, .8fr) minmax(0, 1.25fr) minmax(190px, .95fr);
+      align-items: center;
+      gap: var(--space-3);
+      padding: 10px 12px;
+      border: 1px solid rgba(255, 255, 255, .42);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, .68);
+      backdrop-filter: blur(12px) saturate(1.1);
+      -webkit-backdrop-filter: blur(12px) saturate(1.1);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, .38) inset,
+        0 4px 16px rgba(21, 25, 35, .1);
+      min-width: 0;
+    }
+
+    .site-card-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: var(--space-3);
+      min-width: 0;
+    }
+
+    .site-card .pill {
+      justify-content: flex-start;
+      gap: 7px;
+      min-height: 24px;
+      padding-inline: 2px 0;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 780;
+    }
+
+    .site-card .pill::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      flex: 0 0 7px;
+      border-radius: 999px;
+      background: var(--slate);
+      box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 9%, transparent);
+    }
+
+    .site-card .pill.liberado::before { background: var(--green); }
+    .site-card .pill.pendente::before { background: var(--amber); }
+    .site-card .pill.tratativa::before { background: var(--blue); }
+    .site-card .pill.sem::before { background: var(--slate); }
+
+    .site-card-title {
+      min-width: 0;
+    }
+
+    .site-card-title strong {
+      display: block;
+      color: var(--ink);
+      font-size: var(--text-sm);
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .site-card-title span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: var(--text-xs);
+      line-height: 1.25;
+    }
+
+    .site-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-2);
+      color: var(--muted);
+      font-size: var(--text-xs);
+    }
+
+    .site-meta b {
+      display: block;
+      color: var(--ink-2);
+      font-size: var(--text-xs);
+      margin-bottom: 2px;
+    }
+
+    .site-action {
+      padding-top: 0;
+      border-top: 0;
+      color: var(--ink-2);
+      font-size: var(--text-sm);
+      line-height: 1.35;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 18px 14px;
+      color: var(--muted);
+      font-size: var(--text-sm);
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 320px;
+    }
+
+    .search-box input {
+      padding-left: 34px;
+      border-color: color-mix(in srgb, var(--eqs) 24%, var(--line));
+      background:
+        linear-gradient(180deg, color-mix(in srgb, var(--surface) 94%, transparent), color-mix(in srgb, var(--surface-soft) 92%, transparent));
+      box-shadow: 0 1px 0 rgba(255, 255, 255, .55) inset;
+    }
+
+    .search-box:before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      background: var(--quiet);
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+      mask-size: contain;
+      -webkit-mask-size: contain;
+      mask-repeat: no-repeat;
+      -webkit-mask-repeat: no-repeat;
+      z-index: 1;
+    }
+
+    .table-wrap {
+      overflow: visible;
+      border-top: 1px solid var(--line-soft);
+      background: color-mix(in srgb, var(--surface) 88%, transparent);
+      max-width: 100%;
+    }
+
+    table {
+      width: 100%;
+      min-width: 880px;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: var(--text-sm);
+    }
+
+    .action-plan table {
+      min-width: 760px;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line-soft);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: var(--surface);
+      color: var(--quiet);
+      font-size: var(--text-xs);
+      font-family: var(--font-command);
+      font-weight: 750;
+      letter-spacing: .055em;
+      text-transform: uppercase;
+      border-bottom: 2px solid var(--eqs);
+    }
+
+    tbody tr:hover { background: var(--surface-soft); }
+
+    .timeline tbody tr {
+      transition: background .16s ease, box-shadow .16s ease;
+    }
+
+    .timeline tbody tr:hover {
+      background: var(--surface-soft);
+      box-shadow: inset 2px 0 0 var(--line);
+    }
+
+    .empty-row td {
+      padding: 18px;
+    }
+
+    .empty-row:hover {
+      background: transparent;
+    }
+
+    .site-cell {
+      color: var(--ink);
+      font-family: var(--font-command);
+      font-weight: 750;
+      width: 15%;
+    }
+
+    .site-code {
+      display: -webkit-box;
+      max-width: 16ch;
+      overflow: hidden;
+      line-height: 1.18;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .company-cell {
+      width: 26%;
+      min-width: 0;
+    }
+
+    .demand-cell {
+      display: grid;
+      gap: 4px;
+      width: 30%;
+      min-width: 160px;
+    }
+
+    .demand-cell span {
+      color: var(--quiet);
+    }
+
+    .demand-hint {
+      flex: 0 0 auto;
+      color: var(--quiet);
+      font-family: var(--font-command);
+      font-size: .64rem;
+      font-weight: 820;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .demand-cell .site-code {
+      display: inline;
+      max-width: none;
+      color: var(--ink-2);
+      font-family: var(--font-command);
+      font-weight: 820;
+      letter-spacing: .01em;
+    }
+
+    .company-cell strong {
+      display: block;
+      color: var(--ink);
+      font-weight: 850;
+      line-height: 1.2;
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
+
+    .action-cell strong {
+      display: block;
+      color: var(--ink);
+      font-weight: 850;
+      line-height: 1.2;
+      overflow-wrap: break-word;
+    }
+
+    .company-cell span,
+    .action-cell span {
+      display: -webkit-box;
+      margin-top: 4px;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: var(--text-xs);
+      line-height: 1.35;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .category-cell {
+      width: 17%;
+      color: var(--ink);
+      font-weight: 720;
+      line-height: 1.28;
+      overflow-wrap: anywhere;
+    }
+
+    .status-cell {
+      width: 15%;
+    }
+
+    .status-cell .pill {
+      height: auto;
+      min-height: 26px;
+      padding-block: 4px;
+      white-space: normal;
+      line-height: 1.1;
+      text-align: center;
+    }
+
+    .timeline .status-cell .pill {
+      justify-content: flex-start;
+      gap: 7px;
+      padding: 4px 0;
+      border-radius: 0;
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--font-command);
+      font-size: var(--text-xs);
+      font-weight: 760;
+      letter-spacing: .018em;
+      text-align: left;
+    }
+
+    .timeline .status-cell .pill::before {
+      content: "";
+      flex: 0 0 7px;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--line-strong);
+      opacity: .72;
+    }
+
+    .timeline .status-cell .pill.liberado { color: var(--muted); }
+    .timeline .status-cell .pill.pendente { color: var(--ink-2); }
+    .timeline .status-cell .pill.tratativa { color: var(--muted); }
+    .timeline .status-cell .pill.sem { color: var(--muted); }
+    .timeline .status-cell .pill.liberado::before { background: var(--green); }
+    .timeline .status-cell .pill.pendente::before { background: var(--amber); }
+    .timeline .status-cell .pill.tratativa::before { background: var(--blue); }
+    .timeline .status-cell .pill.sem::before { background: var(--slate); }
+
+    .muted-cell {
+      color: var(--muted);
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .action-cell {
+      width: 32%;
+      min-width: 0;
+    }
+
+    .action-text {
+      display: block;
+      width: 100%;
+      padding: 6px 8px;
+      margin: -6px -8px;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color .18s ease, box-shadow .18s ease;
+    }
+
+    .action-text:hover {
+      background-color: color-mix(in srgb, var(--owner-color, var(--line)) 8%, transparent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--owner-color, var(--line)) 16%, transparent);
+    }
+
+    .action-text:focus-visible {
+      outline: none;
+      background-color: color-mix(in srgb, var(--owner-color, var(--line)) 10%, transparent);
+      box-shadow: var(--focus);
+    }
+
+    .action-text strong {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .action-text span {
+      display: -webkit-box;
+      margin-top: 4px;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: var(--text-xs);
+      line-height: 1.35;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+    }
+
+    tr.is-expanded .action-text strong,
+    tr.is-expanded .action-text span {
+      display: block;
+      overflow: visible;
+      -webkit-line-clamp: unset;
+    }
+
+    .action-plan {
+      --owner-eqs: #475569;
+      --owner-claro: #334155;
+      --owner-seguranca: #64748b;
+      --owner-detentora: #52616f;
+      --owner-acompanhamento: #5b6b7f;
+    }
+
+    .action-plan .panel-head {
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .action-plan th {
+      border-bottom-color: var(--line-soft);
+    }
+
+    .action-plan tbody tr:hover {
+      box-shadow: none;
+    }
+
+    .action-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 14px 8px;
+      background: color-mix(in srgb, var(--surface) 92%, var(--surface-soft));
+    }
+
+    .action-summary-card {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 7px;
+      min-width: 0;
+      padding: 6px 9px;
+      border: 1px solid var(--line-soft);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--surface) 78%, transparent);
+    }
+
+    .action-summary-card strong {
+      display: block;
+      color: var(--ink);
+      font-family: var(--font-display);
+      font-size: .92rem;
+      font-stretch: condensed;
+      font-weight: 850;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .action-summary-card span {
+      display: block;
+      margin-top: 0;
+      color: var(--muted);
+      font-family: var(--font-command);
+      font-size: var(--text-xs);
+      font-weight: 760;
+      letter-spacing: .035em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .owner-rail {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 7px 14px 10px;
+      border-top: 1px solid var(--line-soft);
+      background: color-mix(in srgb, var(--surface-soft) 74%, transparent);
+    }
+
+    .owner-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 28px;
+      padding: 5px 9px;
+      border: 1px solid var(--line-soft);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      font-family: var(--font-command);
+      font-size: var(--text-xs);
+      font-weight: 760;
+      letter-spacing: .035em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 160ms var(--ease-out), color 160ms var(--ease-out), background-color 160ms var(--ease-out);
+    }
+
+    .owner-chip::before,
+    .owner-dot {
+      content: "";
+      width: 7px;
+      height: 7px;
+      flex: 0 0 7px;
+      border-radius: 999px;
+      background: var(--owner-color, var(--slate));
+    }
+
+    .owner-chip[aria-pressed="true"] {
+      border-color: color-mix(in srgb, var(--owner-color, var(--ink)) 34%, var(--line));
+      background: color-mix(in srgb, var(--owner-color, var(--slate)) 8%, var(--surface));
+      color: var(--ink);
+    }
+
+    .owner-cell,
+    .stage-cell,
+    .age-cell {
+      vertical-align: top;
+    }
+
+    .owner-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      max-width: 100%;
+      padding: 4px 0;
+      color: var(--ink-2);
+      font-family: var(--font-command);
+      font-size: var(--text-xs);
+      font-weight: 780;
+      letter-spacing: .045em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .owner-badge span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .stage-track {
+      display: grid;
+      gap: 5px;
+      min-width: 132px;
+    }
+
+    .stage-track strong {
+      display: block;
+      color: var(--ink);
+      font-size: var(--text-sm);
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .stage-steps {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(14px, 1fr));
+      gap: 4px;
+      max-width: 138px;
+    }
+
+    .stage-step {
+      height: 4px;
+      border-radius: 999px;
+      background: var(--line-soft);
+    }
+
+    .stage-step.is-done {
+      background: color-mix(in srgb, var(--owner-color, var(--slate)) 48%, var(--line));
+    }
+
+    .stage-step.is-current {
+      background: var(--owner-color, var(--slate));
+    }
+
+    .age-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 4px 7px;
+      border: 1px solid var(--line-soft);
+      border-radius: 999px;
+      background: var(--surface-soft);
+      color: var(--muted);
+      font-family: var(--font-command);
+      font-size: var(--text-xs);
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .action-plan .action-cell span {
+      -webkit-line-clamp: 1;
+    }
+
+
+
+    .page-footer {
+      position: relative;
+      margin-top: var(--space-5);
+      padding: 13px 18px;
+      background: rgba(255, 255, 255, .42);
+      backdrop-filter: blur(28px) saturate(1.2);
+      -webkit-backdrop-filter: blur(28px) saturate(1.2);
+      border: 1px solid rgba(21, 25, 35, .08);
+      border-radius: 18px;
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, .18) inset,
+        0 -1px 0 rgba(21, 25, 35, .10) inset,
+        0 18px 44px rgba(21, 25, 35, .14);
+      color: var(--muted);
+      font-family: var(--font-command);
+      font-size: var(--text-xs);
+      line-height: 1.35;
+      letter-spacing: 0.01em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      isolation: isolate;
+    }
+
+    .page-footer::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      border-radius: inherit;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .01) 42%, rgba(255, 255, 255, .04)),
+        linear-gradient(180deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, 0) 55%, rgba(21, 25, 35, .05));
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, .10) inset,
+        0 -1px 0 rgba(21, 25, 35, .10) inset;
+      opacity: .22;
+      pointer-events: none;
+    }
+
+    .page-footer::after {
+      content: "";
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: -14px;
+      height: 28px;
+      z-index: -1;
+      background: linear-gradient(180deg, rgba(21, 25, 35, .14), rgba(21, 25, 35, 0));
+      filter: blur(12px);
+      opacity: .28;
+      pointer-events: none;
+    }
+
+    .page-footer > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-footer strong {
+      color: var(--fg);
+      font-weight: 700;
+    }
+
+    .footer-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .footer-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-item svg {
+      width: 13px;
+      height: 13px;
+      flex: 0 0 auto;
+      opacity: 0.7;
+      stroke-width: 2;
+    }
+
+    .footer-divider {
+      width: 1px;
+      height: 13px;
+      background: var(--line);
+      opacity: 0.7;
+    }
+
+    .footer-updated {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .footer-updated svg {
+      width: 13px;
+      height: 13px;
+      flex: 0 0 auto;
+      opacity: 0.65;
+    }
+
+    .footer-status {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 2px color-mix(in srgb, #22c55e 22%, transparent);
+    }
+
+    .empty {
+      display: grid;
+      gap: 7px;
+      padding: 16px;
+      border: 1px solid var(--line-soft);
+      border-radius: 12px;
+      background: var(--surface-soft);
+      color: var(--muted);
+      font-size: var(--text-sm);
+      line-height: 1.4;
+    }
+
+    .empty strong {
+      color: var(--ink);
+      font-size: var(--text-md);
+      line-height: 1.2;
+    }
+
+    .empty span {
+      max-width: 56ch;
+    }
+
+    .empty button {
+      justify-self: start;
+      min-height: 32px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--ink-2);
+      font-size: var(--text-xs);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .empty button:hover {
+      border-color: var(--claro);
+      color: var(--claro);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .panel, .kpi {
+        transition: transform 180ms var(--ease-out), border-color 180ms var(--ease-out);
+      }
+      .panel:hover, .kpi:hover {
+        transform: translateY(-1px);
+        border-color: var(--line);
+      }
+
+      .view-section.is-active .panel,
+      .view-section.is-active .kpi,
+      .view-section.is-active .site-card {
+        animation: block-in 220ms var(--ease-out);
+        animation-delay: calc(var(--i, 0) * 32ms);
+      }
+
+      .view-section.is-active .decision-row,
+      .view-section.is-active .focus-row {
+        animation: block-in 220ms var(--ease-out);
+        animation-delay: calc(var(--i, 0) * 48ms);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .view-section.is-active,
+      .view-section.is-entering,
+      .view-section.is-leaving {
+        animation: none;
+        transform: none;
+      }
+
+      .view-section.is-active .panel,
+      .view-section.is-active .kpi,
+      .view-section.is-active .site-card,
+      .view-section.is-active .decision-row,
+      .view-section.is-active .focus-row,
+      .tabs button,
+      .tabs-indicator,
+      .tab-ripple,
+      .quick-actions button,
+      .status-chip,
+      .panel,
+      .kpi,
+      .bar-fill {
+        animation: none;
+        transition: none;
+      }
+      .bar-fill { width: auto; }
+    }
+
+    @media (max-width: 1320px) {
+      .dashboard-grid {
+        grid-template-columns: minmax(260px, 292px) minmax(0, 1fr);
+        grid-template-areas:
+          "summary overview"
+          "actions overview";
+      }
+      .executive-board {
+        grid-template-columns: minmax(0, 1fr) minmax(300px, .7fr);
+        grid-template-areas:
+          "radar radar"
+          "side side";
+      }
+      .executive-side {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      #view-painel .executive-board {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+          "radar"
+          "side";
+      }
+      #view-painel .executive-side {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .actions-panel { align-self: stretch; }
+    }
+
+    @media (max-width: 1060px) {
+      body:before {
+        background-position: 58% center;
+        opacity: .20;
+      }
+      .topbar { grid-template-columns: 1fr; }
+      .nav-stack, .tabs, .meeting-chip { justify-self: start; }
+      .executive-board {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "radar"
+          "side";
+      }
+      .executive-side {
+        grid-template-columns: 1fr;
+      }
+      #view-painel .executive-side {
+        grid-template-columns: 1fr;
+      }
+      .radar-map-canvas {
+        min-height: 0;
+      }
+      .mg-map { max-width: min(540px, 100%); }
+      .radar-legend {
+        gap: 10px;
+      }
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "summary"
+          "overview"
+          "actions";
+      }
+      #view-bloqueios .content-row {
+        grid-template-columns: 1fr;
+      }
+      .title-note { text-align: left; }
+      .title-right { align-items: flex-start; }
+      .page-title { align-items: flex-start; flex-direction: column; }
+    }
+
+    @media (max-width: 760px) {
+      body:before {
+        background-position: 62% center;
+        opacity: .15;
+      }
+      .app { padding: var(--space-3); }
+      .topbar {
+        border-radius: 16px;
+        margin-inline: calc(-1 * var(--space-3));
+        width: calc(100% + 2 * var(--space-3));
+        max-width: calc(100% + 2 * var(--space-3));
+        padding: 12px var(--space-3);
+      }
+      .page-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 14px var(--space-3);
+        border-radius: 16px;
+      }
+      .footer-updated { align-self: flex-end; }
+      .tabs { width: 100%; overflow-x: auto; justify-content: flex-start; }
+      h1 { font-size: 1.4375rem; }
+      .meeting-chip { align-items: flex-start; flex-wrap: wrap; text-align: left; }
+      .content-row { grid-template-columns: 1fr; }
+      .toolbar { align-items: stretch; flex-direction: column; }
+      .search-box { min-width: 0; }
+      .table-wrap {
+        border-top: 0;
+      }
+      table,
+      tbody,
+      tr,
+      td {
+        display: block;
+        width: 100%;
+        min-width: 0;
+      }
+      table {
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: var(--text-sm);
+      }
+      thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+      }
+      tbody {
+        display: grid;
+        gap: var(--space-3);
+      }
+      tbody tr {
+        padding: 12px;
+        border: 1px solid var(--line-soft);
+        border-radius: 12px;
+        background: var(--surface);
+        box-shadow: var(--shadow-tight);
+      }
+      td {
+        display: grid;
+        grid-template-columns: 104px minmax(0, 1fr);
+        gap: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--line-soft);
+      }
+      td:last-child {
+        border-bottom: 0;
+      }
+      td::before {
+        content: attr(data-label);
+        color: var(--quiet);
+        font-size: var(--text-xs);
+        font-weight: 900;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+      }
+      .empty-row td {
+        display: block;
+        padding: 0;
+        border-bottom: 0;
+      }
+      .empty-row td::before {
+        content: none;
+      }
+      .site-cell,
+      .company-cell,
+      .status-cell,
+      .category-cell,
+      .action-cell {
+        width: auto;
+      }
+      .site-code {
+        max-width: none;
+        -webkit-line-clamp: 3;
+      }
+      .summary-main { grid-template-columns: 1fr; }
+      .site-card { grid-template-columns: 1fr; }
+      .action-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .owner-rail {
+        padding-inline: 12px;
+      }
+      .owner-chip {
+        flex: 1 1 132px;
+        justify-content: center;
+      }
+      .stage-track {
+        min-width: 0;
+      }
+      .bar-row { grid-template-columns: minmax(78px, 116px) 1fr 30px; }
+      .site-meta { grid-template-columns: 1fr; }
+      .status-command-head { align-items: flex-start; flex-direction: column; gap: var(--space-2); }
+      .status-chip { flex: 1 1 142px; min-width: 0; }
+    }
+
+    /* ── MODO ESCURO (toggle manual) ──────────────────────── */
+    :root[data-theme="dark"] {
+      --page: #111827;
+      --surface: #1a1e2d;
+      --surface-soft: #202536;
+      --ink: #f5f7fb;
+      --ink-2: #d7deea;
+      --muted: #aab3c3;
+      --quiet: #7f8a9d;
+      --line: rgba(255, 255, 255, .12);
+      --line-soft: rgba(255, 255, 255, .06);
+      --claro-soft: rgba(213, 43, 30, .18);
+      --eqs-soft: rgba(255, 255, 255, .08);
+      --blue-soft: rgba(40, 90, 156, .22);
+      --green-soft: rgba(21, 122, 82, .22);
+      --amber-soft: rgba(184, 110, 13, .24);
+      --slate-soft: rgba(102, 112, 133, .22);
+      --shadow-tight: 0 4px 12px rgba(0, 0, 0, .30);
+      --focus: 0 0 0 3px rgba(213, 43, 30, .32);
+      --fg: var(--ink);
+      --border: var(--line);
+
+      body {
+        background: var(--page);
+        color: var(--ink);
+      }
+
+      body:before {
+        opacity: .18;
+        filter: saturate(.72) contrast(.92) brightness(.45);
+        mix-blend-mode: screen;
+      }
+
+      body::after {
+        content: none;
+      }
+
+      .topbar {
+        background: rgba(21, 25, 35, .78);
+        backdrop-filter: blur(28px) saturate(1.2);
+        -webkit-backdrop-filter: blur(28px) saturate(1.2);
+        border-color: rgba(255, 255, 255, .12);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, .16) inset,
+          0 -1px 0 rgba(0, 0, 0, .42) inset,
+          0 20px 60px rgba(0, 0, 0, .42);
+      }
+
+      .topbar.is-condensed {
+        background: rgba(21, 25, 35, .62);
+        backdrop-filter: blur(38px) saturate(1.25);
+        -webkit-backdrop-filter: blur(38px) saturate(1.25);
+        border-color: rgba(255, 255, 255, .14);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, .18) inset,
+          0 -1px 0 rgba(0, 0, 0, .44) inset,
+          0 24px 70px rgba(0, 0, 0, .44);
+      }
+
+      .topbar::before {
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .03) 42%, rgba(255, 255, 255, .10)),
+          linear-gradient(180deg, rgba(255, 255, 255, .10), rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, .18));
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, .14) inset,
+          0 -1px 0 rgba(0, 0, 0, .32) inset;
+        opacity: .78;
+      }
+
+      .topbar.is-condensed::before {
+        opacity: .84;
+      }
+
+      .topbar::after {
+        background: linear-gradient(180deg, rgba(0, 0, 0, .38), rgba(0, 0, 0, 0));
+        opacity: .82;
+      }
+
+      .brand-logo {
+        background: rgba(255, 255, 255, .06);
+        border: 1px solid rgba(255, 255, 255, .08);
+      }
+      .meeting-chip .brand-logo.eqs-mark {
+        background: transparent;
+        border-color: transparent;
+      }
+      .meeting-chip .eqs-mark .logo-light {
+        display: none;
+      }
+      .meeting-chip .eqs-mark .logo-dark {
+        display: block;
+        filter: drop-shadow(0 4px 14px rgba(0, 0, 0, .34));
+      }
+      .brand-copy span,
+      .meeting-chip {
+        color: var(--muted);
+      }
+
+      .tabs {
+        background: rgba(18, 22, 32, .62);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, .07);
+      }
+      .tabs button {
+        color: var(--muted);
+      }
+      .tabs button:hover,
+      .tabs button[aria-selected="true"] {
+        color: var(--ink);
+      }
+      .tabs-indicator {
+        background: rgba(255, 255, 255, .12);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, .08) inset,
+          0 4px 16px rgba(0, 0, 0, .28);
+      }
+      .tab-ripple {
+        background: rgba(255, 255, 255, .16);
+      }
+
+      .panel {
+        background: rgba(26, 30, 45, .70);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border-color: rgba(255, 255, 255, .08);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, .06) inset,
+          0 12px 36px rgba(0, 0, 0, .30);
+      }
+      .panel-head {
+        border-bottom-color: rgba(255, 255, 255, .08);
+      }
+      .panel h1,
+      .panel h2,
+      .panel h3 {
+        color: var(--ink);
+      }
+
+      .radar-map-canvas {
+        background: rgba(255, 255, 255, .035);
+      }
+      :root[data-theme="dark"] .mg-real-map {
+        background: #101420;
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, .08),
+          0 14px 36px rgba(0, 0, 0, .34);
+      }
+      :root[data-theme="dark"] .mg-live-marker {
+        border-color: #101420;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, .18),
+          0 8px 18px rgba(0, 0, 0, .42);
+      }
+      .mg-outline {
+        fill: rgba(43, 49, 67, .74);
+        stroke: rgba(218, 224, 235, .26);
+      }
+      .mg-leader {
+        stroke: rgba(214, 221, 235, .34);
+      }
+      .mg-marker {
+        stroke: #151923;
+        filter: drop-shadow(0 8px 14px rgba(0, 0, 0, .42));
+      }
+      .mg-marker:hover,
+      .mg-marker-group:focus-visible .mg-marker {
+        filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .52));
+      }
+      .mg-marker-label {
+        fill: #e4e8f0;
+        stroke: #151923;
+      }
+      .radar-legend-swatch {
+        box-shadow:
+          0 0 0 2px #151923,
+          0 0 0 3px rgba(255, 255, 255, .10);
+      }
+      .decision-count {
+        background: rgba(255, 255, 255, .06);
+        color: #ff7d75;
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, .08) inset;
+      }
+
+      .kpi {
+        background: rgba(26, 30, 45, .68);
+        border-color: rgba(255, 255, 255, .08);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, .06) inset,
+          0 10px 28px rgba(0, 0, 0, .28);
+      }
+      .kpi::before {
+        content: none;
+      }
+      .kpi:hover,
+      .kpi.is-active {
+        border-color: rgba(255, 255, 255, .16);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, .07) inset,
+          0 12px 32px rgba(0, 0, 0, .32);
+      }
+      .kpi:after {
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, .08);
+      }
+      .kpi span,
+      .kpi small {
+        color: var(--muted);
+      }
+      .kpi strong {
+        color: var(--ink);
+        text-shadow: none;
+      }
+
+      .decision-row,
+      .focus-row {
+        background: rgba(255, 255, 255, .045);
+        border: 1px solid rgba(255, 255, 255, .07);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, .035) inset;
+      }
+      .decision-row strong,
+      .focus-row strong {
+        color: var(--ink);
+      }
+      .decision-row span,
+      .focus-row span {
+        color: var(--muted);
+      }
+
+      .icon {
+        background: rgba(138, 148, 172, .14);
+        color: #b0b9cc;
+      }
+
+      .status-light {
+        background: var(--eqs);
+      }
+
+      .bar-track {
+        background: rgba(255, 255, 255, .06);
+      }
+
+      .pill {
+        color: var(--ink);
+      }
+      .focus-row .pill,
+      #view-bloqueios .doc > .pill,
+      #view-bloqueios .bar-label {
+        background: transparent;
+        border-color: transparent;
+        color: var(--muted);
+      }
+      .focus-row .pill.pendente,
+      #view-bloqueios .doc > .pill.pendente {
+        color: var(--ink-2);
+      }
+      .focus-row .pill::before,
+      #view-bloqueios .doc > .pill::before {
+        opacity: .78;
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, .045);
+      }
+      #view-painel .panel {
+        box-shadow: none;
+      }
+      #view-painel .radar-panel .panel-head,
+      #view-painel .decision-panel .panel-head,
+      #view-painel .focus-panel .panel-head {
+        border-bottom-color: rgba(255, 255, 255, .018);
+      }
+      #view-painel .panel-title .icon {
+        background: rgba(255, 255, 255, .045);
+        color: #9ea8bd;
+      }
+      #view-painel .view-count,
+      #view-painel .view-link {
+        color: var(--muted);
+        background: transparent;
+        border-color: rgba(255, 255, 255, .08);
+      }
+      #view-painel .view-link:hover {
+        color: var(--ink);
+        border-color: rgba(255, 255, 255, .16);
+      }
+      #view-painel .panel-lens {
+        background: rgba(15, 23, 42, .72);
+        border-color: rgba(148, 163, 184, .18);
+        color: var(--muted);
+      }
+      #view-painel .panel-lens strong {
+        color: var(--ink);
+      }
+      #view-painel .mg-real-map {
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, .07),
+          0 8px 22px rgba(0, 0, 0, .24);
+      }
+      #view-painel .radar-legend-item {
+        color: var(--quiet);
+      }
+      #view-painel .radar-legend-swatch {
+        box-shadow: none;
+        opacity: .72;
+      }
+      #view-painel .decision-row,
+      #view-painel .focus-row {
+        border-top-color: rgba(255, 255, 255, .012);
+        border-right-color: transparent;
+        border-bottom-color: transparent;
+        border-left-color: transparent;
+        background: transparent;
+        box-shadow: none;
+      }
+      #view-painel .decision-row:first-child,
+      #view-painel .focus-row:first-child {
+        border-top-color: transparent;
+      }
+      #view-painel .decision-count {
+        background: transparent;
+        color: var(--muted);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08);
+      }
+      #view-bloqueios .doc {
+        border-top-color: rgba(255, 255, 255, .08);
+        background: transparent;
+      }
+      #view-bloqueios .doc-ico {
+        background: rgba(255, 255, 255, .14);
+      }
+      #view-bloqueios .bar-track {
+        background: rgba(255, 255, 255, .055);
+      }
+      #view-bloqueios .bar-fill {
+        opacity: .62;
+      }
+      .status-chip {
+        color: var(--ink);
+        background: rgba(255, 255, 255, .035);
+        border-color: rgba(255, 255, 255, .08);
+      }
+
+      .action-summary {
+        background: rgba(18, 22, 34, .42);
+      }
+      .action-summary-card,
+      .owner-chip,
+      .age-pill {
+        background: rgba(255, 255, 255, .04);
+        border-color: rgba(255, 255, 255, .075);
+      }
+      .owner-rail {
+        background: rgba(255, 255, 255, .026);
+        border-top-color: rgba(255, 255, 255, .06);
+      }
+      .owner-chip[aria-pressed="true"] {
+        background: color-mix(in srgb, var(--owner-color, #94a3b8) 16%, rgba(255, 255, 255, .05));
+        border-color: color-mix(in srgb, var(--owner-color, #94a3b8) 46%, rgba(255, 255, 255, .12));
+      }
+      .stage-step {
+        background: rgba(255, 255, 255, .08);
+      }
+      .stage-step.is-done {
+        background: color-mix(in srgb, var(--owner-color, #94a3b8) 44%, rgba(255, 255, 255, .12));
+      }
+      .stage-step.is-current {
+        background: color-mix(in srgb, var(--owner-color, #94a3b8) 78%, #f8fafc);
+      }
+      #view-geral .panel {
+        position: relative;
+        z-index: 2;
+        background: rgba(24, 29, 43, .94);
+        border-color: rgba(255, 255, 255, .13);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, .08) inset,
+          0 18px 46px rgba(0, 0, 0, .42);
+      }
+      #view-geral .status-command,
+      #view-geral .site-overview {
+        position: relative;
+        z-index: 1;
+      }
+      #view-geral .status-rail {
+        background: rgba(14, 18, 29, .78);
+        border-color: rgba(255, 255, 255, .12);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, .05) inset;
+      }
+      #view-geral .status-chip {
+        background: rgba(34, 40, 58, .62);
+        border-color: rgba(255, 255, 255, .12);
+        color: var(--ink-2);
+      }
+      #view-geral .status-chip:hover,
+      #view-geral .status-chip[aria-pressed="true"] {
+        background: rgba(46, 54, 76, .78);
+        border-color: rgba(255, 255, 255, .22);
+        color: var(--ink);
+      }
+      #view-geral .site-card {
+        background: rgba(31, 37, 54, .96);
+        border-color: rgba(255, 255, 255, .12);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, .06) inset,
+          0 10px 24px rgba(0, 0, 0, .28);
+      }
+      #view-geral .site-card .pill {
+        color: var(--muted);
+      }
+      #view-geral .site-card-title strong,
+      #view-geral .site-meta b,
+      #view-geral .site-action strong {
+        color: var(--ink);
+      }
+      #view-geral .site-card-title span,
+      #view-geral .site-meta,
+      #view-geral .site-action {
+        color: var(--muted);
+      }
+
+      .site-card {
+        background: rgba(26, 30, 45, .62);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-color: rgba(255, 255, 255, .06);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, .03) inset,
+          0 8px 24px rgba(0, 0, 0, .24);
+      }
+
+      .page-footer {
+        background: rgba(21, 25, 35, .78);
+        backdrop-filter: blur(28px) saturate(1.2);
+        -webkit-backdrop-filter: blur(28px) saturate(1.2);
+        border-color: rgba(255, 255, 255, .12);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, .16) inset,
+          0 -1px 0 rgba(0, 0, 0, .42) inset,
+          0 20px 60px rgba(0, 0, 0, .42);
+        color: var(--muted);
+      }
+
+      .page-footer::before {
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .03) 42%, rgba(255, 255, 255, .10)),
+          linear-gradient(180deg, rgba(255, 255, 255, .10), rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, .18));
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, .14) inset,
+          0 -1px 0 rgba(0, 0, 0, .32) inset;
+        opacity: .78;
+      }
+
+      .page-footer::after {
+        background: linear-gradient(180deg, rgba(0, 0, 0, .38), rgba(0, 0, 0, 0));
+        opacity: .82;
+      }
+
+      .footer-divider {
+        background: rgba(255, 255, 255, .12);
+      }
+
+      .empty {
+        background: rgba(255, 255, 255, .04);
+        color: var(--quiet);
+      }
+
+      th {
+        border-bottom-color: rgba(255, 255, 255, .08);
+        color: var(--muted);
+      }
+      td {
+        border-bottom-color: rgba(255, 255, 255, .04);
+      }
+
+      .timeline .panel-head {
+        background: rgba(26, 30, 45, .76);
+      }
+      .timeline .toolbar {
+        background: rgba(255, 255, 255, .035);
+        border-top-color: rgba(255, 255, 255, .06);
+      }
+      .timeline .view-count {
+        background: rgba(255, 255, 255, .045);
+        border-color: rgba(255, 255, 255, .08);
+        color: var(--muted);
+      }
+      .timeline .table-wrap {
+        background: rgba(18, 22, 34, .50);
+        border-top-color: rgba(255, 255, 255, .06);
+      }
+      .timeline th {
+        background: rgba(23, 27, 41, .98);
+        border-bottom-color: rgba(255, 255, 255, .10);
+      }
+      .timeline tbody tr:hover {
+        background: rgba(255, 255, 255, .045);
+        box-shadow: inset 2px 0 0 rgba(255, 255, 255, .14);
+      }
+      .timeline .status-cell .pill {
+        color: var(--muted);
+      }
+      .timeline .status-cell .pill.pendente {
+        color: var(--ink-2);
+      }
+      .timeline .status-cell .pill::before {
+        opacity: .78;
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, .045);
+      }
+
+      .search-box {
+        background: rgba(255, 255, 255, .06);
+        border-color: rgba(255, 255, 255, .08);
+        color: var(--ink);
+      }
+      .search-box::placeholder {
+        color: var(--quiet);
+      }
+
+      .topbar.flash {
+        animation: topbar-flash 520ms var(--ease-out);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .topbar {
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+          background: var(--eqs);
+          border-color: rgba(255, 255, 255, .08);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, .28);
+        }
+        .topbar::before,
+        .topbar::after {
+          display: none;
+        }
+        .tabs {
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+          background: rgba(26, 30, 45, .9);
+        }
+        .tabs button[aria-selected="true"] {
+          background: var(--eqs);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, .28);
+        }
+        .tabs-indicator {
+          background: var(--eqs);
+          box-shadow: none;
+        }
+        .panel {
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+          background: rgba(26, 30, 45, .94);
+          border-color: rgba(255, 255, 255, .07);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, .28);
+        }
+        .site-card {
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+          background: rgba(26, 30, 45, .88);
+          border-color: rgba(255, 255, 255, .06);
+          box-shadow: none;
+        }
+        .page-footer {
+          border-color: rgba(255, 255, 255, .06);
+          background: rgba(255, 255, 255, .025);
+        }
+      }
+    }
+    /* ── IMPRESSÃO (handouts de reunião) ────────────────── */
+    @media print {
+      *, *::before, *::after {
+        background: transparent !important;
+        color: #000 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+      }
+
+      body {
+        background: #fff !important;
+        font-size: 11pt;
+      }
+
+      body:before { display: none !important; }
+
+      .topbar {
+        position: static;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border: 0;
+        padding: 12px 0;
+        border-bottom: 2px solid #000;
+      }
+
+      .theme-toggle { display: none !important; }
+
+      .tabs { display: none !important; }
+
+      .view-stack { position: static; }
+
+      .view-section {
+        display: block !important;
+        opacity: 1 !important;
+        transform: none !important;
+        position: static !important;
+        page-break-inside: avoid;
+      }
+
+      .view-section[hidden] { display: block !important; }
+
+      .kpi-strip {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .kpi {
+        border: 1px solid #ccc;
+        padding: 10px;
+        min-height: auto;
+      }
+
+      .panel {
+        border: 1px solid #ccc;
+        page-break-inside: avoid;
+        margin-bottom: 12px;
+      }
+
+      .radar-map-canvas {
+        max-height: 300px;
+      }
+
+      .mg-marker {
+        animation: none !important;
+        filter: none !important;
+      }
+
+      .mg-outline {
+        fill: #e8e8e8 !important;
+        stroke: #888 !important;
+      }
+
+      .mg-tooltip {
+        display: none !important;
+      }
+
+      .radar-legend {
+        gap: 12px;
+      }
+
+      .radar-map-note {
+        display: none;
+      }
+
+      .panel-head { border-bottom-color: #ccc; }
+
+      .site-card {
+        border: 1px solid #ccc;
+        page-break-inside: avoid;
+      }
+
+      .bar-fill { width: var(--bar-w) !important; transition: none !important; }
+
+      .page-footer {
+        border: 1px solid #ccc;
+        border-radius: 0;
+        background: transparent !important;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        margin-top: 16px;
+        font-size: 9pt;
+      }
+      .page-footer::before,
+      .page-footer::after { display: none; }
+
+      table { font-size: 9pt; }
+      th, td { padding: 6px 8px; }
+
+      .toolbar { display: none !important; }
+
+      a[href]::after { content: " (" attr(href) ")"; font-size: 8pt; color: #666; }
+
+      @page {
+        margin: 1.5cm;
+        size: A4 landscape;
+      }
+    }
+  </style>
+<script>
+    (function(){try{var t=localStorage.getItem("od-theme");document.documentElement.setAttribute("data-theme",t==="dark"?"dark":"light")}catch(e){document.documentElement.setAttribute("data-theme","light")}})();
+  </script>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo"><img src="assets/claro-logo.png" alt="Claro S.A."></div>
+        <div class="brand-copy">
+          <span>Controle de acessos críticos<br>Claro MG</span>
+        </div>
+      </div>
+      <div class="nav-stack">
+        <nav class="tabs" aria-label="Navegação do painel" role="tablist">
+          <div class="tabs-indicator"></div>
+          <button type="button" id="tab-painel" data-tab="painel" role="tab" aria-controls="view-painel" aria-selected="true">Painel</button>
+          <button type="button" id="tab-bloqueios" data-tab="bloqueios" role="tab" aria-controls="view-bloqueios" aria-selected="false" tabindex="-1">Bloqueios</button>
+          <button type="button" id="tab-geral" data-tab="geral" role="tab" aria-controls="view-geral" aria-selected="false" tabindex="-1">Visão geral</button>
+          <button type="button" id="tab-historico" data-tab="historico" role="tab" aria-controls="view-historico" aria-selected="false" tabindex="-1">Operacional</button>
+        </nav>
+      </div>
+      <div class="meeting-chip">
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Alternar modo escuro">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="brand-logo eqs-mark" role="img" aria-label="EQS Engenharia">
+          <img class="logo-light" src="mqjlkfzf-logo-eqs-2.png" alt="" aria-hidden="true">
+          <img class="logo-dark" src="mqjlkfzf-logo-eqs-2.png" alt="" aria-hidden="true">
+        </div>
+      </div>
+    </header>
+
+    <section class="page-title">
+      <div class="title-left">
+        <h1 id="viewTitle">Pendências de acesso a sites críticos</h1>
+      </div>
+      <div class="title-right">
+        <p class="title-note" id="viewNote">Leitura rápida para decidir apoio, prioridade e próximo passo.</p>
+      </div>
+    </section>
+
+    <div class="kpi-strip" data-od-id="kpi-strip" aria-label="Indicadores executivos rápidos">
+      <div class="kpi red" data-kpi-overview="" tabindex="0" role="button" aria-label="Total de demandas">
+        <span>Total</span>
+        <strong id="kpiTotal">—</strong>
+        <small>todas as demandas no recorte</small>
+      </div>
+      <div class="kpi green" data-kpi-overview="LIBERADO" tabindex="0" role="button" aria-label="Demandas liberadas">
+        <span>Liberadas</span>
+        <strong id="kpiLiberado">—</strong>
+        <small>acesso confirmado</small>
+      </div>
+      <div class="kpi amber" data-kpi-overview="__OPEN__" tabindex="0" role="button" aria-label="Demandas em aberto">
+        <span>Em aberto</span>
+        <strong id="kpiAberto">—</strong>
+        <small>dependem de avanço</small>
+      </div>
+      <div class="kpi blue" data-kpi-overview="__BOTTLENECK__" tabindex="0" role="button" aria-label="Gargalos que impactam o percentual liberado">
+        <span>% Liberado</span>
+        <strong id="kpiPct">—</strong>
+        <small>sobre o total do recorte</small>
+      </div>
+    </div>
+
+    <div class="view-stack" data-od-id="dashboard-views">
+      <section class="view-section is-active" id="view-painel" data-view="painel" data-od-id="view-painel" role="tabpanel" aria-labelledby="tab-painel">
+        <section class="executive-board" aria-label="Controle executivo de pendências" data-od-id="executive-board">
+          <section class="panel radar-panel" data-od-id="radar-executivo">
+            <div class="panel-head">
+              <div class="panel-title"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg></div><h2>Radar</h2></div>
+              <span class="view-count" id="baseCount" aria-live="polite">23 registros</span>
+            </div>
+            <div class="panel-lens" id="panelLensSummary" hidden></div>
+            <div class="radar-map-wrap">
+              <div class="radar-map-canvas">
+                <div id="mgRealMap" class="mg-real-map" role="img" aria-label="Mapa real de Minas Gerais com pendências por latitude e longitude"></div>
+                <div class="mg-map-fallback" id="mgMapFallback" hidden>
+                  <strong>Mapa indisponível</strong>
+                  <span>Os pontos continuam carregados; verifique conexão com OpenFreeMap/MapLibre.</span>
+                </div>
+                <div class="mg-tooltip" id="mgTooltip" hidden></div>
+              </div>
+              <div class="radar-legend" aria-label="Legenda de status">
+                <span class="radar-legend-item"><span class="radar-legend-swatch" style="background:#157a52"></span>Liberado</span>
+                <span class="radar-legend-item"><span class="radar-legend-swatch" style="background:#D52B1E"></span>Pendente</span>
+                <span class="radar-legend-item"><span class="radar-legend-swatch" style="background:#ADAFAF"></span>Levant. docs</span>
+                <span class="radar-legend-item"><span class="radar-legend-swatch" style="background:#A8201A"></span>Em tratativa</span>
+                <span class="radar-legend-item"><span class="radar-legend-swatch" style="background:#667085"></span>Sem status</span>
+              </div>
+              <p class="radar-map-note" id="radarMapNote">Clique no cluster para aproximar · Clique no ponto para abrir o endereço</p>
+            </div>
+          </section>
+
+          <div class="executive-side" data-od-id="executive-side">
+          <section class="panel decision-panel" data-od-id="fila-decisao">
+            <div class="panel-head">
+              <div class="panel-title"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v6L4 18"/><path d="M12 9l8 9"/><circle cx="4" cy="18.5" r="2"/><circle cx="20" cy="18.5" r="2"/></svg></div><h2>Fila de decisão</h2></div>
+              <button class="view-link" type="button" id="focusCritical">Críticos</button>
+            </div>
+            <div class="decision-list" id="decisionQueue"></div>
+          </section>
+
+          <section class="panel focus-panel" data-od-id="sites-foco">
+            <div class="panel-head">
+              <div class="panel-title"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div><h2>Sites em foco</h2></div>
+              <button class="view-link" type="button" id="focusOpen">Visão geral</button>
+            </div>
+            <div class="focus-list" id="focusSites"></div>
+          </section>
+          </div>
+        </section>
+      </section>
+
+      <section class="view-section" id="view-bloqueios" data-view="bloqueios" data-od-id="view-bloqueios" role="tabpanel" aria-labelledby="tab-bloqueios" hidden>
+        <div class="content-row" id="bloqueios">
+          <div class="bloqueios-charts">
+            <section class="panel">
+              <div class="panel-head">
+                <div class="panel-title"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="5" rx="1"/><line x1="8" y1="5" x2="8" y2="10"/><line x1="14" y1="5" x2="14" y2="10"/><rect x="2" y="14" width="12" height="5" rx="1"/><line x1="8" y1="14" x2="8" y2="19"/></svg></div><h2>Distribuição por status</h2></div>
+              </div>
+              <div class="bar-list" id="statusChart"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div class="panel-title"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg></div><h2>Distribuição por cluster</h2></div>
+              </div>
+              <div class="bar-list" id="clusterChart"></div>
+            </section>
+          </div>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div class="panel-title"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="16"/><circle cx="12" cy="18.5" r=".9" fill="currentColor" stroke="none"/></svg></div><h2>Dossiê de bloqueios</h2></div>
+              <span class="view-count" id="criticalCount">0 casos</span>
+            </div>
+            <div class="documents" id="documentList"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view-section" id="view-geral" data-view="geral" data-od-id="view-geral" role="tabpanel" aria-labelledby="tab-geral" hidden>
+        <section class="panel">
+          <div class="panel-head">
+            <div class="panel-title"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/><line x1="15" y1="9" x2="15" y2="21"/></svg></div><h2>Visão geral dos sites com pendências</h2></div>
+            <span class="view-count" id="pendingCount" aria-live="polite">0 sites</span>
+          </div>
+          <div class="status-command" aria-label="Filtro executivo de status">
+            <div class="status-command-head">
+              <div>
+                <strong>Recorte por situação</strong>
+                <span>Escolha o status para conduzir a conversa por prioridade.</span>
+              </div>
+              <span class="status-scope" id="overviewStatusScope">Todos os status</span>
+            </div>
+            <div class="status-rail" id="overviewStatusRail"></div>
+          </div>
+          <div class="site-overview" id="pendingSiteList"></div>
+        </section>
+      </section>
+
+      <section class="view-section" id="view-historico" data-view="historico" data-od-id="view-historico" role="tabpanel" aria-labelledby="tab-historico" hidden>
+        <section class="panel timeline action-plan" id="historico">
+          <div class="panel-head">
+            <div class="panel-title"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 12h10"/><path d="M4 18h7"/><path d="m15 16 2 2 4-5"/></svg></div><h2>Plano de ação operacional</h2></div>
+            <span class="view-count" id="rowCount" aria-live="polite">0 registros</span>
+          </div>
+          <div class="action-summary" id="operationalSummary" aria-label="Resumo operacional"></div>
+          <div class="toolbar">
+            <span>Filtre por site, empresa, etapa ou responsabilidade atual.</span>
+            <div class="search-box"><label class="visually-hidden" for="searchFilter">Buscar site, empresa ou observação</label><input id="searchFilter" type="search" placeholder="Buscar site, empresa, observação" autocomplete="off"></div>
+          </div>
+          <div class="owner-rail" id="ownerRail" aria-label="Filtros por responsabilidade"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Demanda</th>
+                  <th>Com quem está</th>
+                  <th>Etapa</th>
+                  <th>Tempo</th>
+                  <th>Próxima ação</th>
+                </tr>
+              </thead>
+              <tbody id="detailBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </div>
+
+    <footer class="page-footer">
+      <div class="footer-meta">
+        <span class="footer-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          Atualização diária às 14h
+        </span>
+        <span class="footer-divider" aria-hidden="true"></span>
+        <span class="footer-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+          Fonte: planilha oficial de pendências de acesso no OneDrive
+        </span>
+      </div>
+      <div class="footer-updated">
+        <span class="footer-status" aria-hidden="true"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+        Última atualização: <strong id="generatedAtBottom"></strong>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    const EMBEDDED_DATA = {"generated_at":"23/06/2026 12:17","source_file":"ACESSO PENDENCIAS.xlsx","source_sheet":"ACESSOS","metrics":{"total":22,"liberado":7,"em_aberto":15,"sem_status":0,"percent_liberado":31.8},"series":{"status":[{"label":"PENDENTE","value":9},{"label":"LIBERADO","value":7},{"label":"EM TRATATIVA","value":4},{"label":"LEVANTAMENTO DE DOCUMENTOS","value":2}],"cluster":[{"label":"METROPOLITANO","value":13},{"label":"BH","value":5},{"label":"OESTE","value":2},{"label":"LESTE","value":1},{"label":"SUL","value":1}],"holder":[{"label":"Claro","value":7},{"label":"Tbsa","value":5},{"label":"Sem informação","value":4},{"label":"Atc","value":2},{"label":"Sba","value":2},{"label":"Qmc","value":1},{"label":"Tim","value":1}],"company":[{"label":"ARCELOR MITTAL JM","value":2},{"label":"ANGLO AMERICAN","value":1},{"label":"ARCELOR MITTAL ITAÚNA","value":1},{"label":"COCA-COLA","value":1},{"label":"COOPER STANDARD","value":1},{"label":"CSN - ARCOS","value":1},{"label":"CSN - CONGONHAS","value":1},{"label":"GERDAU MIGUEL BURNIER","value":1},{"label":"GERDAU OURO BRANCO","value":1},{"label":"GRUPO ARION","value":1},{"label":"HOSPITAL MARIO CUNHA","value":1},{"label":"MINEIRÃO","value":1},{"label":"NESTLÉ","value":1},{"label":"NESTLÉ  FABRICA NINHO","value":1},{"label":"PALÁCIO DO GOVERNO","value":1},{"label":"SAMARCO","value":1},{"label":"VALE (Mina Fábrica)","value":1},{"label":"VALE (Minas Timbopeba)","value":1},{"label":"VALE FERROS","value":1},{"label":"VILMA","value":1},{"label":"VRB","value":1}],"category":[{"label":"Documentação","value":12},{"label":"Liberação concluída","value":7},{"label":"Tratativa com detentora","value":2},{"label":"Mobilização/cadastro","value":1}],"stage":[{"label":"Levantamento documental","value":11},{"label":"Liberado / acompanhar","value":7},{"label":"Aguardando retorno","value":2},{"label":"Aguardando SMS","value":1},{"label":"Cadastro / mobilização","value":1}],"current_responsibility":[{"label":"EQS","value":19},{"label":"Sem informação","value":1},{"label":"CLARO","value":1},{"label":"SMS","value":1}]},"rows":[{"id":1,"row":5,"start":"29/04/2026","site":"MGBEL11","cluster":"BH","address":"Rua Pedro José Pardo - S/N - Mangabeiras - Palácio Do Governo","lat":-19.9529,"lng":-43.9126,"company":"PALÁCIO DO GOVERNO","holder":"Tim","details":"","status":"EM TRATATIVA","stage":"Aguardando retorno","current_responsibility":"EQS","notes":"Aguardando retorno do palacio, contato realizado via email.","category":"Tratativa com detentora","next_action":"Reforçar contato com EQS e registrar retorno."},{"id":2,"row":6,"start":"29/04/2026","site":"MGCONI1","cluster":"BH","address":"Rodovia Mg-010 - Km 08 - Aeroporto Confins","lat":-19.6321,"lng":-43.9613,"company":"GRUPO ARION","holder":"Qmc","details":"","status":"LIBERADO","stage":"Liberado / acompanhar","current_responsibility":"EQS","notes":"Carlos Souto e Nilson Pacheco com credenciais validas.","category":"Liberação concluída","next_action":"Manter evidência e acompanhar validade do acesso."},{"id":3,"row":7,"start":"29/04/2026","site":"MGCTG10","cluster":"BH","address":"Praça Louis Ensch - 160 - Cidade Industrial - Esquina Com A Avenida Amazonas - Pastifício Vilma","lat":-19.9506,"lng":-44.0119,"company":"VILMA","holder":"Sba","details":"Edneia V. Da Silva (ADM - TI)\\u003cevsilva@vilma.com.br\\u003e","status":"LEVANTAMENTO DE DOCUMENTOS","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Documentação será solicitada a segurança do trabalho após definição de equipe designada.","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":4,"row":8,"start":"11/05/2026","site":"MGIBA04","cluster":"OESTE","address":"Avenida Nestlé (Rua 02), S/N - Centro","lat":-19.47929,"lng":-46.53204,"company":"NESTLÉ","holder":"Claro","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Alinhar contato e dificuldade com supervisão regional (Diego e Arthur)","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":5,"row":9,"start":"11/05/2026","site":"MGIUA14","cluster":"OESTE","address":"Rodovia BR 365, 755 - Paranaíba (Nestlé)","lat":-18.94978,"lng":-49.46483,"company":"NESTLÉ  FABRICA NINHO","holder":"Claro","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Alinhar contato e dificuldade com supervisão regional (Diego e Arthur)","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":6,"row":10,"start":"29/05/2026","site":"MGCMD02/MGCMD08/MGCOW35","cluster":"METROPOLITANO","address":"Rodovia Mg 10 - Km 178 - Zona Rural - Fazenda Jardim - Mineradora Anglo Ferrous","lat":-18.88677,"lng":-43.41728,"company":"ANGLO AMERICAN","holder":"","details":"","status":"PENDENTE","stage":"Aguardando retorno","current_responsibility":"CLARO","notes":"Marcos Vinícius Lacerda (Gerente de contas Claro) necessita efetuar o processo de mobilização da subcontratada no SAP Fieldglass (Em tratativa Filipe césar)","category":"Tratativa com detentora","next_action":"Reforçar contato com CLARO e registrar retorno."},{"id":7,"row":11,"start":"01/06/2026","site":"MGOBR03/MGOBR05/MGOBR10/MGCGH14/MGCGH15","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.5513,"lng":-43.7548,"company":"GERDAU OURO BRANCO","holder":"","details":"TRANSITO LEGAL","status":"LIBERADO","stage":"Liberado / acompanhar","current_responsibility":"EQS","notes":"Documentação atualizada periodicamente via bancodoc.","category":"Liberação concluída","next_action":"Manter evidência e acompanhar validade do acesso."},{"id":8,"row":12,"start":"","site":"MGOPR11/MGOPR42/MGOPR44/MGOPR45/MGOPR47","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.454333,"lng":-43.780806,"company":"GERDAU MIGUEL BURNIER","holder":"","details":"TRANSITO LEGAL","status":"PENDENTE","stage":"Cadastro / mobilização","current_responsibility":"EQS","notes":"Adicionar colaboradores no bancodoc e verificar validade da documentação com segurança do trabalho","category":"Mobilização/cadastro","next_action":"Avançar cadastro/mobilização com EQS."},{"id":9,"row":13,"start":"","site":"MGMRN04","cluster":"METROPOLITANO","address":"Rodovia Mg 129 - S/N - Mina Do Germano - Samarco - Unidade Operacional Da Samarco","lat":-20.208788,"lng":-43.500246,"company":"SAMARCO","holder":"Tbsa","details":"","status":"EM TRATATIVA","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Em preenchimento de formularios enviados pela TBSA","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":10,"row":14,"start":"","site":"MGOPR23","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.41708,"lng":-43.86005,"company":"VALE (Mina Fábrica)","holder":"Atc","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"PGR, ART, PCMSO e Técnicos: RG, CPF, CTPS, CNH, FOTO 3x4, ASO, NR 10, NR35, NR22, RAC01(sistema Ves Vale), RAC02(sistema Ves Vale), RAC10(sistema Ves Vale) e Formulário de Saúde RAC","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":11,"row":15,"start":"","site":"MGOPR80","cluster":"METROPOLITANO","address":"Estrada De Ferro Vitoria Minas - Km 13 - Zona Rural - Mina Timbopeba","lat":-20.26866,"lng":-43.52737,"company":"VALE (Minas Timbopeba)","holder":"Tbsa","details":"","status":"LIBERADO","stage":"Liberado / acompanhar","current_responsibility":"EQS","notes":"Acesso mediante e-mail (Formulário)","category":"Liberação concluída","next_action":"Manter evidência e acompanhar validade do acesso."},{"id":12,"row":16,"start":"","site":"MGJCE02","cluster":"METROPOLITANO","address":"Rua Pátio João Carlos Guedes - S/N - Ferrovia Do Aço - Na","lat":-20.59229,"lng":-43.97062,"company":"VRB","holder":"Tbsa","details":"","status":"LIBERADO","stage":"Liberado / acompanhar","current_responsibility":"EQS","notes":"Acesso mediante e-mail","category":"Liberação concluída","next_action":"Manter evidência e acompanhar validade do acesso."},{"id":13,"row":17,"start":"","site":"MGITA09","cluster":"METROPOLITANO","address":"Rodovia Mg 050 - Km 61 - Zona Rural - Arcelor Mittal / Faz Dos Coelhos","lat":-20.069125,"lng":-44.662082,"company":"ARCELOR MITTAL ITAÚNA","holder":"Tbsa","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":14,"row":18,"start":"","site":"MGARC02","cluster":"METROPOLITANO","address":"Rodovia Mg 170 - Km 70 - Zona Rural - Csn - Silo De Farinha","lat":-20.31231,"lng":-45.58585,"company":"CSN - ARCOS","holder":"Claro","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Processo antigo, atualizar documentação e verificar se a mudanças nas equipes.","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":15,"row":19,"start":"","site":"MGCGH02/MGCGH12/MGCGH16/MGOPR33","cluster":"METROPOLITANO","address":"Rua Vic - S/N - Centro - Área Da Csn - Mineração Casa De Pedra","lat":-20.4675,"lng":-43.9023,"company":"CSN - CONGONHAS","holder":"","details":"","status":"LIBERADO","stage":"Liberado / acompanhar","current_responsibility":"EQS","notes":"Liberado equipe energia / Pendente equipe zeladoria em processo de mobilização / Veiculo: agendamento selo de fumaça 22/06 e aguardando retorno gerente sobre CTM Roberto","category":"Liberação concluída","next_action":"Manter evidência e acompanhar validade do acesso."},{"id":16,"row":20,"start":"","site":"MGOPR23","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.41708,"lng":-43.86005,"company":"VALE FERROS","holder":"Atc","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":17,"row":21,"start":"","site":"MGJML10","cluster":"METROPOLITANO","address":"Rua Dos Andrades - S/N - José Eloi - Arcelor Mittal Aços Planos","lat":-19.79297,"lng":-43.17774,"company":"ARCELOR MITTAL JM","holder":"Tbsa","details":"","status":"LIBERADO","stage":"Liberado / acompanhar","current_responsibility":"","notes":"","category":"Liberação concluída","next_action":"Manter evidência e acompanhar validade do acesso."},{"id":18,"row":22,"start":"","site":"MGCOW05","cluster":"METROPOLITANO","address":"Avenida Getúlio Vargas, 100 - Centro Industrial","lat":-19.827388,"lng":-43.129098,"company":"ARCELOR MITTAL JM","holder":"Claro","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":19,"row":23,"start":"","site":"MGPAMI6","cluster":"BH","address":"Avenida Antonio Abrãhao Caram, 1001 - São José - Estádio Mineirão","lat":-19.865967,"lng":-43.971048,"company":"MINEIRÃO","holder":"Claro","details":"","status":"LIBERADO","stage":"Liberado / acompanhar","current_responsibility":"EQS","notes":"Carlos Souto e Nilson Pacheco liberados para atividades, acompanhamente e elaboração de orçamentos, solicitar via email.","category":"Liberação concluída","next_action":"Manter evidência e acompanhar validade do acesso."},{"id":20,"row":24,"start":"","site":"MGCOW31","cluster":"BH","address":"Rodovia BR 040 Km 572, 233 - Distrito Industrial (Spal - Industria Brasileira de Bebidas","lat":-20.23333,"lng":-43.96756,"company":"COCA-COLA","holder":"Claro","details":"","status":"EM TRATATIVA","stage":"Aguardando SMS","current_responsibility":"SMS","notes":"Documentação de integração sendo enviada via portal SG3. Aguardando regularização do PCMSO pela EQS engenharia.","category":"Documentação","next_action":"Acompanhar retorno de SMS e registrar próxima pendência."},{"id":21,"row":25,"start":"","site":"MGVAR25","cluster":"SUL","address":"Avenida Manoel Vida, 1000 - Industrial JK","lat":-21.587892,"lng":-45.448986,"company":"COOPER STANDARD","holder":"Sba","details":"","status":"EM TRATATIVA","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Levantamento de documentação junto a equipe, assim que documentação ok, será enviado via email para tatiana.Barbara@cooperstandard.com","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":22,"row":26,"start":"","site":"MGIPGI2","cluster":"LESTE","address":"Rua Kiyoshi Tsunawaki 41 - Das Águas - Hospital Mario Cunha","lat":-19.496736,"lng":-42.53847,"company":"HOSPITAL MARIO CUNHA","holder":"Claro","details":"","status":"LEVANTAMENTO DE DOCUMENTOS","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Levantamento de documentação para iniciar ambientação ao hospital.","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."}],"critical":[{"id":16,"row":20,"start":"","site":"MGOPR23","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.41708,"lng":-43.86005,"company":"VALE FERROS","holder":"Atc","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":14,"row":18,"start":"","site":"MGARC02","cluster":"METROPOLITANO","address":"Rodovia Mg 170 - Km 70 - Zona Rural - Csn - Silo De Farinha","lat":-20.31231,"lng":-45.58585,"company":"CSN - ARCOS","holder":"Claro","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Processo antigo, atualizar documentação e verificar se a mudanças nas equipes.","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":13,"row":17,"start":"","site":"MGITA09","cluster":"METROPOLITANO","address":"Rodovia Mg 050 - Km 61 - Zona Rural - Arcelor Mittal / Faz Dos Coelhos","lat":-20.069125,"lng":-44.662082,"company":"ARCELOR MITTAL ITAÚNA","holder":"Tbsa","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":18,"row":22,"start":"","site":"MGCOW05","cluster":"METROPOLITANO","address":"Avenida Getúlio Vargas, 100 - Centro Industrial","lat":-19.827388,"lng":-43.129098,"company":"ARCELOR MITTAL JM","holder":"Claro","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":22,"row":26,"start":"","site":"MGIPGI2","cluster":"LESTE","address":"Rua Kiyoshi Tsunawaki 41 - Das Águas - Hospital Mario Cunha","lat":-19.496736,"lng":-42.53847,"company":"HOSPITAL MARIO CUNHA","holder":"Claro","details":"","status":"LEVANTAMENTO DE DOCUMENTOS","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Levantamento de documentação para iniciar ambientação ao hospital.","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":21,"row":25,"start":"","site":"MGVAR25","cluster":"SUL","address":"Avenida Manoel Vida, 1000 - Industrial JK","lat":-21.587892,"lng":-45.448986,"company":"COOPER STANDARD","holder":"Sba","details":"","status":"EM TRATATIVA","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Levantamento de documentação junto a equipe, assim que documentação ok, será enviado via email para tatiana.Barbara@cooperstandard.com","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."}],"details":{}};
+    let DATA = EMBEDDED_DATA;
+    const DATA_URL = 'data/dashboard-data.json';
+
+    async function loadDashboardData() {
+      try {
+        const response = await fetch(DATA_URL, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const externalData = await response.json();
+        if (!externalData || !Array.isArray(externalData.rows)) throw new Error('JSON sem rows');
+        DATA = externalData;
+        document.documentElement.dataset.dataSource = 'json';
+      } catch (error) {
+        console.warn('Usando dados embutidos; falha ao carregar JSON externo.', error);
+        DATA = EMBEDDED_DATA;
+        document.documentElement.dataset.dataSource = 'embedded';
+      }
+    }
+
+    const COLORS = ["#151923", "#252d42", "#344058", "#445270", "#556588", "#6779a0"];
+    const CLUSTER_COLORS = {
+      "METROPOLITANO": "#151923",
+      "BH": "#252d42",
+      "OESTE": "#344058",
+      "SUL": "#445270",
+      "LESTE/NORTE": "#556588",
+      "ZONA DA MATA": "#6779a0"
+    };
+    const STATUS_ORDER = ["LIBERADO", "PENDENTE", "LEVANTAMENTO DE DOCUMENTOS", "EM TRATATIVA", "SEM STATUS"];
+    const OVERVIEW_STATUS_ORDER = ["PENDENTE", "LIBERADO", "LEVANTAMENTO DE DOCUMENTOS", "EM TRATATIVA", "SEM STATUS"];
+    const $ = id => document.getElementById(id);
+    let overviewStatus = "";
+    let radarStatus = "";
+    let panelKpiLens = "";
+    let operationalOwnerFilter = "";
+    let operationalExpandedId = "";
+
+    const PANEL_LENSES = {
+      "": {
+        label: "Todos",
+        decisionTitle: "Fila de decisão",
+        focusTitle: "Sites em foco",
+        detail: "Todas as demandas no recorte atual."
+      },
+      "LIBERADO": {
+        label: "Liberadas",
+        decisionTitle: "Liberações concluídas",
+        focusTitle: "Sites liberados em foco",
+        detail: "Somente sites com acesso confirmado."
+      },
+      "__OPEN__": {
+        label: "Em aberto",
+        decisionTitle: "Fila de decisão · em aberto",
+        focusTitle: "Sites em aberto em foco",
+        detail: "Somente pendências que ainda dependem de avanço."
+      },
+      "__BOTTLENECK__": {
+        label: "Gargalos do % liberado",
+        decisionTitle: "Gargalos para avançar",
+        focusTitle: "Sites que mais impactam o avanço",
+        detail: "Pendências com maior impacto para aumentar o percentual liberado."
+      }
+    };
+
+    const OPERATIONAL_OWNERS = {
+      "": { label: "Todos", color: "#64748b" },
+      "EQS": { label: "EQS", color: "#475569" },
+      "Claro": { label: "CLARO", color: "#334155" },
+      "Segurança": { label: "SMS", color: "#64748b" },
+      "Detentora": { label: "Detentora", color: "#52616f" },
+      "Acompanhamento": { label: "Acompanhamento", color: "#5b6b7f" }
+    };
+
+    function esc(value) {
+      return String(value || "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+
+    function emptyState(title, detail, actionLabel = "") {
+      return `<div class="empty" role="status">
+        <strong>${esc(title)}</strong>
+        <span>${esc(detail)}</span>
+        ${actionLabel ? `<button type="button" data-empty-clear>${esc(actionLabel)}</button>` : ""}
+      </div>`;
+    }
+
+    function unique(key) {
+      return [...new Set(DATA.rows.map(row => row[key]).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+    }
+
+    function fillSelect(id, values) {
+      $(id).innerHTML = '<option value="">Todos</option>' + values.map(value => `<option>${esc(value)}</option>`).join("");
+    }
+
+    function filteredRows() {
+      const q = $("searchFilter").value.trim().toLowerCase();
+      if (!q) return DATA.rows;
+      return DATA.rows.filter(row => {
+        const blob = [row.site, row.company, row.cluster, row.holder, row.address, row.status, row.category, row.details, row.notes, row.next_action].join(" ").toLowerCase();
+        return blob.includes(q);
+      });
+    }
+
+    function countBy(rows, key, order = null) {
+      const map = new Map();
+      rows.forEach(row => {
+        const label = row[key] || "Sem informação";
+        map.set(label, (map.get(label) || 0) + 1);
+      });
+      const values = [...map.entries()].map(([label, value]) => ({ label, value }));
+      if (!order) return values.sort((a, b) => b.value - a.value || a.label.localeCompare(b.label, "pt-BR"));
+      return values.sort((a, b) => {
+        const ai = order.indexOf(a.label);
+        const bi = order.indexOf(b.label);
+        return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi) || b.value - a.value;
+      });
+    }
+
+    function statusClass(status) {
+      if (status === "LIBERADO") return "liberado";
+      if (status === "PENDENTE" || status === "LEVANTAMENTO DE DOCUMENTOS") return "pendente";
+      if (status === "EM TRATATIVA") return "tratativa";
+      if (status === "SEM STATUS") return "sem";
+      return "";
+    }
+
+    function statusShortLabel(status) {
+      if (status === "__OPEN__") return "EM ABERTO";
+      return status === "LEVANTAMENTO DE DOCUMENTOS" ? "LEVANT. DOCS" : status;
+    }
+
+    function matchesOverviewStatus(row) {
+      if (!overviewStatus) return true;
+      if (overviewStatus === "__OPEN__") return ["PENDENTE", "LEVANTAMENTO DE DOCUMENTOS", "EM TRATATIVA"].includes(row.status);
+      return row.status === overviewStatus;
+    }
+
+    function matchesStatusLens(row, status) {
+      if (!status) return true;
+      if (status === "__OPEN__") return ["PENDENTE", "LEVANTAMENTO DE DOCUMENTOS", "EM TRATATIVA"].includes(row.status);
+      if (status === "__BOTTLENECK__") return ["PENDENTE", "LEVANTAMENTO DE DOCUMENTOS", "EM TRATATIVA", "SEM STATUS"].includes(row.status);
+      return row.status === status;
+    }
+
+    function panelLensConfig() {
+      return PANEL_LENSES[panelKpiLens] || PANEL_LENSES[""];
+    }
+
+    function panelLensRows(rows) {
+      const visible = rows.filter(row => matchesStatusLens(row, panelKpiLens));
+      if (panelKpiLens !== "__BOTTLENECK__") return visible;
+      const criticalIds = new Set(DATA.critical.map(row => row.id));
+      const impactOrder = {
+        "Documentação": 0,
+        "Mobilização/cadastro": 1,
+        "Tratativa com detentora": 2,
+        "Sem informação": 3
+      };
+      return [...visible].sort((a, b) => {
+        const criticalDelta = Number(criticalIds.has(b.id)) - Number(criticalIds.has(a.id));
+        return criticalDelta
+          || (impactOrder[a.category] ?? 9) - (impactOrder[b.category] ?? 9)
+          || a.company.localeCompare(b.company, "pt-BR");
+      });
+    }
+
+    function updatePanelLensSummary(rows, visibleRows) {
+      const summary = $("panelLensSummary");
+      if (!summary) return;
+      const config = panelLensConfig();
+      document.querySelector("#view-painel .decision-panel .panel-title h2").textContent = config.decisionTitle;
+      document.querySelector("#view-painel .focus-panel .panel-title h2").textContent = config.focusTitle;
+      if (!panelKpiLens) {
+        summary.hidden = true;
+        summary.innerHTML = "";
+        return;
+      }
+      summary.hidden = false;
+      summary.innerHTML = `<span><strong>Filtro: ${esc(config.label)}</strong> · ${visibleRows.length}/${rows.length} sites · ${esc(config.detail)}</span><button type="button" data-panel-lens-clear>Limpar filtro</button>`;
+    }
+
+    function overviewStatusRail(rows) {
+      const counts = new Map(countBy(rows, "status").map(item => [item.label, item.value]));
+      const total = rows.length;
+      const options = [
+        { value: "", label: "TODOS", hint: "recorte atual", count: total },
+        ...OVERVIEW_STATUS_ORDER.map(status => ({
+          value: status,
+          label: statusShortLabel(status),
+          hint: status === "LIBERADO" ? "concluídos" : "situação",
+          count: counts.get(status) || 0
+        }))
+      ];
+      $("overviewStatusScope").textContent = overviewStatus ? statusShortLabel(overviewStatus) : "Todos os status";
+      $("overviewStatusRail").innerHTML = options.map(option => `
+        <button class="status-chip ${statusClass(option.value)}" type="button" data-overview-status="${esc(option.value)}" aria-pressed="${option.value === overviewStatus ? "true" : "false"}">
+          <span class="status-chip-count">${option.count}</span>
+          <span class="status-chip-label">${esc(option.label)}</span>
+          <span class="status-chip-hint">${esc(option.hint)}</span>
+        </button>`).join("");
+    }
+
+    function barList(id, items, opts = {}) {
+      const max = Math.max(1, ...items.map(item => item.value));
+      const limit = opts.limit || 6;
+      $(id).innerHTML = items.length ? items.slice(0, limit).map((item, index) => {
+        const color = opts.colors?.[item.label] || COLORS[index % COLORS.length];
+        const width = Math.max(3, item.value / max * 100);
+        return `<div class="bar-row" title="${esc(item.label)}: ${item.value}">
+          <div class="bar-label">${esc(item.label)}</div>
+          <div class="bar-track"><div class="bar-fill" style="--bar-w:${width}%;background:${color}"></div></div>
+          <div class="bar-value">${item.value}</div>
+        </div>`;
+      }).join("") : emptyState("Sem registros neste recorte", "Ajuste os filtros para voltar à visão completa.");
+
+      if (items.length) {
+        requestAnimationFrame(() => {
+          const isReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          $(id).querySelectorAll(".bar-fill").forEach((fill, i) => {
+            const targetW = fill.style.getPropertyValue("--bar-w");
+            if (isReduced) {
+              fill.style.width = targetW;
+            } else {
+              fill.style.transition = `width 380ms var(--ease-out) ${i * 48}ms`;
+              fill.style.width = targetW;
+            }
+          });
+        });
+      }
+    }
+
+    function documentList(rows) {
+      const criticalIds = new Set(DATA.critical.map(row => row.id));
+      const critical = rows.filter(row => criticalIds.has(row.id)).slice(0, 6);
+      $("criticalCount").textContent = `${critical.length} casos`;
+      $("documentList").innerHTML = critical.length ? `
+        <div class="doc-group"><h3>Tratativas em destaque</h3>
+        ${critical.map(row => `<div class="doc">
+          <div class="doc-ico">#</div>
+          <div><strong>${esc(row.company)}</strong><span>${esc(row.site)} · ${esc(row.notes || row.details || "Sem observação detalhada")}</span></div>
+          <span class="pill ${statusClass(row.status)}">${esc(row.status)}</span>
+        </div>`).join("")}</div>` : emptyState("Sem tratativas críticas", "O filtro atual não contém casos destacados.");
+    }
+
+    function decisionQueue(rows, lens = "") {
+      const categories = countBy(rows, "category");
+      const get = name => categories.find(item => item.label === name)?.value || 0;
+      const openRows = rows.filter(row => row.status !== "LIBERADO");
+      let queue = [
+        ["Documentação", get("Documentação"), "Checklist, portal e evidências"],
+        ["Tratativa com detentora", get("Tratativa com detentora"), "Retorno externo ou contato"],
+        ["Mobilização/cadastro", get("Mobilização/cadastro"), "Cadastro, Fieldglass ou terceiro"],
+        ["Informação pendente", openRows.filter(row => row.status === "SEM STATUS").length, "Classificação antes da reunião"]
+      ].filter(row => row[1] > 0);
+      if (lens === "LIBERADO") {
+        const clusters = countBy(rows, "cluster").slice(0, 3);
+        queue = [
+          ["Acessos confirmados", rows.length, "Manter evidencia e acompanhamento"],
+          ...clusters.map(item => [item.label, item.value, "Sites liberados nesta regiao"])
+        ].filter(row => row[1] > 0);
+      } else if (lens === "__BOTTLENECK__") {
+        queue = queue.map(row => row[0].includes("Document") ? [row[0], row[1], "Maior impacto no avanço do percentual"] : row);
+      }
+      $("decisionQueue").innerHTML = queue.length ? queue.map((row, i) => `<div class="decision-row" style="--i:${i}">
+        <div><strong>${esc(row[0])}</strong><span>${esc(row[2])}</span></div>
+        <div class="decision-count">${row[1]}</div>
+      </div>`).join("") : emptyState("Sem pendências abertas", "O recorte atual não exige decisão operacional.");
+    }
+
+    function focusSites(rows, lens = "") {
+      const criticalIds = new Set(DATA.critical.map(row => row.id));
+      const statusOrder = lens === "LIBERADO"
+        ? { "LIBERADO": 0, "EM TRATATIVA": 1, "PENDENTE": 2, "LEVANTAMENTO DE DOCUMENTOS": 3, "SEM STATUS": 4 }
+        : { "PENDENTE": 0, "LEVANTAMENTO DE DOCUMENTOS": 1, "EM TRATATIVA": 2, "SEM STATUS": 3, "LIBERADO": 4 };
+      const focus = [...rows].sort((a, b) => {
+        const criticalDelta = Number(criticalIds.has(b.id)) - Number(criticalIds.has(a.id));
+        return criticalDelta
+          || (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9)
+          || a.company.localeCompare(b.company, "pt-BR");
+      }).slice(0, 6);
+      const actionText = row => lens === "LIBERADO" ? "Acesso confirmado; manter evidencia atualizada." : row.next_action;
+      $("focusSites").innerHTML = focus.length ? focus.map((row, i) => `<div class="focus-row" style="--i:${i}">
+        <div><strong>${esc(row.company)}</strong><span>${esc(row.site)} · ${esc(actionText(row))}</span></div>
+        <span class="pill ${statusClass(row.status)}">${esc(row.status)}</span>
+      </div>`).join("") : emptyState("Sem sites no recorte", "Revise filtro de status ou busca para ampliar a lista.");
+    }
+
+    function pendingSites(rows) {
+      overviewStatusRail(rows);
+      const pending = rows
+        .filter(matchesOverviewStatus)
+        .sort((a, b) => {
+          const order = { "PENDENTE": 0, "LEVANTAMENTO DE DOCUMENTOS": 1, "EM TRATATIVA": 2, "SEM STATUS": 3, "LIBERADO": 4 };
+          return (order[a.status] ?? 9) - (order[b.status] ?? 9)
+            || a.cluster.localeCompare(b.cluster, "pt-BR")
+            || a.company.localeCompare(b.company, "pt-BR");
+        });
+      $("pendingCount").textContent = `${pending.length} ${pending.length === 1 ? "site" : "sites"} no recorte`;
+      $("pendingSiteList").innerHTML = pending.length ? pending.map((row, index) => `
+        <article class="site-card" style="--i:${Math.min(index, 6)}">
+          <div class="site-card-head">
+            <div class="site-card-title">
+              <strong>${esc(row.site)}</strong>
+              <span>${esc(row.company)}</span>
+            </div>
+            <span class="pill ${statusClass(row.status)}">${esc(row.status)}</span>
+          </div>
+          <div class="site-meta">
+            <div><b>Cluster</b>${esc(row.cluster)}</div>
+            <div><b>Detentora</b>${esc(row.holder)}</div>
+            <div><b>Bloqueio</b>${esc(row.category)}</div>
+          </div>
+          <div class="site-action"><strong>Ação:</strong> ${esc(row.next_action)}</div>
+        </article>`).join("") : emptyState("Nenhum site encontrado", "Este status não aparece no recorte atual.", "Limpar filtros");
+    }
+
+    function rowText(row) {
+      return [row.category, row.status, row.notes, row.next_action, row.details, row.stage, row.current_responsibility].filter(Boolean).join(" ").toLowerCase();
+    }
+
+    function normalizeOperationalOwner(value) {
+      const text = String(value || "").trim().toUpperCase();
+      if (!text) return "";
+      if (text === "EQS") return "EQS";
+      if (text === "CLARO") return "Claro";
+      if (text === "SMS" || text.includes("SEGURAN")) return "Segurança";
+      if (text.includes("DETENTORA")) return "Detentora";
+      if (text.includes("ACOMPANH")) return "Acompanhamento";
+      return "";
+    }
+
+    function stageStepFromLabel(label, status = "") {
+      const text = String(label || "").toLowerCase();
+      if (status === "LIBERADO" || /liberado/.test(text)) return 4;
+      if (/retorno|sms|seguran|enviado|valid/.test(text)) return 3;
+      if (/cadastro|mobiliza|regulariza/.test(text)) return 2;
+      return 1;
+    }
+
+    function inferOperationalOwner(row) {
+      const explicitOwner = normalizeOperationalOwner(row.current_responsibility);
+      if (explicitOwner) return explicitOwner;
+      const text = rowText(row);
+      if (row.status === "LIBERADO") return "Acompanhamento";
+      if (/aso|pc mso|pcmso|pgr|nr ?10|nr ?35|nr ?22|document|checklist/.test(text)) return "EQS";
+      if (/seguran/.test(text)) return "Segurança";
+      if (/mobiliza|fieldglass|claro\/eqs|gerente de contas/.test(text)) return "Claro";
+      if (/detentora|tbsa|atc|sba|qmc|tim|retorno|contato/.test(text)) return "Detentora";
+      if (row.holder && row.holder !== "Sem detentora") return "Detentora";
+      return "EQS";
+    }
+
+    function inferOperationalStage(row) {
+      if (row.stage && typeof row.stage === "object" && row.stage.label) return row.stage;
+      if (row.stage && typeof row.stage === "string") {
+        return { label: row.stage, step: stageStepFromLabel(row.stage, row.status) };
+      }
+      const text = rowText(row);
+      if (row.status === "LIBERADO") return { label: "Liberado / acompanhar", step: 4 };
+      if (/aso|vencid|validade/.test(text)) return { label: "Regularização documental", step: 2 };
+      if (/seguran/.test(text)) return { label: "Aguardando segurança", step: 3 };
+      if (/enviad|portal|sg3|bancodoc|email/.test(text)) return { label: "Enviado / em validação", step: 3 };
+      if (/levantamento|checklist|document/.test(text)) return { label: "Levantamento documental", step: 1 };
+      if (/mobiliza|fieldglass|cadastro/.test(text)) return { label: "Cadastro / mobilização", step: 2 };
+      if (/retorno|contato|tratativa/.test(text)) return { label: "Aguardando retorno", step: 3 };
+      return { label: "Triagem operacional", step: 1 };
+    }
+
+    function parseBrDate(value) {
+      const match = String(value || "").match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+      if (!match) return null;
+      return new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
+    }
+
+    function generatedDate() {
+      return parseBrDate(DATA.generated_at) || new Date();
+    }
+
+    function ageLabel(row) {
+      if (row.status === "LIBERADO") return "concluído";
+      const start = parseBrDate(row.start);
+      if (!start) return "sem data";
+      const diff = Math.max(0, Math.round((generatedDate() - start) / 86400000));
+      return `${diff} ${diff === 1 ? "dia" : "dias"}`;
+    }
+
+    function operationalDecoratedRows(rows) {
+      return rows.map(row => {
+        const owner = inferOperationalOwner(row);
+        const stage = inferOperationalStage(row);
+        return { ...row, owner, stage };
+      }).filter(row => !operationalOwnerFilter || row.owner === operationalOwnerFilter);
+    }
+
+    function updateOperationalSummary(rows, visible) {
+      const summary = $("operationalSummary");
+      if (!summary) return;
+      const open = rows.filter(row => row.status !== "LIBERADO").length;
+      const eqs = rows.filter(row => inferOperationalOwner(row) === "EQS").length;
+      const claro = rows.filter(row => inferOperationalOwner(row) === "Claro").length;
+      const security = rows.filter(row => inferOperationalOwner(row) === "Segurança").length;
+      summary.innerHTML = [
+        [open, "ações em aberto"],
+        [eqs, "EQS"],
+        [claro, "CLARO"],
+        [security, "SMS"],
+      ].map(item => `<div class="action-summary-card"><strong>${item[0]}</strong><span>${esc(item[1])}</span></div>`).join("");
+      $("rowCount").textContent = `${visible.length} ${visible.length === 1 ? "ação" : "ações"}`;
+    }
+
+    function updateOwnerRail(rows) {
+      const rail = $("ownerRail");
+      if (!rail) return;
+      const counts = new Map();
+      rows.forEach(row => {
+        const owner = inferOperationalOwner(row);
+        counts.set(owner, (counts.get(owner) || 0) + 1);
+      });
+      const chips = Object.entries(OPERATIONAL_OWNERS).map(([key, config]) => {
+        const count = key ? (counts.get(key) || 0) : rows.length;
+        if (key && !count) return "";
+        const pressed = operationalOwnerFilter === key;
+        return `<button type="button" class="owner-chip" data-owner-filter="${esc(key)}" aria-pressed="${pressed}" style="--owner-color:${config.color}">${esc(config.label)} · ${count}</button>`;
+      }).filter(Boolean);
+      rail.innerHTML = chips.join("");
+    }
+
+    function stageSteps(stage) {
+      return [1, 2, 3, 4].map(step => `<span class="stage-step ${step < stage.step ? "is-done" : step === stage.step ? "is-current" : ""}"></span>`).join("");
+    }
+
+    function decorateOperationalExpansion(rows) {
+      const body = $("detailBody");
+      if (!body) return;
+      const renderedRows = Array.from(body.querySelectorAll("tr:not(.empty-row)"));
+      renderedRows.forEach((tr, index) => {
+        const row = rows[index];
+        if (!row) return;
+        const ownerConfig = OPERATIONAL_OWNERS[row.owner] || OPERATIONAL_OWNERS[""];
+        const expanded = operationalExpandedId === String(row.id);
+        const support = [row.notes, row.details].filter(Boolean).join(" | ");
+        const demandCell = tr.querySelector(".demand-cell");
+        const actionCell = tr.querySelector(".action-cell");
+        tr.classList.toggle("is-expanded", expanded);
+        tr.style.setProperty("--owner-color", ownerConfig.color);
+        if (demandCell) {
+          demandCell.innerHTML = `<strong>${esc(row.company)}</strong><span><span class="site-code" title="${esc(row.site)}">${esc(row.site)}</span> · ${esc(row.cluster)} · ${esc(row.holder || "Sem detentora")}</span>`;
+        }
+        if (actionCell) {
+          actionCell.innerHTML = `<button type="button" class="action-text" data-operational-expand="${esc(row.id)}" aria-expanded="${expanded ? "true" : "false"}"><strong>${esc(row.next_action)}</strong>${support ? `<span>${esc(support)}</span>` : ""}</button>`;
+        }
+      });
+    }
+
+    function table(rows) {
+      const decorated = operationalDecoratedRows(rows).sort((a, b) => {
+        const ownerOrder = { "EQS": 0, "Claro": 1, "Segurança": 2, "Detentora": 3, "Acompanhamento": 4 };
+        const statusOrder = { "PENDENTE": 0, "LEVANTAMENTO DE DOCUMENTOS": 1, "EM TRATATIVA": 2, "SEM STATUS": 3, "LIBERADO": 4 };
+        return (ownerOrder[a.owner] ?? 9) - (ownerOrder[b.owner] ?? 9)
+          || (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9)
+          || a.company.localeCompare(b.company, "pt-BR");
+      });
+      updateOperationalSummary(rows, decorated);
+      updateOwnerRail(rows);
+      if (!decorated.length) {
+        $("detailBody").innerHTML = `<tr class="empty-row"><td colspan="5">${emptyState("Nenhuma ação encontrada", "O filtro operacional atual não encontrou site, empresa, etapa ou responsabilidade correspondente.", "Limpar busca")}</td></tr>`;
+        return;
+      }
+      $("detailBody").innerHTML = decorated.map(row => {
+        const support = [row.notes, row.details].filter(Boolean).join(" | ");
+        const ownerConfig = OPERATIONAL_OWNERS[row.owner] || OPERATIONAL_OWNERS[""];
+        return `<tr style="--owner-color:${ownerConfig.color}">
+          <td class="company-cell demand-cell" data-label="Demanda"><strong>${esc(row.company)}</strong><span><span class="site-code" title="${esc(row.site)}">${esc(row.site)}</span> · ${esc(row.cluster)} · ${esc(row.holder || "Sem detentora")}</span></td>
+          <td class="owner-cell" data-label="Com quem está"><span class="owner-badge"><i class="owner-dot"></i><span>${esc(ownerConfig.label)}</span></span></td>
+          <td class="stage-cell" data-label="Etapa"><div class="stage-track"><strong>${esc(row.stage.label)}</strong><div class="stage-steps" aria-hidden="true">${stageSteps(row.stage)}</div></div></td>
+          <td class="age-cell" data-label="Tempo"><span class="age-pill">${esc(ageLabel(row))}</span></td>
+          <td class="muted-cell action-cell" data-label="Próxima ação"><strong>${esc(row.next_action)}</strong>${support ? `<span>${esc(support)}</span>` : ""}</td>
+        </tr>`;
+      }).join("");
+      decorateOperationalExpansion(decorated);
+    }
+
+    const STATUS_COLORS = {
+      "LIBERADO": "#157a52",
+      "PENDENTE": "#D52B1E",
+      "LEVANTAMENTO DE DOCUMENTOS": "#ADAFAF",
+      "EM TRATATIVA": "#A8201A",
+      "SEM STATUS": "#667085"
+    };
+
+    // -- Radar: mapa real de MG com OpenFreeMap/MapLibre -----------------------
+    const MAP_STYLES = {
+      light: "https://tiles.openfreemap.org/styles/positron",
+      dark: "https://tiles.openfreemap.org/styles/dark"
+    };
+    const MAP_FALLBACK_STYLE = "https://tiles.openfreemap.org/styles/liberty";
+    const MAP_INITIAL_VIEW = {
+      center: [-45.45, -18.58],
+      zoom: 4.85
+    };
+    const MAP_MG_BOUNDS = [[-51.05, -22.93], [-39.85, -14.22]];
+    const MG_BOUNDARY_SOURCE = "mg-boundary";
+    const MG_BOUNDARY_FILL = "mg-boundary-fill";
+    const MG_BOUNDARY_LINE = "mg-boundary-line";
+    const MG_BOUNDARY_GEOJSON = "assets/mg-boundary.geojson";
+    const CLUSTER_ALIAS = { "LESTE": "LESTE/NORTE", "NORTE": "LESTE/NORTE" };
+    const CLUSTER_FILTER = { "LESTE/NORTE": "LESTE" };
+    const STATUS_COLOR_IDX = {
+      "LIBERADO": 0,
+      "PENDENTE": 1,
+      "LEVANTAMENTO DE DOCUMENTOS": 2,
+      "EM TRATATIVA": 3,
+      "SEM STATUS": 4
+    };
+
+    let radarRowsCache = null;
+    let mgMap = null;
+    let mgMapMarkers = [];
+    let mgMapStyle = "";
+    let mgMapReady = false;
+    let mgBoundaryRetryTimer = 0;
+    let mapForceIndividual = false;
+    const MAP_CLUSTER_ZOOM = 7.15;
+
+    function currentMapStyle() {
+      const theme = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+      return MAP_STYLES[theme] || MAP_FALLBACK_STYLE;
+    }
+
+    function currentBoundaryPaint() {
+      const dark = document.documentElement.getAttribute("data-theme") === "dark";
+      return dark
+        ? { fill: "#e2e8f0", fillOpacity: 0.055, line: "#f8fafc", lineOpacity: 0.58, lineWidth: 2.25 }
+        : { fill: "#334155", fillOpacity: 0.045, line: "#0f172a", lineOpacity: 0.58, lineWidth: 2.05 };
+    }
+
+    function firstMapSymbolLayerId() {
+      if (!mgMap || !mgMap.getStyle) return undefined;
+      const style = mgMap.getStyle();
+      const layers = style && style.layers ? style.layers : [];
+      const symbol = layers.find(layer => layer.type === "symbol");
+      return symbol ? symbol.id : undefined;
+    }
+
+    function ensureMgBoundaryLayer() {
+      if (!mgMap) return;
+      if (!mgMap.isStyleLoaded || !mgMap.isStyleLoaded()) {
+        window.clearTimeout(mgBoundaryRetryTimer);
+        mgBoundaryRetryTimer = window.setTimeout(ensureMgBoundaryLayer, 90);
+        return;
+      }
+      window.clearTimeout(mgBoundaryRetryTimer);
+      mgBoundaryRetryTimer = 0;
+      const paint = currentBoundaryPaint();
+      const beforeId = firstMapSymbolLayerId();
+
+      if (!mgMap.getSource(MG_BOUNDARY_SOURCE)) {
+        mgMap.addSource(MG_BOUNDARY_SOURCE, {
+          type: "geojson",
+          data: MG_BOUNDARY_GEOJSON
+        });
+      }
+
+      if (!mgMap.getLayer(MG_BOUNDARY_FILL)) {
+        mgMap.addLayer({
+          id: MG_BOUNDARY_FILL,
+          type: "fill",
+          source: MG_BOUNDARY_SOURCE,
+          paint: {
+            "fill-color": paint.fill,
+            "fill-opacity": paint.fillOpacity
+          }
+        }, beforeId);
+      } else {
+        mgMap.setPaintProperty(MG_BOUNDARY_FILL, "fill-color", paint.fill);
+        mgMap.setPaintProperty(MG_BOUNDARY_FILL, "fill-opacity", paint.fillOpacity);
+      }
+
+      if (!mgMap.getLayer(MG_BOUNDARY_LINE)) {
+        mgMap.addLayer({
+          id: MG_BOUNDARY_LINE,
+          type: "line",
+          source: MG_BOUNDARY_SOURCE,
+          paint: {
+            "line-color": paint.line,
+            "line-opacity": paint.lineOpacity,
+            "line-width": paint.lineWidth
+          }
+        }, beforeId);
+      } else {
+        mgMap.setPaintProperty(MG_BOUNDARY_LINE, "line-color", paint.line);
+        mgMap.setPaintProperty(MG_BOUNDARY_LINE, "line-opacity", paint.lineOpacity);
+        mgMap.setPaintProperty(MG_BOUNDARY_LINE, "line-width", paint.lineWidth);
+      }
+    }
+
+    function refreshMapStyleArtifacts() {
+      ensureMgBoundaryLayer();
+      renderMapMarkers(radarRowsCache || DATA.rows, { fit: false });
+      window.setTimeout(ensureMgBoundaryLayer, 120);
+      window.setTimeout(ensureMgBoundaryLayer, 360);
+    }
+
+    function validCoords(row) {
+      return Number.isFinite(row.lat) && Number.isFinite(row.lng);
+    }
+
+    function dominantStatus(counts) {
+      let domStatus = "SEM STATUS";
+      let domCount = -1;
+      STATUS_ORDER.forEach(status => {
+        const count = counts[status] || 0;
+        if (count > domCount) {
+          domStatus = status;
+          domCount = count;
+        }
+      });
+      return domStatus;
+    }
+
+    function mapClusterName(row) {
+      return CLUSTER_ALIAS[row.cluster] || row.cluster || "Sem cluster";
+    }
+
+    function mapGroups(rows, groupByCluster = false) {
+      const groups = new Map();
+      rows.filter(validCoords).forEach(row => {
+        const key = groupByCluster
+          ? `cluster:${mapClusterName(row)}`
+          : `point:${row.lat.toFixed(5)},${row.lng.toFixed(5)}`;
+        if (!groups.has(key)) {
+          groups.set(key, { lat: row.lat, lng: row.lng, rows: [], groupKey: key, groupByCluster });
+        }
+        groups.get(key).rows.push(row);
+      });
+      return [...groups.values()].map(group => {
+        if (group.groupByCluster) {
+          const latSum = group.rows.reduce((sum, row) => sum + row.lat, 0);
+          const lngSum = group.rows.reduce((sum, row) => sum + row.lng, 0);
+          group.lat = latSum / group.rows.length;
+          group.lng = lngSum / group.rows.length;
+        }
+        return group;
+      });
+    }
+
+    function buildMapTooltip(group) {
+      const counts = {};
+      STATUS_ORDER.forEach(status => counts[status] = 0);
+      group.rows.forEach(row => counts[row.status || "SEM STATUS"] = (counts[row.status || "SEM STATUS"] || 0) + 1);
+      const statusShort = {
+        "LIBERADO": "Liberado",
+        "PENDENTE": "Pendente",
+        "LEVANTAMENTO DE DOCUMENTOS": "Levant. docs",
+        "EM TRATATIVA": "Em tratativa",
+        "SEM STATUS": "Sem status"
+      };
+      const isClusterDrill = group.groupByCluster && group.rows.length > 1;
+      const title = isClusterDrill
+        ? mapClusterName(group.rows[0])
+        : group.rows.length === 1
+        ? group.rows[0].site
+        : (CLUSTER_ALIAS[group.rows[0].cluster] || group.rows[0].cluster || "Ponto agrupado");
+      const subtitle = isClusterDrill
+        ? `${group.rows.length} pendências no cluster`
+        : group.rows.length === 1
+        ? group.rows[0].company
+        : `${group.rows.length} pendências no mesmo ponto`;
+      const tipRows = STATUS_ORDER
+        .filter(status => counts[status] > 0)
+        .map(status => '<div class="mg-tooltip-status-row"><span class="mg-tooltip-status-name"><span class="tt-dot" style="background:' + STATUS_COLORS[status] + '"></span>' + esc(statusShort[status]) + '</span><span class="mg-tooltip-status-count">' + counts[status] + '</span></div>')
+        .join("");
+      return '<div class="mg-tooltip-title">' + esc(title) + '</div><div class="mg-tooltip-total">' + esc(subtitle) + '</div><div class="mg-tooltip-status-list">' + tipRows + '</div>';
+    }
+
+    function positionMapTooltip(markerEl, tooltip, canvas) {
+      const markerRect = markerEl.getBoundingClientRect();
+      const canvasRect = canvas.getBoundingClientRect();
+      tooltip.style.left = (markerRect.left - canvasRect.left + markerRect.width / 2) + "px";
+      tooltip.style.top = (markerRect.top - canvasRect.top) + "px";
+    }
+
+    function clearMapMarkers() {
+      mgMapMarkers.forEach(marker => marker.remove());
+      mgMapMarkers = [];
+    }
+
+    function zoomMapGroup(group) {
+      if (!mgMap || !group || group.rows.length <= 1) return;
+      mapForceIndividual = true;
+      radarRowsCache = group.rows;
+      const bounds = new maplibregl.LngLatBounds();
+      group.rows.filter(validCoords).forEach(row => bounds.extend([row.lng, row.lat]));
+      const note = $("radarMapNote");
+      if (note) {
+        note.textContent = `${mapClusterName(group.rows[0])}: zoom aplicado para mostrar os pontos individuais da região.`;
+      }
+      if (bounds.isEmpty && bounds.isEmpty()) return;
+      mgMap.fitBounds(bounds, {
+        padding: { top: 72, right: 72, bottom: 72, left: 72 },
+        maxZoom: Math.max(MAP_CLUSTER_ZOOM + 0.75, 8.4),
+        duration: 520
+      });
+      renderMapMarkers(radarRowsCache, { fit: false });
+    }
+
+    function openMapPointDetails(group) {
+      const first = group.rows[0];
+      const search = group.rows.length === 1
+        ? first.site
+        : (first.address || first.site || first.company || "");
+      $("searchFilter").value = search;
+      overviewStatus = "";
+      activateView("geral");
+      render();
+    }
+
+    function renderMapMarkers(rows, options = {}) {
+      const shouldFit = options.fit !== false;
+      const canvas = document.querySelector(".radar-map-canvas");
+      const tooltip = document.getElementById("mgTooltip");
+      if (!mgMap || !canvas) return;
+      clearMapMarkers();
+
+      const zoom = mgMap.getZoom ? mgMap.getZoom() : 0;
+      const groupByCluster = !mapForceIndividual && zoom > 0 && zoom <= MAP_CLUSTER_ZOOM && rows.length > 1;
+      const groups = mapGroups(rows, groupByCluster);
+      if (!groups.length) return;
+      const maxVol = Math.max(1, ...groups.map(group => group.rows.length));
+      const bounds = new maplibregl.LngLatBounds();
+
+      groups.forEach(group => {
+        const counts = {};
+        STATUS_ORDER.forEach(status => counts[status] = 0);
+        group.rows.forEach(row => counts[row.status || "SEM STATUS"] = (counts[row.status || "SEM STATUS"] || 0) + 1);
+        const domStatus = dominantStatus(counts);
+        const isClusterDrill = group.groupByCluster && group.rows.length > 1;
+        const isGroupedMarker = isClusterDrill || group.rows.length > 1;
+        const size = isGroupedMarker
+          ? Math.round(20 + (group.rows.length / maxVol) * 16)
+          : 14;
+        const el = document.createElement("button");
+        el.type = "button";
+        el.className = `mg-live-marker ${isGroupedMarker ? "is-group" : "is-single"}`;
+        el.style.setProperty("--marker-color", STATUS_COLORS[domStatus] || STATUS_COLORS["SEM STATUS"]);
+        el.style.setProperty("--marker-size", size + "px");
+        el.innerHTML = isGroupedMarker ? '<span>' + group.rows.length + '</span>' : '<span></span>';
+        const markerLabel = isClusterDrill ? mapClusterName(group.rows[0]) : group.rows[0].site;
+        el.setAttribute("aria-label", `${group.rows.length} registro${group.rows.length === 1 ? "" : "s"} em ${markerLabel}; status dominante ${domStatus}`);
+
+        const showTip = () => {
+          if (!tooltip) return;
+          tooltip.innerHTML = buildMapTooltip(group);
+          tooltip.hidden = false;
+          tooltip.style.opacity = "1";
+          positionMapTooltip(el, tooltip, canvas);
+        };
+        const hideTip = () => {
+          if (tooltip) { tooltip.style.opacity = "0"; tooltip.hidden = true; }
+        };
+        el.addEventListener("mouseenter", showTip);
+        el.addEventListener("focus", showTip);
+        el.addEventListener("mouseleave", hideTip);
+        el.addEventListener("blur", hideTip);
+        el.addEventListener("click", () => {
+          hideTip();
+          if (isClusterDrill) {
+            zoomMapGroup(group);
+            return;
+          }
+          openMapPointDetails(group);
+        });
+
+        const marker = new maplibregl.Marker({ element: el, anchor: "center" })
+          .setLngLat([group.lng, group.lat])
+          .addTo(mgMap);
+        mgMapMarkers.push(marker);
+        bounds.extend([group.lng, group.lat]);
+      });
+
+      if (!shouldFit) return;
+
+      requestAnimationFrame(() => {
+        mgMap.resize();
+        if (groups.length === 1) {
+          mgMap.easeTo({ center: [groups[0].lng, groups[0].lat], zoom: 8.5, duration: 280 });
+        } else {
+          mgMap.fitBounds(bounds, { padding: 42, maxZoom: 7.6, duration: 320 });
+        }
+      });
+    }
+
+    function fitMapToMinas(options = {}) {
+      if (!mgMap || !mgMapReady || typeof maplibregl === "undefined") return;
+      requestAnimationFrame(() => {
+        mgMap.resize();
+        const bounds = new maplibregl.LngLatBounds(MAP_MG_BOUNDS[0], MAP_MG_BOUNDS[1]);
+        mgMap.fitBounds(bounds, {
+          padding: { top: 32, right: 34, bottom: 32, left: 34 },
+          maxZoom: 5.05,
+          duration: options.duration ?? 0
+        });
+      });
+    }
+
+    function ensureRadarMap() {
+      const container = document.getElementById("mgRealMap");
+      const fallback = document.getElementById("mgMapFallback");
+      if (!container) return false;
+      if (!window.maplibregl) {
+        if (fallback) fallback.hidden = false;
+        return false;
+      }
+      const desiredStyle = currentMapStyle();
+      if (mgMap) {
+        if (desiredStyle !== mgMapStyle) {
+          mgMapStyle = desiredStyle;
+          mgMap.once("style.load", refreshMapStyleArtifacts);
+          mgMap.once("idle", ensureMgBoundaryLayer);
+          mgMap.setStyle(desiredStyle);
+          window.setTimeout(refreshMapStyleArtifacts, 180);
+        } else {
+          ensureMgBoundaryLayer();
+        }
+        return mgMapReady;
+      }
+      mgMapStyle = desiredStyle;
+      mgMap = new maplibregl.Map({
+        container,
+        style: desiredStyle,
+        center: MAP_INITIAL_VIEW.center,
+        zoom: MAP_INITIAL_VIEW.zoom,
+        attributionControl: true,
+        cooperativeGestures: true
+      });
+      mgMap.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), "top-right");
+      mgMap.on("load", () => {
+        mgMapReady = true;
+        if (fallback) fallback.hidden = true;
+        ensureMgBoundaryLayer();
+        renderMapMarkers(radarRowsCache || DATA.rows, { fit: false });
+        fitMapToMinas();
+      });
+      mgMap.on("zoomend", () => {
+        renderMapMarkers(radarRowsCache || DATA.rows, { fit: false });
+      });
+      mgMap.on("error", () => {
+        if (!mgMapReady && fallback) fallback.hidden = false;
+      });
+      return false;
+    }
+
+    function renderRadarMap(rows) {
+      if (rows) {
+        radarRowsCache = rows;
+        mapForceIndividual = false;
+      }
+      if (!radarRowsCache) return;
+      if (!ensureRadarMap()) return;
+      const shouldShowWholeState = !radarStatus && !panelKpiLens && !mapForceIndividual;
+      renderMapMarkers(radarRowsCache, { fit: !shouldShowWholeState });
+      if (shouldShowWholeState) fitMapToMinas();
+    }
+
+    function resetRadarToOverview(rows = DATA.rows) {
+      radarStatus = "";
+      panelKpiLens = "";
+      mapForceIndividual = false;
+      radarRowsCache = rows;
+      render();
+      if (!mgMap || !mgMapReady) {
+        return;
+      }
+      renderMapMarkers(radarRowsCache, { fit: false });
+      fitMapToMinas({ duration: 480 });
+      const note = $("radarMapNote");
+      if (note) {
+        note.textContent = "Todas as demandas no mapa · clusters por região · clique no cluster para aproximar";
+      }
+      updateKpiStates();
+    }
+
+    function updateKpiStates() {
+      const status = activeView === "painel" ? panelKpiLens : (activeView === "geral" ? overviewStatus : "");
+      document.querySelectorAll("[data-kpi-overview]").forEach(card => {
+        const value = card.dataset.kpiOverview || "";
+        const selected = value === status;
+        card.classList.toggle("is-active", selected);
+        card.setAttribute("aria-pressed", selected ? "true" : "false");
+      });
+    }
+
+    function updateRadarNote(rows, visibleRows) {
+      const note = $("radarMapNote");
+      if (!note) return;
+      if (!radarStatus) {
+        note.textContent = "Tamanho do marcador ∝ volume · Cor = status dominante · Clique para filtrar";
+        return;
+      }
+      note.textContent = `Mapa filtrado: ${statusShortLabel(radarStatus)} · ${visibleRows.length}/${rows.length} registros no radar · Total limpa o recorte`;
+    }
+
+    function render() {
+      const rows = filteredRows();
+      const total = rows.length;
+      const liberated = rows.filter(row => row.status === "LIBERADO").length;
+      const noStatus = rows.filter(row => row.status === "SEM STATUS").length;
+      const open = total - liberated - noStatus;
+      const pct = total ? liberated / total * 100 : 0;
+
+      $("baseCount").textContent = `${total} registro${total === 1 ? "" : "s"}`;
+
+      // KPI strip
+      $("kpiTotal").textContent = total;
+      $("kpiLiberado").textContent = liberated;
+      $("kpiAberto").textContent = open;
+      $("kpiPct").textContent = `${Math.round(pct)}%`;
+
+      // Radar: mapa geográfico de MG
+      const panelRows = panelLensRows(rows);
+      updatePanelLensSummary(rows, panelRows);
+      const radarRows = panelRows.filter(row => matchesStatusLens(row, radarStatus));
+      renderRadarMap(radarRows);
+      updateRadarNote(panelRows, radarRows);
+
+      barList("statusChart", countBy(rows, "status", STATUS_ORDER), {
+        colors: {
+          "LIBERADO": "var(--green)",
+          "PENDENTE": "var(--amber)",
+          "LEVANTAMENTO DE DOCUMENTOS": "#d69428",
+          "EM TRATATIVA": "var(--blue)",
+          "SEM STATUS": "var(--slate)"
+        }
+      });
+      barList("clusterChart", countBy(rows, "cluster"), { limit: 5, colors: CLUSTER_COLORS });
+      documentList(rows);
+      decisionQueue(panelRows, panelKpiLens);
+      focusSites(panelRows, panelKpiLens);
+      pendingSites(rows);
+      table(rows);
+      updateKpiStates();
+    }
+
+    const VIEW_TITLES = {
+      painel:    ["Pendências de acesso a sites críticos", "Leitura rápida para decidir apoio, prioridade e próximo passo."],
+      bloqueios: ["Painel de bloqueios e distribuição",       "Status e clusters - onde estão os gargalos de acesso."],
+      geral:     ["Visão geral dos sites com pendências",     "Todos os sites no recorte, com filtro rápido por situação."],
+      historico: ["Plano de ação operacional",                 "Responsabilidade, etapa e próximo passo por site, com base nos dados disponíveis."]
+    };
+
+    const VIEW_ORDER = ["painel", "bloqueios", "geral", "historico"];
+    let activeView = "painel";
+    let viewTransitionTimer = 0;
+
+    function alignTabsIndicator({ instant = false } = {}) {
+      const indicator = document.querySelector(".tabs-indicator");
+      if (!indicator) return;
+      const activeTab = document.querySelector('.tabs button[aria-selected="true"]');
+      if (!activeTab) return;
+
+      if (instant) indicator.style.transition = "none";
+      indicator.style.left = activeTab.offsetLeft + "px";
+      indicator.style.width = activeTab.offsetWidth + "px";
+      if (instant) {
+        void indicator.offsetWidth;
+        indicator.style.transition = "";
+      }
+    }
+
+    function activateView(view) {
+      const topbar = document.querySelector(".topbar");
+      const title = document.querySelector(".page-title");
+      const stack = document.querySelector(".view-stack");
+      const currentSection = document.querySelector(".view-section.is-active");
+      const nextSection = document.querySelector(`[data-view="${view}"]`);
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const currentView = currentSection?.dataset.view || activeView;
+      const currentIndex = VIEW_ORDER.indexOf(currentView);
+      const nextIndex = VIEW_ORDER.indexOf(view);
+      const direction = nextIndex >= currentIndex ? "forward" : "backward";
+
+      if (!nextSection) return;
+      const viewSections = () => document.querySelectorAll(".view-section[data-view]");
+      const settleViewSections = () => {
+        viewSections().forEach(section => {
+          const selected = section.dataset.view === view;
+          section.classList.toggle("is-active", selected);
+          section.classList.remove("is-entering", "is-leaving");
+          section.hidden = !selected;
+          section.setAttribute("aria-hidden", selected ? "false" : "true");
+        });
+        if (stack) {
+          stack.style.minHeight = "";
+          stack.classList.remove("is-transitioning");
+        }
+      };
+
+      // Flash na borda da topbar
+      if (topbar) {
+        topbar.classList.remove("flash");
+        void topbar.offsetWidth;
+        topbar.classList.add("flash");
+      }
+
+      // Transição do título
+      if (title) {
+        title.classList.add("switching");
+      }
+
+      // Atualiza conteúdo do título para a view atual
+      const [viewTitle, viewNote] = VIEW_TITLES[view] || VIEW_TITLES.painel;
+      const h1 = $("viewTitle");
+      const note = $("viewNote");
+      if (h1) h1.textContent = viewTitle;
+      if (note) note.textContent = viewNote;
+
+      clearTimeout(viewTransitionTimer);
+      stack?.setAttribute("data-current-view", view);
+      stack?.setAttribute("data-direction", direction);
+      stack?.classList.remove("is-transitioning");
+
+      if (!currentSection || currentSection === nextSection || reducedMotion) {
+        settleViewSections();
+      } else {
+        stack?.classList.add("is-transitioning");
+        const fromHeight = currentSection.offsetHeight;
+
+        viewSections().forEach(section => {
+          if (section !== currentSection && section !== nextSection) {
+            section.classList.remove("is-active", "is-entering", "is-leaving");
+            section.hidden = true;
+            section.setAttribute("aria-hidden", "true");
+          }
+        });
+
+        nextSection.hidden = false;
+        nextSection.setAttribute("aria-hidden", "false");
+        nextSection.classList.remove("is-leaving");
+        nextSection.classList.add("is-active", "is-entering");
+        const toHeight = nextSection.offsetHeight;
+        if (stack) stack.style.minHeight = Math.max(fromHeight, toHeight) + "px";
+
+        currentSection.classList.remove("is-active", "is-entering");
+        currentSection.classList.add("is-leaving");
+        currentSection.setAttribute("aria-hidden", "true");
+
+        viewTransitionTimer = window.setTimeout(() => {
+          settleViewSections();
+        }, 580);
+      }
+
+      activeView = view;
+      document.querySelectorAll("[data-tab]").forEach(tab => {
+        const selected = tab.dataset.tab === view;
+        tab.setAttribute("aria-selected", selected ? "true" : "false");
+        tab.tabIndex = selected ? 0 : -1;
+      });
+      updateKpiStates();
+
+      // Indicador deslizante: reposiciona sobre a aba ativa
+      alignTabsIndicator();
+
+      // Restaura o título após a view entrar
+      if (title) {
+        setTimeout(() => title.classList.remove("switching"), 260);
+      }
+    }
+
+    function clearFilters() {
+      overviewStatus = "";
+      radarStatus = "";
+      panelKpiLens = "";
+      operationalOwnerFilter = "";
+      operationalExpandedId = "";
+      $("searchFilter").value = "";
+      render();
+    }
+
+    function clearBaseFilters() {
+      $("searchFilter").value = "";
+    }
+
+    function openOverview(status) {
+      clearBaseFilters();
+      overviewStatus = status || "";
+      render();
+      activateView("geral");
+    }
+
+    function handleKpiAction(status) {
+      const value = status || "";
+      if (activeView === "painel") {
+        if (!value) {
+          clearBaseFilters();
+          overviewStatus = "";
+          panelKpiLens = "";
+          resetRadarToOverview(DATA.rows);
+          return;
+        }
+        panelKpiLens = panelKpiLens === value ? "" : value;
+        radarStatus = panelKpiLens === "__BOTTLENECK__" ? "__OPEN__" : panelKpiLens;
+        render();
+        return;
+      }
+      if (activeView === "geral") {
+        clearBaseFilters();
+        overviewStatus = overviewStatus === value ? "" : value;
+        render();
+        return;
+      }
+      openOverview(value);
+    }
+
+    (async function initDashboard() {
+      await loadDashboardData();
+
+      $("generatedAtBottom").textContent = DATA.generated_at;
+
+    $("searchFilter").addEventListener("input", render);
+    document.querySelectorAll("[data-tab]").forEach(tab => tab.addEventListener("click", () => activateView(tab.dataset.tab)));
+    document.querySelector(".tabs")?.addEventListener("keydown", event => {
+      const tabs = [...document.querySelectorAll("[data-tab]")];
+      const current = tabs.indexOf(document.activeElement);
+      if (current < 0) return;
+      let next = current;
+      if (event.key === "ArrowRight") next = (current + 1) % tabs.length;
+      else if (event.key === "ArrowLeft") next = (current - 1 + tabs.length) % tabs.length;
+      else if (event.key === "Home") next = 0;
+      else if (event.key === "End") next = tabs.length - 1;
+      else return;
+      event.preventDefault();
+      tabs[next].focus();
+      activateView(tabs[next].dataset.tab);
+    });
+
+    // Efeito de gota (ripple) nos botões das tabs
+    document.querySelectorAll(".tabs button").forEach(btn => {
+      btn.addEventListener("click", function(e) {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const rect = this.getBoundingClientRect();
+        const ripple = document.createElement("span");
+        ripple.className = "tab-ripple";
+        ripple.style.setProperty("--rx", (e.clientX - rect.left) + "px");
+        ripple.style.setProperty("--ry", (e.clientY - rect.top) + "px");
+        this.appendChild(ripple);
+        ripple.addEventListener("animationend", () => ripple.remove());
+      });
+    });
+    document.querySelectorAll("[data-tab-shortcut]").forEach(button => button.addEventListener("click", () => activateView(button.dataset.tabShortcut)));
+    document.querySelectorAll("[data-kpi-overview]").forEach(card => {
+      card.addEventListener("click", () => handleKpiAction(card.dataset.kpiOverview));
+      card.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleKpiAction(card.dataset.kpiOverview); }
+      });
+    });
+    $("overviewStatusRail").addEventListener("click", event => {
+      const button = event.target.closest("[data-overview-status]");
+      if (!button) return;
+      overviewStatus = button.dataset.overviewStatus;
+      render();
+    });
+    document.addEventListener("click", event => {
+      const demandButton = event.target.closest("[data-operational-expand]");
+      if (demandButton) {
+        const value = String(demandButton.dataset.operationalExpand || "");
+        operationalExpandedId = operationalExpandedId === value ? "" : value;
+        render();
+        return;
+      }
+      const ownerButton = event.target.closest("[data-owner-filter]");
+      if (ownerButton) {
+        const value = ownerButton.dataset.ownerFilter || "";
+        operationalOwnerFilter = operationalOwnerFilter === value ? "" : value;
+        operationalExpandedId = "";
+        render();
+        return;
+      }
+      const panelLensClear = event.target.closest("[data-panel-lens-clear]");
+      if (panelLensClear) {
+        panelKpiLens = "";
+        radarStatus = "";
+        render();
+        return;
+      }
+      const clearButton = event.target.closest("[data-empty-clear]");
+      if (clearButton) {
+        clearFilters();
+        return;
+      }
+    });
+    $("focusOpen").addEventListener("click", () => { clearFilters(); activateView("geral"); });
+    $("focusCritical").addEventListener("click", () => activateView("bloqueios"));
+
+    activateView("painel");
+    render();
+
+    // Inicializa o indicador de abas na posição correta
+    alignTabsIndicator({ instant: true });
+
+    // Mantém o indicador alinhado em resize
+      window.addEventListener("resize", () => {
+        alignTabsIndicator({ instant: true });
+      });
+    })();
+
+    (function initIndicatorGeometryWatch() {
+      if (!("ResizeObserver" in window)) return;
+      const tabs = document.querySelector(".tabs");
+      const topbar = document.querySelector(".topbar");
+      if (!tabs) return;
+
+      const ro = new ResizeObserver(() => {
+        alignTabsIndicator({ instant: true });
+      });
+      ro.observe(tabs);
+      if (topbar) ro.observe(topbar);
+      document.querySelectorAll(".tabs button").forEach(button => ro.observe(button));
+    })();
+
+    // ── Topbar: card arredondado quase ponta a ponta no topo,
+    // pílula flutuante centralizada ao rolar ─────────────────
+    // CSS já define .topbar.is-condensed (pílula arredondada, blur forte,
+    // filhos encolhidos, variantes dark). Aqui só conectamos o gatilho.
+    (function initTopbarCondense() {
+      const topbar = document.querySelector(".topbar");
+      if (!topbar || !("IntersectionObserver" in window)) return;
+
+      const THRESHOLD = 200; // px rolados antes de virar pílula
+      const sentinel = document.createElement("div");
+      sentinel.setAttribute("aria-hidden", "true");
+      sentinel.style.cssText =
+        "position:absolute;top:0;left:0;width:1px;height:" + THRESHOLD +
+        "px;margin:0;padding:0;pointer-events:none;opacity:0;";
+      document.body.insertBefore(sentinel, document.body.firstChild);
+
+      const io = new IntersectionObserver((entries) => {
+        topbar.classList.toggle("is-condensed", !entries[0].isIntersecting);
+        alignTabsIndicator({ instant: true });
+        requestAnimationFrame(() => alignTabsIndicator({ instant: true }));
+        window.setTimeout(() => alignTabsIndicator({ instant: true }), 260);
+        window.setTimeout(() => alignTabsIndicator({ instant: true }), 560);
+      }, { threshold: 0, rootMargin: "0px" });
+
+      io.observe(sentinel);
+    })();
+
+    // ── Alternador de tema claro/escuro ────────────────────
+    (function initThemeToggle() {
+      const toggle = document.getElementById("themeToggle");
+      if (!toggle) return;
+      const root = document.documentElement;
+
+      function applyTheme(theme) {
+        if (theme === "dark") {
+          root.setAttribute("data-theme", "dark");
+          toggle.setAttribute("aria-label", "Alternar para modo claro");
+        } else if (theme === "light") {
+          root.setAttribute("data-theme", "light");
+          toggle.setAttribute("aria-label", "Alternar para modo escuro");
+        } else {
+          root.removeAttribute("data-theme");
+          toggle.setAttribute("aria-label", "Alternar modo escuro");
+        }
+        if (typeof renderRadarMap === "function") renderRadarMap();
+      }
+
+      applyTheme(root.getAttribute("data-theme") === "dark" ? "dark" : "light");
+
+      toggle.addEventListener("click", () => {
+        const current = root.getAttribute("data-theme");
+        if (current === "dark") {
+          applyTheme("light");
+          try { localStorage.setItem("od-theme", "light"); } catch (e) {}
+        } else {
+          applyTheme("dark");
+          try { localStorage.setItem("od-theme", "dark"); } catch (e) {}
+        }
+      });
+    })();
+  </script>
+
+
+</body></html>

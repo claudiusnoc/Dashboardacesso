@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="pt-BR"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -557,6 +557,13 @@
       text-align: right;
     }
 
+    .title-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
     .dashboard-grid {
       display: grid;
       grid-template-columns: minmax(270px, 292px) minmax(0, 1fr) minmax(320px, 350px);
@@ -1007,8 +1014,8 @@
     .focus-row .pill,
     #view-bloqueios .doc > .pill,
     #view-bloqueios .bar-label {
-      background: color-mix(in srgb, var(--surface) 88%, var(--line-soft));
-      border: 1px solid var(--line-soft);
+      background: transparent;
+      border: 1px solid transparent;
       color: var(--muted);
       font-weight: 760;
     }
@@ -1016,19 +1023,20 @@
     .focus-row .pill,
     #view-bloqueios .doc > .pill {
       justify-content: flex-start;
-      gap: 6px;
+      gap: 7px;
       min-height: 24px;
-      padding-inline: 8px 10px;
+      padding-inline: 2px 0;
     }
 
     .focus-row .pill::before,
     #view-bloqueios .doc > .pill::before {
       content: "";
-      width: 6px;
-      height: 6px;
-      flex: 0 0 6px;
+      width: 7px;
+      height: 7px;
+      flex: 0 0 7px;
       border-radius: 999px;
       background: var(--slate);
+      box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 9%, transparent);
     }
 
     .focus-row .pill.liberado::before,
@@ -1246,8 +1254,7 @@
       }
 
       .panel,
-      .site-card,
-      .method {
+      .site-card {
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
       }
@@ -1264,11 +1271,16 @@
         box-shadow: none;
       }
 
-      .method {
+      .page-footer {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
         background: rgba(255, 255, 255, .98);
         border-color: var(--line-soft);
-        box-shadow: none;
+        box-shadow: var(--shadow-tight);
       }
+
+      .page-footer::before,
+      .page-footer::after { display: none; }
 
       .theme-toggle {
         backdrop-filter: none;
@@ -2062,6 +2074,19 @@
     .pill.sem { color: var(--slate); background: var(--slate-soft); }
     .pill.red { color: var(--claro); background: var(--claro-soft); }
 
+    #view-painel .focus-row .pill,
+    #view-geral .site-card .pill {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      color: var(--muted);
+    }
+
+    #view-painel .focus-row .pill::before,
+    #view-geral .site-card .pill::before {
+      box-shadow: none;
+    }
+
     .timeline {
       margin-top: 16px;
       overflow: hidden;
@@ -2153,18 +2178,18 @@
 
     .status-chip {
       display: inline-grid;
-      grid-template-columns: auto auto;
+      grid-template-columns: 4px auto auto;
       grid-template-areas:
-        "count label"
-        "count hint";
+        "mark count label"
+        "mark count hint";
       align-items: center;
-      gap: 0 8px;
+      gap: 0 9px;
       min-height: 46px;
       min-width: 154px;
       padding: 8px 11px;
-      border: 1px solid transparent;
+      border: 1px solid var(--line-soft);
       border-radius: 10px;
-      background: #fff;
+      background: color-mix(in srgb, var(--surface) 82%, transparent);
       color: var(--ink-2);
       cursor: pointer;
       text-align: left;
@@ -2175,6 +2200,20 @@
         transform 140ms var(--ease-out);
     }
 
+    .status-chip::before {
+      content: "";
+      grid-area: mark;
+      align-self: stretch;
+      width: 3px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--muted) 42%, transparent);
+    }
+
+    .status-chip.liberado::before { background: var(--green); }
+    .status-chip.pendente::before { background: var(--amber); }
+    .status-chip.tratativa::before { background: var(--blue); }
+    .status-chip.sem::before { background: var(--slate); }
+
     .status-chip:hover {
       border-color: var(--line);
       transform: translateY(-1px);
@@ -2182,9 +2221,9 @@
 
     .status-chip[aria-pressed="true"] {
       border-color: rgba(23, 36, 58, .18);
-      background: var(--navy);
+      background: color-mix(in srgb, var(--navy) 94%, var(--surface));
       color: #fff;
-      box-shadow: 0 2px 8px rgba(20, 27, 45, .12);
+      box-shadow: 0 2px 8px rgba(20, 27, 45, .10);
     }
 
     .status-chip-count {
@@ -2244,6 +2283,32 @@
       gap: var(--space-3);
       min-width: 0;
     }
+
+    .site-card .pill {
+      justify-content: flex-start;
+      gap: 7px;
+      min-height: 24px;
+      padding-inline: 2px 0;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 780;
+    }
+
+    .site-card .pill::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      flex: 0 0 7px;
+      border-radius: 999px;
+      background: var(--slate);
+      box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 9%, transparent);
+    }
+
+    .site-card .pill.liberado::before { background: var(--green); }
+    .site-card .pill.pendente::before { background: var(--amber); }
+    .site-card .pill.tratativa::before { background: var(--blue); }
+    .site-card .pill.sem::before { background: var(--slate); }
 
     .site-card-title {
       min-width: 0;
@@ -2776,20 +2841,120 @@
 
 
 
-    .method {
+    .page-footer {
+      position: relative;
       margin-top: var(--space-5);
-      padding: 14px 18px;
-      border: 1px solid rgba(255, 255, 255, .4);
-      border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, .65);
-      backdrop-filter: blur(14px) saturate(1.1);
-      -webkit-backdrop-filter: blur(14px) saturate(1.1);
+      padding: 13px 18px;
+      background: rgba(255, 255, 255, .42);
+      backdrop-filter: blur(28px) saturate(1.2);
+      -webkit-backdrop-filter: blur(28px) saturate(1.2);
+      border: 1px solid rgba(21, 25, 35, .08);
+      border-radius: 18px;
       box-shadow:
-        0 0 0 1px rgba(255, 255, 255, .42) inset,
-        0 4px 16px rgba(21, 25, 35, .08);
+        0 1px 0 rgba(255, 255, 255, .18) inset,
+        0 -1px 0 rgba(21, 25, 35, .10) inset,
+        0 18px 44px rgba(21, 25, 35, .14);
       color: var(--muted);
-      font-size: var(--text-sm);
-      line-height: 1.45;
+      font-family: var(--font-command);
+      font-size: var(--text-xs);
+      line-height: 1.35;
+      letter-spacing: 0.01em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      isolation: isolate;
+    }
+
+    .page-footer::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      border-radius: inherit;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .01) 42%, rgba(255, 255, 255, .04)),
+        linear-gradient(180deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, 0) 55%, rgba(21, 25, 35, .05));
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, .10) inset,
+        0 -1px 0 rgba(21, 25, 35, .10) inset;
+      opacity: .22;
+      pointer-events: none;
+    }
+
+    .page-footer::after {
+      content: "";
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: -14px;
+      height: 28px;
+      z-index: -1;
+      background: linear-gradient(180deg, rgba(21, 25, 35, .14), rgba(21, 25, 35, 0));
+      filter: blur(12px);
+      opacity: .28;
+      pointer-events: none;
+    }
+
+    .page-footer > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-footer strong {
+      color: var(--fg);
+      font-weight: 700;
+    }
+
+    .footer-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .footer-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-item svg {
+      width: 13px;
+      height: 13px;
+      flex: 0 0 auto;
+      opacity: 0.7;
+      stroke-width: 2;
+    }
+
+    .footer-divider {
+      width: 1px;
+      height: 13px;
+      background: var(--line);
+      opacity: 0.7;
+    }
+
+    .footer-updated {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .footer-updated svg {
+      width: 13px;
+      height: 13px;
+      flex: 0 0 auto;
+      opacity: 0.65;
+    }
+
+    .footer-status {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 2px color-mix(in srgb, #22c55e 22%, transparent);
     }
 
     .empty {
@@ -2947,6 +3112,7 @@
         grid-template-columns: 1fr;
       }
       .title-note { text-align: left; }
+      .title-right { align-items: flex-start; }
       .page-title { align-items: flex-start; flex-direction: column; }
     }
 
@@ -2963,6 +3129,14 @@
         max-width: calc(100% + 2 * var(--space-3));
         padding: 12px var(--space-3);
       }
+      .page-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 14px var(--space-3);
+        border-radius: 16px;
+      }
+      .footer-updated { align-self: flex-end; }
       .tabs { width: 100%; overflow-x: auto; justify-content: flex-start; }
       h1 { font-size: 1.4375rem; }
       .meeting-chip { align-items: flex-start; flex-wrap: wrap; text-align: left; }
@@ -3308,8 +3482,8 @@
       .focus-row .pill,
       #view-bloqueios .doc > .pill,
       #view-bloqueios .bar-label {
-        background: rgba(255, 255, 255, .045);
-        border-color: rgba(255, 255, 255, .08);
+        background: transparent;
+        border-color: transparent;
         color: var(--muted);
       }
       .focus-row .pill.pendente,
@@ -3396,7 +3570,7 @@
       }
       .status-chip {
         color: var(--ink);
-        background: rgba(255, 255, 255, .06);
+        background: rgba(255, 255, 255, .035);
         border-color: rgba(255, 255, 255, .08);
       }
 
@@ -3446,13 +3620,13 @@
         box-shadow: 0 1px 0 rgba(255, 255, 255, .05) inset;
       }
       #view-geral .status-chip {
-        background: rgba(34, 40, 58, .96);
+        background: rgba(34, 40, 58, .62);
         border-color: rgba(255, 255, 255, .12);
         color: var(--ink-2);
       }
       #view-geral .status-chip:hover,
       #view-geral .status-chip[aria-pressed="true"] {
-        background: rgba(46, 54, 76, .98);
+        background: rgba(46, 54, 76, .78);
         border-color: rgba(255, 255, 255, .22);
         color: var(--ink);
       }
@@ -3462,6 +3636,9 @@
         box-shadow:
           0 1px 0 rgba(255, 255, 255, .06) inset,
           0 10px 24px rgba(0, 0, 0, .28);
+      }
+      #view-geral .site-card .pill {
+        color: var(--muted);
       }
       #view-geral .site-card-title strong,
       #view-geral .site-meta b,
@@ -3484,15 +3661,35 @@
           0 8px 24px rgba(0, 0, 0, .24);
       }
 
-      .method {
-        background: rgba(26, 30, 45, .62);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-color: rgba(255, 255, 255, .06);
+      .page-footer {
+        background: rgba(21, 25, 35, .78);
+        backdrop-filter: blur(28px) saturate(1.2);
+        -webkit-backdrop-filter: blur(28px) saturate(1.2);
+        border-color: rgba(255, 255, 255, .12);
         box-shadow:
-          0 0 0 1px rgba(255, 255, 255, .03) inset,
-          0 6px 20px rgba(0, 0, 0, .18);
+          0 1px 0 rgba(255, 255, 255, .16) inset,
+          0 -1px 0 rgba(0, 0, 0, .42) inset,
+          0 20px 60px rgba(0, 0, 0, .42);
         color: var(--muted);
+      }
+
+      .page-footer::before {
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .03) 42%, rgba(255, 255, 255, .10)),
+          linear-gradient(180deg, rgba(255, 255, 255, .10), rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, .18));
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, .14) inset,
+          0 -1px 0 rgba(0, 0, 0, .32) inset;
+        opacity: .78;
+      }
+
+      .page-footer::after {
+        background: linear-gradient(180deg, rgba(0, 0, 0, .38), rgba(0, 0, 0, 0));
+        opacity: .82;
+      }
+
+      .footer-divider {
+        background: rgba(255, 255, 255, .12);
       }
 
       .empty {
@@ -3595,12 +3792,9 @@
           border-color: rgba(255, 255, 255, .06);
           box-shadow: none;
         }
-        .method {
-          backdrop-filter: none;
-          -webkit-backdrop-filter: none;
-          background: rgba(26, 30, 45, .88);
+        .page-footer {
           border-color: rgba(255, 255, 255, .06);
-          box-shadow: none;
+          background: rgba(255, 255, 255, .025);
         }
       }
     }
@@ -3702,11 +3896,17 @@
 
       .bar-fill { width: var(--bar-w) !important; transition: none !important; }
 
-      .method {
+      .page-footer {
         border: 1px solid #ccc;
+        border-radius: 0;
+        background: transparent !important;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
         margin-top: 16px;
         font-size: 9pt;
       }
+      .page-footer::before,
+      .page-footer::after { display: none; }
 
       table { font-size: 9pt; }
       th, td { padding: 6px 8px; }
@@ -3748,9 +3948,6 @@
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
           <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
-        <div>
-          <span>Atualização: <span id="generatedAtTop"></span></span>
-        </div>
         <div class="brand-logo eqs-mark" role="img" aria-label="EQS Engenharia">
           <img class="logo-light" src="mqjlkfzf-logo-eqs-2.png" alt="" aria-hidden="true">
           <img class="logo-dark" src="mqjlkfzf-logo-eqs-2.png" alt="" aria-hidden="true">
@@ -3762,7 +3959,9 @@
       <div class="title-left">
         <h1 id="viewTitle">Pendências de acesso a sites críticos</h1>
       </div>
-      <p class="title-note" id="viewNote">Leitura rápida para decidir apoio, prioridade e próximo passo.</p>
+      <div class="title-right">
+        <p class="title-note" id="viewNote">Leitura rápida para decidir apoio, prioridade e próximo passo.</p>
+      </div>
     </section>
 
     <div class="kpi-strip" data-od-id="kpi-strip" aria-label="Indicadores executivos rápidos">
@@ -3892,7 +4091,7 @@
           </div>
           <div class="action-summary" id="operationalSummary" aria-label="Resumo operacional"></div>
           <div class="toolbar">
-            <span>Filtre por site, empresa, etapa ou responsabilidade inferida. Campos reais podem substituir esta leitura depois.</span>
+            <span>Filtre por site, empresa, etapa ou responsabilidade atual.</span>
             <div class="search-box"><label class="visually-hidden" for="searchFilter">Buscar site, empresa ou observação</label><input id="searchFilter" type="search" placeholder="Buscar site, empresa, observação" autocomplete="off"></div>
           </div>
           <div class="owner-rail" id="ownerRail" aria-label="Filtros por responsabilidade"></div>
@@ -3914,13 +4113,28 @@
       </section>
     </div>
 
-    <section class="panel method">
-      Fonte controladora: <strong>ACESSO PENDENCIAS.xlsx</strong>, aba <strong>ACESSOS</strong>. Abas de detalhe usadas como evidência operacional. Atualização: <strong id="generatedAtBottom"></strong>.
-    </section>
+    <footer class="page-footer">
+      <div class="footer-meta">
+        <span class="footer-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          Atualização diária às 14h
+        </span>
+        <span class="footer-divider" aria-hidden="true"></span>
+        <span class="footer-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+          Fonte: planilha oficial de pendências de acesso no OneDrive
+        </span>
+      </div>
+      <div class="footer-updated">
+        <span class="footer-status" aria-hidden="true"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+        Última atualização: <strong id="generatedAtBottom"></strong>
+      </div>
+    </footer>
   </main>
 
   <script>
-    const EMBEDDED_DATA = {"generated_at":"19/06/2026 10:25","source_file":"ACESSO PENDENCIAS.xlsx","metrics":{"total":22,"liberado":7,"em_aberto":15,"sem_status":0,"percent_liberado":31.8},"series":{"status":[{"label":"LIBERADO","value":7},{"label":"PENDENTE","value":9},{"label":"LEVANTAMENTO DE DOCUMENTOS","value":2},{"label":"EM TRATATIVA","value":4}],"cluster":[{"label":"METROPOLITANO","value":13},{"label":"BH","value":5},{"label":"OESTE","value":2},{"label":"LESTE","value":1},{"label":"SUL","value":1}],"holder":[{"label":"Claro","value":7},{"label":"Tbsa","value":5},{"label":"Sem detentora","value":4},{"label":"Atc","value":2},{"label":"Sba","value":2},{"label":"Qmc","value":1},{"label":"Tim","value":1}],"company":[{"label":"ARCELOR MITTAL JM","value":2},{"label":"VALE","value":2},{"label":"ANGLO AMERICAN","value":1},{"label":"ARCELOR MITTAL ITAÚNA","value":1},{"label":"COCA-COLA","value":1},{"label":"COOPER STANDARD","value":1},{"label":"CSN - ARCOS","value":1},{"label":"CSN - CONGONHAS","value":1},{"label":"GERDAU MIGUEL BURNIER","value":1},{"label":"GERDAU OURO BRANCO","value":1},{"label":"GRUPO ARION","value":1},{"label":"HOSPITAL MARIO CUNHA","value":1},{"label":"MINEIRÃO","value":1},{"label":"NESTLÉ","value":1},{"label":"NESTLÉ FABRICA NINHO","value":1},{"label":"PALÁCIO DO GOVERNO","value":1},{"label":"SAMARCO","value":1},{"label":"VALE FERROS","value":1},{"label":"VILMA","value":1},{"label":"VRB","value":1}],"category":[{"label":"Documentação","value":7},{"label":"Liberação concluída","value":7},{"label":"Tratativa com detentora","value":6},{"label":"Mobilização/cadastro","value":2}]},"rows":[{"id":1,"row":5,"start":"29/04/2026","site":"MGBEL11","cluster":"BH","address":"Rua Pedro José Pardo - S/N - Mangabeiras - Palácio Do Governo","lat":-19.9529,"lng":-43.9126,"company":"PALÁCIO DO GOVERNO","holder":"Tim","details":"","status":"EM TRATATIVA","notes":"Aguardando retorno do palacio, contato realizado via email.","category":"Tratativa com detentora","next_action":"Reforçar contato e registrar retorno da detentora."},{"id":2,"row":6,"start":"29/04/2026","site":"MGCONI1","cluster":"BH","address":"Rodovia Mg-010 - Km 08 - Aeroporto Confins","lat":-19.6321,"lng":-43.9613,"company":"GRUPO ARION","holder":"Qmc","details":"","status":"LIBERADO","notes":"Carlos Souto e Nilson Pacheco com credenciais validas.","category":"Liberação concluída","next_action":"Manter evidência e atualizar se houver nova equipe."},{"id":3,"row":7,"start":"29/04/2026","site":"MGCTG10","cluster":"BH","address":"Praça Louis Ensch - 160 - Cidade Industrial - Esquina Com A Avenida Amazonas - Pastifício Vilma","lat":-19.9506,"lng":-44.0119,"company":"VILMA","holder":"Sba","details":"Edneia V. Da Silva (ADM - TI)<evsilva@vilma.com.br>","status":"LEVANTAMENTO DE DOCUMENTOS","notes":"Documentação será solicitada a segurança do trabalho após definição de equipe designada.","category":"Documentação","next_action":"Concluir checklist documental e reenviar para validação."},{"id":4,"row":8,"start":"11/05/2026","site":"MGIBA04","cluster":"OESTE","address":"Avenida Nestlé (Rua 02), S/N - Centro","lat":-19.47929,"lng":-46.53204,"company":"NESTLÉ","holder":"Claro","details":"","status":"PENDENTE","notes":"Alinhar contato e dificuldade com supervisão regional (Diego e Arthur)","category":"Tratativa com detentora","next_action":"Reforçar contato e registrar retorno da detentora."},{"id":5,"row":9,"start":"11/05/2026","site":"MGIUA14","cluster":"OESTE","address":"Rodovia BR 365, 755 - Paranaíba (Nestlé)","lat":-18.94978,"lng":-49.46483,"company":"NESTLÉ FABRICA NINHO","holder":"Claro","details":"","status":"PENDENTE","notes":"Alinhar contato e dificuldade com supervisão regional (Diego e Arthur)","category":"Tratativa com detentora","next_action":"Reforçar contato e registrar retorno da detentora."},{"id":6,"row":10,"start":"29/05/2026","site":"MGCMD02/MGCMD08/MGCOW35","cluster":"METROPOLITANO","address":"Rodovia Mg 10 - Km 178 - Zona Rural - Fazenda Jardim - Mineradora Anglo Ferrous","lat":-18.88677,"lng":-43.41728,"company":"ANGLO AMERICAN","holder":"Sem detentora","details":"","status":"PENDENTE","notes":"Marcos Vinícius Lacerda (Gerente de contas Claro) necessita efetuar o processo de mobilização da subcontratada no SAP Fieldglass (Em tratativa Filipe césar)","category":"Mobilização/cadastro","next_action":"Solicitar avanço do cadastro/mobilização com responsável Claro/EQS."},{"id":7,"row":11,"start":"01/06/2026","site":"MGOBR03/MGOBR05/MGOBR10/MGCGH14/MGCGH15","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.5513,"lng":-43.7548,"company":"GERDAU OURO BRANCO","holder":"Sem detentora","details":"TRANSITO LEGAL","status":"LIBERADO","notes":"Documentação atualizada periodicamente via bancodoc.","category":"Liberação concluída","next_action":"Manter evidência e atualizar se houver nova equipe."},{"id":8,"row":12,"start":"","site":"MGOPR11/MGOPR42/MGOPR44/MGOPR45/MGOPR47","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.454333,"lng":-43.780806,"company":"GERDAU MIGUEL BURNIER","holder":"Sem detentora","details":"TRANSITO LEGAL","status":"PENDENTE","notes":"Adicionar colaboradores no bancodoc e verificar validade da documentação com segurança do trabalho","category":"Mobilização/cadastro","next_action":"Solicitar avanço do cadastro/mobilização com responsável Claro/EQS."},{"id":9,"row":13,"start":"","site":"MGMRN04","cluster":"METROPOLITANO","address":"Rodovia Mg 129 - S/N - Mina Do Germano - Samarco - Unidade Operacional Da Samarco","lat":-20.208788,"lng":-43.500246,"company":"SAMARCO","holder":"Tbsa","details":"","status":"EM TRATATIVA","notes":"Em preenchimento de formularios enviados pela TBSA","category":"Tratativa com detentora","next_action":"Reforçar contato e registrar retorno da detentora."},{"id":10,"row":14,"start":"","site":"MGOPR23","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.41708,"lng":-43.86005,"company":"VALE","holder":"Atc","details":"","status":"PENDENTE","notes":"PGR, ART, PCMSO e Técnicos: RG, CPF, CTPS, CNH, FOTO 3x4, ASO, NR 10, NR35, NR22, RAC01(sistema Ves Vale), RAC02(sistema Ves Vale), RAC10(sistema Ves Vale) e Formulário de Saúde RAC","category":"Documentação","next_action":"Concluir checklist documental e reenviar para validação."},{"id":11,"row":15,"start":"","site":"MGOPR80","cluster":"METROPOLITANO","address":"Estrada De Ferro Vitoria Minas - Km 13 - Zona Rural - Mina Timbopeba","lat":-20.26866,"lng":-43.52737,"company":"VALE","holder":"Tbsa","details":"","status":"LIBERADO","notes":"Acesso mediante e-mail (Formulário)","category":"Liberação concluída","next_action":"Manter evidência e atualizar se houver nova equipe."},{"id":12,"row":16,"start":"","site":"MGJCE02","cluster":"METROPOLITANO","address":"Rua Pátio João Carlos Guedes - S/N - Ferrovia Do Aço - Na","lat":-20.59229,"lng":-43.97062,"company":"VRB","holder":"Tbsa","details":"","status":"LIBERADO","notes":"Acesso mediante e-mail","category":"Liberação concluída","next_action":"Manter evidência e atualizar se houver nova equipe."},{"id":13,"row":17,"start":"","site":"MGITA09","cluster":"METROPOLITANO","address":"Rodovia Mg 050 - Km 61 - Zona Rural - Arcelor Mittal / Faz Dos Coelhos","lat":-20.069125,"lng":-44.662082,"company":"ARCELOR MITTAL ITAÚNA","holder":"Tbsa","details":"","status":"PENDENTE","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental e reenviar para validação."},{"id":14,"row":18,"start":"","site":"MGARC02","cluster":"METROPOLITANO","address":"Rodovia Mg 170 - Km 70 - Zona Rural - Csn - Silo De Farinha","lat":-20.31231,"lng":-45.58585,"company":"CSN - ARCOS","holder":"Claro","details":"","status":"PENDENTE","notes":"Processo antigo, atualizar documentação e verificar se a mudanças nas equipes.","category":"Documentação","next_action":"Concluir checklist documental e reenviar para validação."},{"id":15,"row":19,"start":"","site":"MGCGH02/MGCGH12/MGCGH16/MGOPR33","cluster":"METROPOLITANO","address":"Rua Vic - S/N - Centro - Área Da Csn - Mineração Casa De Pedra","lat":-20.4675,"lng":-43.9023,"company":"CSN - CONGONHAS","holder":"Sem detentora","details":"","status":"LIBERADO","notes":"Liberado equipe energia / Pendente equipe zeladoria em processo de mobilização","category":"Liberação concluída","next_action":"Manter evidência e atualizar se houver nova equipe."},{"id":16,"row":20,"start":"","site":"MGOPR23","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.41708,"lng":-43.86005,"company":"VALE FERROS","holder":"Atc","details":"","status":"PENDENTE","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental e reenviar para validação."},{"id":17,"row":21,"start":"","site":"MGJML10","cluster":"METROPOLITANO","address":"Rua Dos Andrades - S/N - José Eloi - Arcelor Mittal Aços Planos","lat":-19.79297,"lng":-43.17774,"company":"ARCELOR MITTAL JM","holder":"Tbsa","details":"","status":"LIBERADO","notes":"","category":"Liberação concluída","next_action":"Manter evidência e atualizar se houver nova equipe."},{"id":18,"row":22,"start":"","site":"MGCOW05","cluster":"METROPOLITANO","address":"Avenida Getúlio Vargas, 100 - Centro Industrial","lat":-19.827388,"lng":-43.129098,"company":"ARCELOR MITTAL JM","holder":"Claro","details":"","status":"PENDENTE","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental e reenviar para validação."},{"id":19,"row":23,"start":"","site":"MGPAMI6","cluster":"BH","address":"Avenida Antonio Abrãhao Caram, 1001 - São José - Estádio Mineirão","lat":-19.865967,"lng":-43.971048,"company":"MINEIRÃO","holder":"Claro","details":"","status":"LIBERADO","notes":"Carlos Souto e Nilson Pacheco liberados para atividades, acompanhamente e elaboração de orçamentos, solicitar via email.","category":"Liberação concluída","next_action":"Manter evidência e atualizar se houver nova equipe."},{"id":20,"row":24,"start":"","site":"MGCOW31","cluster":"BH","address":"Rodovia BR 040 Km 572, 233 - Distrito Industrial (Spal - Industria Brasileira de Bebidas","lat":-20.23333,"lng":-43.96756,"company":"COCA-COLA","holder":"Claro","details":"","status":"EM TRATATIVA","notes":"Documentação de integração sendo enviada via portal SG3. Aguardando regularização do PCMSO pela EQS engenharia.","category":"Tratativa com detentora","next_action":"Reforçar contato e registrar retorno da detentora."},{"id":21,"row":25,"start":"","site":"MGVAR25","cluster":"SUL","address":"Avenida Manoel Vida, 1000 - Industrial JK","lat":-21.587892,"lng":-45.448986,"company":"COOPER STANDARD","holder":"Sba","details":"","status":"EM TRATATIVA","notes":"Levantamento de documentação junto a equipe, assim que documentação ok, será enviado via email para tatiana.Barbara@cooperstandard.com","category":"Tratativa com detentora","next_action":"Reforçar contato e registrar retorno da detentora."},{"id":22,"row":26,"start":"","site":"MGIPGI2","cluster":"LESTE","address":"Rua Kiyoshi Tsunawaki 41 - Das Águas - Hospital Mario Cunha","lat":-19.496736,"lng":-42.53847,"company":"HOSPITAL MARIO CUNHA","holder":"Claro","details":"","status":"LEVANTAMENTO DE DOCUMENTOS","notes":"Levantamento de documentação para iniciar ambientação ao hospital.","category":"Documentação","next_action":"Concluir checklist documental e reenviar para validação."}],"critical":[{"id":4,"row":8,"start":"11/05/2026","site":"MGIBA04","cluster":"OESTE","address":"Avenida Nestlé (Rua 02), S/N - Centro","lat":-19.47929,"lng":-46.53204,"company":"NESTLÉ","holder":"Claro","details":"","status":"PENDENTE","notes":"Alinhar contato e dificuldade com supervisão regional (Diego e Arthur)","category":"Tratativa com detentora","next_action":"Reforçar contato e registrar retorno da detentora."},{"id":5,"row":9,"start":"11/05/2026","site":"MGIUA14","cluster":"OESTE","address":"Rodovia BR 365, 755 - Paranaíba (Nestlé)","lat":-18.94978,"lng":-49.46483,"company":"NESTLÉ FABRICA NINHO","holder":"Claro","details":"","status":"PENDENTE","notes":"Alinhar contato e dificuldade com supervisão regional (Diego e Arthur)","category":"Tratativa com detentora","next_action":"Reforçar contato e registrar retorno da detentora."},{"id":6,"row":10,"start":"29/05/2026","site":"MGCMD02/MGCMD08/MGCOW35","cluster":"METROPOLITANO","address":"Rodovia Mg 10 - Km 178 - Zona Rural - Fazenda Jardim - Mineradora Anglo Ferrous","lat":-18.88677,"lng":-43.41728,"company":"ANGLO AMERICAN","holder":"Sem detentora","details":"","status":"PENDENTE","notes":"Marcos Vinícius Lacerda (Gerente de contas Claro) necessita efetuar o processo de mobilização da subcontratada no SAP Fieldglass (Em tratativa Filipe césar)","category":"Mobilização/cadastro","next_action":"Solicitar avanço do cadastro/mobilização com responsável Claro/EQS."},{"id":8,"row":12,"start":"","site":"MGOPR11/MGOPR42/MGOPR44/MGOPR45/MGOPR47","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.454333,"lng":-43.780806,"company":"GERDAU MIGUEL BURNIER","holder":"Sem detentora","details":"TRANSITO LEGAL","status":"PENDENTE","notes":"Adicionar colaboradores no bancodoc e verificar validade da documentação com segurança do trabalho","category":"Mobilização/cadastro","next_action":"Solicitar avanço do cadastro/mobilização com responsável Claro/EQS."},{"id":10,"row":14,"start":"","site":"MGOPR23","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.41708,"lng":-43.86005,"company":"VALE","holder":"Atc","details":"","status":"PENDENTE","notes":"PGR, ART, PCMSO e Técnicos: RG, CPF, CTPS, CNH, FOTO 3x4, ASO, NR 10, NR35, NR22, RAC01(sistema Ves Vale), RAC02(sistema Ves Vale), RAC10(sistema Ves Vale) e Formulário de Saúde RAC","category":"Documentação","next_action":"Concluir checklist documental e reenviar para validação."},{"id":13,"row":17,"start":"","site":"MGITA09","cluster":"METROPOLITANO","address":"Rodovia Mg 050 - Km 61 - Zona Rural - Arcelor Mittal / Faz Dos Coelhos","lat":-20.069125,"lng":-44.662082,"company":"ARCELOR MITTAL ITAÚNA","holder":"Tbsa","details":"","status":"PENDENTE","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental e reenviar para validação."}],"details":{}};
+    const EMBEDDED_DATA = {"generated_at":"23/06/2026 12:17","source_file":"ACESSO PENDENCIAS.xlsx","source_sheet":"ACESSOS","metrics":{"total":22,"liberado":7,"em_aberto":15,"sem_status":0,"percent_liberado":31.8},"series":{"status":[{"label":"PENDENTE","value":9},{"label":"LIBERADO","value":7},{"label":"EM TRATATIVA","value":4},{"label":"LEVANTAMENTO DE DOCUMENTOS","value":2}],"cluster":[{"label":"METROPOLITANO","value":13},{"label":"BH","value":5},{"label":"OESTE","value":2},{"label":"LESTE","value":1},{"label":"SUL","value":1}],"holder":[{"label":"Claro","value":7},{"label":"Tbsa","value":5},{"label":"Sem informação","value":4},{"label":"Atc","value":2},{"label":"Sba","value":2},{"label":"Qmc","value":1},{"label":"Tim","value":1}],"company":[{"label":"ARCELOR MITTAL JM","value":2},{"label":"ANGLO AMERICAN","value":1},{"label":"ARCELOR MITTAL ITAÚNA","value":1},{"label":"COCA-COLA","value":1},{"label":"COOPER STANDARD","value":1},{"label":"CSN - ARCOS","value":1},{"label":"CSN - CONGONHAS","value":1},{"label":"GERDAU MIGUEL BURNIER","value":1},{"label":"GERDAU OURO BRANCO","value":1},{"label":"GRUPO ARION","value":1},{"label":"HOSPITAL MARIO CUNHA","value":1},{"label":"MINEIRÃO","value":1},{"label":"NESTLÉ","value":1},{"label":"NESTLÉ  FABRICA NINHO","value":1},{"label":"PALÁCIO DO GOVERNO","value":1},{"label":"SAMARCO","value":1},{"label":"VALE (Mina Fábrica)","value":1},{"label":"VALE (Minas Timbopeba)","value":1},{"label":"VALE FERROS","value":1},{"label":"VILMA","value":1},{"label":"VRB","value":1}],"category":[{"label":"Documentação","value":12},{"label":"Liberação concluída","value":7},{"label":"Tratativa com detentora","value":2},{"label":"Mobilização/cadastro","value":1}],"stage":[{"label":"Levantamento documental","value":11},{"label":"Liberado / acompanhar","value":7},{"label":"Aguardando retorno","value":2},{"label":"Aguardando SMS","value":1},{"label":"Cadastro / mobilização","value":1}],"current_responsibility":[{"label":"EQS","value":19},{"label":"Sem informação","value":1},{"label":"CLARO","value":1},{"label":"SMS","value":1}]},"rows":[{"id":1,"row":5,"start":"29/04/2026","site":"MGBEL11","cluster":"BH","address":"Rua Pedro José Pardo - S/N - Mangabeiras - Palácio Do Governo","lat":-19.9529,"lng":-43.9126,"company":"PALÁCIO DO GOVERNO","holder":"Tim","details":"","status":"EM TRATATIVA","stage":"Aguardando retorno","current_responsibility":"EQS","notes":"Aguardando retorno do palacio, contato realizado via email.","category":"Tratativa com detentora","next_action":"Reforçar contato com EQS e registrar retorno."},{"id":2,"row":6,"start":"29/04/2026","site":"MGCONI1","cluster":"BH","address":"Rodovia Mg-010 - Km 08 - Aeroporto Confins","lat":-19.6321,"lng":-43.9613,"company":"GRUPO ARION","holder":"Qmc","details":"","status":"LIBERADO","stage":"Liberado / acompanhar","current_responsibility":"EQS","notes":"Carlos Souto e Nilson Pacheco com credenciais validas.","category":"Liberação concluída","next_action":"Manter evidência e acompanhar validade do acesso."},{"id":3,"row":7,"start":"29/04/2026","site":"MGCTG10","cluster":"BH","address":"Praça Louis Ensch - 160 - Cidade Industrial - Esquina Com A Avenida Amazonas - Pastifício Vilma","lat":-19.9506,"lng":-44.0119,"company":"VILMA","holder":"Sba","details":"Edneia V. Da Silva (ADM - TI)\\u003cevsilva@vilma.com.br\\u003e","status":"LEVANTAMENTO DE DOCUMENTOS","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Documentação será solicitada a segurança do trabalho após definição de equipe designada.","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":4,"row":8,"start":"11/05/2026","site":"MGIBA04","cluster":"OESTE","address":"Avenida Nestlé (Rua 02), S/N - Centro","lat":-19.47929,"lng":-46.53204,"company":"NESTLÉ","holder":"Claro","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Alinhar contato e dificuldade com supervisão regional (Diego e Arthur)","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":5,"row":9,"start":"11/05/2026","site":"MGIUA14","cluster":"OESTE","address":"Rodovia BR 365, 755 - Paranaíba (Nestlé)","lat":-18.94978,"lng":-49.46483,"company":"NESTLÉ  FABRICA NINHO","holder":"Claro","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Alinhar contato e dificuldade com supervisão regional (Diego e Arthur)","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":6,"row":10,"start":"29/05/2026","site":"MGCMD02/MGCMD08/MGCOW35","cluster":"METROPOLITANO","address":"Rodovia Mg 10 - Km 178 - Zona Rural - Fazenda Jardim - Mineradora Anglo Ferrous","lat":-18.88677,"lng":-43.41728,"company":"ANGLO AMERICAN","holder":"","details":"","status":"PENDENTE","stage":"Aguardando retorno","current_responsibility":"CLARO","notes":"Marcos Vinícius Lacerda (Gerente de contas Claro) necessita efetuar o processo de mobilização da subcontratada no SAP Fieldglass (Em tratativa Filipe césar)","category":"Tratativa com detentora","next_action":"Reforçar contato com CLARO e registrar retorno."},{"id":7,"row":11,"start":"01/06/2026","site":"MGOBR03/MGOBR05/MGOBR10/MGCGH14/MGCGH15","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.5513,"lng":-43.7548,"company":"GERDAU OURO BRANCO","holder":"","details":"TRANSITO LEGAL","status":"LIBERADO","stage":"Liberado / acompanhar","current_responsibility":"EQS","notes":"Documentação atualizada periodicamente via bancodoc.","category":"Liberação concluída","next_action":"Manter evidência e acompanhar validade do acesso."},{"id":8,"row":12,"start":"","site":"MGOPR11/MGOPR42/MGOPR44/MGOPR45/MGOPR47","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.454333,"lng":-43.780806,"company":"GERDAU MIGUEL BURNIER","holder":"","details":"TRANSITO LEGAL","status":"PENDENTE","stage":"Cadastro / mobilização","current_responsibility":"EQS","notes":"Adicionar colaboradores no bancodoc e verificar validade da documentação com segurança do trabalho","category":"Mobilização/cadastro","next_action":"Avançar cadastro/mobilização com EQS."},{"id":9,"row":13,"start":"","site":"MGMRN04","cluster":"METROPOLITANO","address":"Rodovia Mg 129 - S/N - Mina Do Germano - Samarco - Unidade Operacional Da Samarco","lat":-20.208788,"lng":-43.500246,"company":"SAMARCO","holder":"Tbsa","details":"","status":"EM TRATATIVA","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Em preenchimento de formularios enviados pela TBSA","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":10,"row":14,"start":"","site":"MGOPR23","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.41708,"lng":-43.86005,"company":"VALE (Mina Fábrica)","holder":"Atc","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"PGR, ART, PCMSO e Técnicos: RG, CPF, CTPS, CNH, FOTO 3x4, ASO, NR 10, NR35, NR22, RAC01(sistema Ves Vale), RAC02(sistema Ves Vale), RAC10(sistema Ves Vale) e Formulário de Saúde RAC","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":11,"row":15,"start":"","site":"MGOPR80","cluster":"METROPOLITANO","address":"Estrada De Ferro Vitoria Minas - Km 13 - Zona Rural - Mina Timbopeba","lat":-20.26866,"lng":-43.52737,"company":"VALE (Minas Timbopeba)","holder":"Tbsa","details":"","status":"LIBERADO","stage":"Liberado / acompanhar","current_responsibility":"EQS","notes":"Acesso mediante e-mail (Formulário)","category":"Liberação concluída","next_action":"Manter evidência e acompanhar validade do acesso."},{"id":12,"row":16,"start":"","site":"MGJCE02","cluster":"METROPOLITANO","address":"Rua Pátio João Carlos Guedes - S/N - Ferrovia Do Aço - Na","lat":-20.59229,"lng":-43.97062,"company":"VRB","holder":"Tbsa","details":"","status":"LIBERADO","stage":"Liberado / acompanhar","current_responsibility":"EQS","notes":"Acesso mediante e-mail","category":"Liberação concluída","next_action":"Manter evidência e acompanhar validade do acesso."},{"id":13,"row":17,"start":"","site":"MGITA09","cluster":"METROPOLITANO","address":"Rodovia Mg 050 - Km 61 - Zona Rural - Arcelor Mittal / Faz Dos Coelhos","lat":-20.069125,"lng":-44.662082,"company":"ARCELOR MITTAL ITAÚNA","holder":"Tbsa","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":14,"row":18,"start":"","site":"MGARC02","cluster":"METROPOLITANO","address":"Rodovia Mg 170 - Km 70 - Zona Rural - Csn - Silo De Farinha","lat":-20.31231,"lng":-45.58585,"company":"CSN - ARCOS","holder":"Claro","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Processo antigo, atualizar documentação e verificar se a mudanças nas equipes.","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":15,"row":19,"start":"","site":"MGCGH02/MGCGH12/MGCGH16/MGOPR33","cluster":"METROPOLITANO","address":"Rua Vic - S/N - Centro - Área Da Csn - Mineração Casa De Pedra","lat":-20.4675,"lng":-43.9023,"company":"CSN - CONGONHAS","holder":"","details":"","status":"LIBERADO","stage":"Liberado / acompanhar","current_responsibility":"EQS","notes":"Liberado equipe energia / Pendente equipe zeladoria em processo de mobilização / Veiculo: agendamento selo de fumaça 22/06 e aguardando retorno gerente sobre CTM Roberto","category":"Liberação concluída","next_action":"Manter evidência e acompanhar validade do acesso."},{"id":16,"row":20,"start":"","site":"MGOPR23","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.41708,"lng":-43.86005,"company":"VALE FERROS","holder":"Atc","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":17,"row":21,"start":"","site":"MGJML10","cluster":"METROPOLITANO","address":"Rua Dos Andrades - S/N - José Eloi - Arcelor Mittal Aços Planos","lat":-19.79297,"lng":-43.17774,"company":"ARCELOR MITTAL JM","holder":"Tbsa","details":"","status":"LIBERADO","stage":"Liberado / acompanhar","current_responsibility":"","notes":"","category":"Liberação concluída","next_action":"Manter evidência e acompanhar validade do acesso."},{"id":18,"row":22,"start":"","site":"MGCOW05","cluster":"METROPOLITANO","address":"Avenida Getúlio Vargas, 100 - Centro Industrial","lat":-19.827388,"lng":-43.129098,"company":"ARCELOR MITTAL JM","holder":"Claro","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":19,"row":23,"start":"","site":"MGPAMI6","cluster":"BH","address":"Avenida Antonio Abrãhao Caram, 1001 - São José - Estádio Mineirão","lat":-19.865967,"lng":-43.971048,"company":"MINEIRÃO","holder":"Claro","details":"","status":"LIBERADO","stage":"Liberado / acompanhar","current_responsibility":"EQS","notes":"Carlos Souto e Nilson Pacheco liberados para atividades, acompanhamente e elaboração de orçamentos, solicitar via email.","category":"Liberação concluída","next_action":"Manter evidência e acompanhar validade do acesso."},{"id":20,"row":24,"start":"","site":"MGCOW31","cluster":"BH","address":"Rodovia BR 040 Km 572, 233 - Distrito Industrial (Spal - Industria Brasileira de Bebidas","lat":-20.23333,"lng":-43.96756,"company":"COCA-COLA","holder":"Claro","details":"","status":"EM TRATATIVA","stage":"Aguardando SMS","current_responsibility":"SMS","notes":"Documentação de integração sendo enviada via portal SG3. Aguardando regularização do PCMSO pela EQS engenharia.","category":"Documentação","next_action":"Acompanhar retorno de SMS e registrar próxima pendência."},{"id":21,"row":25,"start":"","site":"MGVAR25","cluster":"SUL","address":"Avenida Manoel Vida, 1000 - Industrial JK","lat":-21.587892,"lng":-45.448986,"company":"COOPER STANDARD","holder":"Sba","details":"","status":"EM TRATATIVA","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Levantamento de documentação junto a equipe, assim que documentação ok, será enviado via email para tatiana.Barbara@cooperstandard.com","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":22,"row":26,"start":"","site":"MGIPGI2","cluster":"LESTE","address":"Rua Kiyoshi Tsunawaki 41 - Das Águas - Hospital Mario Cunha","lat":-19.496736,"lng":-42.53847,"company":"HOSPITAL MARIO CUNHA","holder":"Claro","details":"","status":"LEVANTAMENTO DE DOCUMENTOS","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Levantamento de documentação para iniciar ambientação ao hospital.","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."}],"critical":[{"id":16,"row":20,"start":"","site":"MGOPR23","cluster":"METROPOLITANO","address":"Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier","lat":-20.41708,"lng":-43.86005,"company":"VALE FERROS","holder":"Atc","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":14,"row":18,"start":"","site":"MGARC02","cluster":"METROPOLITANO","address":"Rodovia Mg 170 - Km 70 - Zona Rural - Csn - Silo De Farinha","lat":-20.31231,"lng":-45.58585,"company":"CSN - ARCOS","holder":"Claro","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Processo antigo, atualizar documentação e verificar se a mudanças nas equipes.","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":13,"row":17,"start":"","site":"MGITA09","cluster":"METROPOLITANO","address":"Rodovia Mg 050 - Km 61 - Zona Rural - Arcelor Mittal / Faz Dos Coelhos","lat":-20.069125,"lng":-44.662082,"company":"ARCELOR MITTAL ITAÚNA","holder":"Tbsa","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":18,"row":22,"start":"","site":"MGCOW05","cluster":"METROPOLITANO","address":"Avenida Getúlio Vargas, 100 - Centro Industrial","lat":-19.827388,"lng":-43.129098,"company":"ARCELOR MITTAL JM","holder":"Claro","details":"","status":"PENDENTE","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Verificar documentação necessaria e dar start","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":22,"row":26,"start":"","site":"MGIPGI2","cluster":"LESTE","address":"Rua Kiyoshi Tsunawaki 41 - Das Águas - Hospital Mario Cunha","lat":-19.496736,"lng":-42.53847,"company":"HOSPITAL MARIO CUNHA","holder":"Claro","details":"","status":"LEVANTAMENTO DE DOCUMENTOS","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Levantamento de documentação para iniciar ambientação ao hospital.","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."},{"id":21,"row":25,"start":"","site":"MGVAR25","cluster":"SUL","address":"Avenida Manoel Vida, 1000 - Industrial JK","lat":-21.587892,"lng":-45.448986,"company":"COOPER STANDARD","holder":"Sba","details":"","status":"EM TRATATIVA","stage":"Levantamento documental","current_responsibility":"EQS","notes":"Levantamento de documentação junto a equipe, assim que documentação ok, será enviado via email para tatiana.Barbara@cooperstandard.com","category":"Documentação","next_action":"Concluir checklist documental com EQS e reenviar para validação."}],"details":{}};
     let DATA = EMBEDDED_DATA;
     const DATA_URL = 'data/dashboard-data.json';
 
@@ -4114,7 +4328,7 @@
       ];
       $("overviewStatusScope").textContent = overviewStatus ? statusShortLabel(overviewStatus) : "Todos os status";
       $("overviewStatusRail").innerHTML = options.map(option => `
-        <button class="status-chip" type="button" data-overview-status="${esc(option.value)}" aria-pressed="${option.value === overviewStatus ? "true" : "false"}">
+        <button class="status-chip ${statusClass(option.value)}" type="button" data-overview-status="${esc(option.value)}" aria-pressed="${option.value === overviewStatus ? "true" : "false"}">
           <span class="status-chip-count">${option.count}</span>
           <span class="status-chip-label">${esc(option.label)}</span>
           <span class="status-chip-hint">${esc(option.hint)}</span>
@@ -5035,7 +5249,6 @@
     (async function initDashboard() {
       await loadDashboardData();
 
-      $("generatedAtTop").textContent = DATA.generated_at;
       $("generatedAtBottom").textContent = DATA.generated_at;
 
     $("searchFilter").addEventListener("input", render);
