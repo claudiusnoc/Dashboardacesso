@@ -1,0 +1,767 @@
+{
+    "generated_at":  "23/06/2026 09:55",
+    "source_file":  "ACESSO PENDENCIAS.xlsx",
+    "source_sheet":  "ACESSOS",
+    "metrics":  {
+                    "total":  22,
+                    "liberado":  7,
+                    "em_aberto":  15,
+                    "sem_status":  0,
+                    "percent_liberado":  31.8
+                },
+    "series":  {
+                   "status":  [
+                                  {
+                                      "label":  "PENDENTE",
+                                      "value":  9
+                                  },
+                                  {
+                                      "label":  "LIBERADO",
+                                      "value":  7
+                                  },
+                                  {
+                                      "label":  "EM TRATATIVA",
+                                      "value":  4
+                                  },
+                                  {
+                                      "label":  "LEVANTAMENTO DE DOCUMENTOS",
+                                      "value":  2
+                                  }
+                              ],
+                   "cluster":  [
+                                   {
+                                       "label":  "METROPOLITANO",
+                                       "value":  13
+                                   },
+                                   {
+                                       "label":  "BH",
+                                       "value":  5
+                                   },
+                                   {
+                                       "label":  "OESTE",
+                                       "value":  2
+                                   },
+                                   {
+                                       "label":  "LESTE",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "SUL",
+                                       "value":  1
+                                   }
+                               ],
+                   "holder":  [
+                                  {
+                                      "label":  "Claro",
+                                      "value":  7
+                                  },
+                                  {
+                                      "label":  "Tbsa",
+                                      "value":  5
+                                  },
+                                  {
+                                      "label":  "Sem informação",
+                                      "value":  4
+                                  },
+                                  {
+                                      "label":  "Atc",
+                                      "value":  2
+                                  },
+                                  {
+                                      "label":  "Sba",
+                                      "value":  2
+                                  },
+                                  {
+                                      "label":  "Qmc",
+                                      "value":  1
+                                  },
+                                  {
+                                      "label":  "Tim",
+                                      "value":  1
+                                  }
+                              ],
+                   "company":  [
+                                   {
+                                       "label":  "ARCELOR MITTAL JM",
+                                       "value":  2
+                                   },
+                                   {
+                                       "label":  "ANGLO AMERICAN",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "ARCELOR MITTAL ITAÚNA",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "COCA-COLA",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "COOPER STANDARD",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "CSN - ARCOS",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "CSN - CONGONHAS",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "GERDAU MIGUEL BURNIER",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "GERDAU OURO BRANCO",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "GRUPO ARION",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "HOSPITAL MARIO CUNHA",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "MINEIRÃO",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "NESTLÉ",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "NESTLÉ  FABRICA NINHO",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "PALÁCIO DO GOVERNO",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "SAMARCO",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "VALE (Mina Fábrica)",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "VALE (Minas Timbopeba)",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "VALE FERROS",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "VILMA",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "VRB",
+                                       "value":  1
+                                   }
+                               ],
+                   "category":  [
+                                    {
+                                        "label":  "Documentação",
+                                        "value":  12
+                                    },
+                                    {
+                                        "label":  "Liberação concluída",
+                                        "value":  7
+                                    },
+                                    {
+                                        "label":  "Tratativa com detentora",
+                                        "value":  2
+                                    },
+                                    {
+                                        "label":  "Mobilização/cadastro",
+                                        "value":  1
+                                    }
+                                ],
+                   "stage":  [
+                                 {
+                                     "label":  "Levantamento documental",
+                                     "value":  11
+                                 },
+                                 {
+                                     "label":  "Liberado / acompanhar",
+                                     "value":  7
+                                 },
+                                 {
+                                     "label":  "Aguardando retorno",
+                                     "value":  2
+                                 },
+                                 {
+                                     "label":  "Aguardando SMS",
+                                     "value":  1
+                                 },
+                                 {
+                                     "label":  "Cadastro / mobilização",
+                                     "value":  1
+                                 }
+                             ],
+                   "current_responsibility":  [
+                                                  {
+                                                      "label":  "EQS",
+                                                      "value":  19
+                                                  },
+                                                  {
+                                                      "label":  "Sem informação",
+                                                      "value":  1
+                                                  },
+                                                  {
+                                                      "label":  "CLARO",
+                                                      "value":  1
+                                                  },
+                                                  {
+                                                      "label":  "SMS",
+                                                      "value":  1
+                                                  }
+                                              ]
+               },
+    "rows":  [
+                 {
+                     "id":  1,
+                     "row":  5,
+                     "start":  "29/04/2026",
+                     "site":  "MGBEL11",
+                     "cluster":  "BH",
+                     "address":  "Rua Pedro José Pardo - S/N - Mangabeiras - Palácio Do Governo",
+                     "lat":  -19.9529,
+                     "lng":  -43.9126,
+                     "company":  "PALÁCIO DO GOVERNO",
+                     "holder":  "Tim",
+                     "details":  "",
+                     "status":  "EM TRATATIVA",
+                     "stage":  "Aguardando retorno",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Aguardando retorno do palacio, contato realizado via email.",
+                     "category":  "Tratativa com detentora",
+                     "next_action":  "Reforçar contato com EQS e registrar retorno."
+                 },
+                 {
+                     "id":  2,
+                     "row":  6,
+                     "start":  "29/04/2026",
+                     "site":  "MGCONI1",
+                     "cluster":  "BH",
+                     "address":  "Rodovia Mg-010 - Km 08 - Aeroporto Confins",
+                     "lat":  -19.6321,
+                     "lng":  -43.9613,
+                     "company":  "GRUPO ARION",
+                     "holder":  "Qmc",
+                     "details":  "",
+                     "status":  "LIBERADO",
+                     "stage":  "Liberado / acompanhar",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Carlos Souto e Nilson Pacheco com credenciais validas.",
+                     "category":  "Liberação concluída",
+                     "next_action":  "Manter evidência e acompanhar validade do acesso."
+                 },
+                 {
+                     "id":  3,
+                     "row":  7,
+                     "start":  "29/04/2026",
+                     "site":  "MGCTG10",
+                     "cluster":  "BH",
+                     "address":  "Praça Louis Ensch - 160 - Cidade Industrial - Esquina Com A Avenida Amazonas - Pastifício Vilma",
+                     "lat":  -19.9506,
+                     "lng":  -44.0119,
+                     "company":  "VILMA",
+                     "holder":  "Sba",
+                     "details":  "Edneia V. Da Silva (ADM - TI)\u003cevsilva@vilma.com.br\u003e",
+                     "status":  "LEVANTAMENTO DE DOCUMENTOS",
+                     "stage":  "Levantamento documental",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Documentação será solicitada a segurança do trabalho após definição de equipe designada.",
+                     "category":  "Documentação",
+                     "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                 },
+                 {
+                     "id":  4,
+                     "row":  8,
+                     "start":  "11/05/2026",
+                     "site":  "MGIBA04",
+                     "cluster":  "OESTE",
+                     "address":  "Avenida Nestlé (Rua 02), S/N - Centro",
+                     "lat":  -19.47929,
+                     "lng":  -46.53204,
+                     "company":  "NESTLÉ",
+                     "holder":  "Claro",
+                     "details":  "",
+                     "status":  "PENDENTE",
+                     "stage":  "Levantamento documental",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Alinhar contato e dificuldade com supervisão regional (Diego e Arthur)",
+                     "category":  "Documentação",
+                     "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                 },
+                 {
+                     "id":  5,
+                     "row":  9,
+                     "start":  "11/05/2026",
+                     "site":  "MGIUA14",
+                     "cluster":  "OESTE",
+                     "address":  "Rodovia BR 365, 755 - Paranaíba (Nestlé)",
+                     "lat":  -18.94978,
+                     "lng":  -49.46483,
+                     "company":  "NESTLÉ  FABRICA NINHO",
+                     "holder":  "Claro",
+                     "details":  "",
+                     "status":  "PENDENTE",
+                     "stage":  "Levantamento documental",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Alinhar contato e dificuldade com supervisão regional (Diego e Arthur)",
+                     "category":  "Documentação",
+                     "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                 },
+                 {
+                     "id":  6,
+                     "row":  10,
+                     "start":  "29/05/2026",
+                     "site":  "MGCMD02/MGCMD08/MGCOW35",
+                     "cluster":  "METROPOLITANO",
+                     "address":  "Rodovia Mg 10 - Km 178 - Zona Rural - Fazenda Jardim - Mineradora Anglo Ferrous",
+                     "lat":  -18.88677,
+                     "lng":  -43.41728,
+                     "company":  "ANGLO AMERICAN",
+                     "holder":  "",
+                     "details":  "",
+                     "status":  "PENDENTE",
+                     "stage":  "Aguardando retorno",
+                     "current_responsibility":  "CLARO",
+                     "notes":  "Marcos Vinícius Lacerda (Gerente de contas Claro) necessita efetuar o processo de mobilização da subcontratada no SAP Fieldglass (Em tratativa Filipe césar)",
+                     "category":  "Tratativa com detentora",
+                     "next_action":  "Reforçar contato com CLARO e registrar retorno."
+                 },
+                 {
+                     "id":  7,
+                     "row":  11,
+                     "start":  "01/06/2026",
+                     "site":  "MGOBR03/MGOBR05/MGOBR10/MGCGH14/MGCGH15",
+                     "cluster":  "METROPOLITANO",
+                     "address":  "Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier",
+                     "lat":  -20.5513,
+                     "lng":  -43.7548,
+                     "company":  "GERDAU OURO BRANCO",
+                     "holder":  "",
+                     "details":  "TRANSITO LEGAL",
+                     "status":  "LIBERADO",
+                     "stage":  "Liberado / acompanhar",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Documentação atualizada periodicamente via bancodoc.",
+                     "category":  "Liberação concluída",
+                     "next_action":  "Manter evidência e acompanhar validade do acesso."
+                 },
+                 {
+                     "id":  8,
+                     "row":  12,
+                     "start":  "",
+                     "site":  "MGOPR11/MGOPR42/MGOPR44/MGOPR45/MGOPR47",
+                     "cluster":  "METROPOLITANO",
+                     "address":  "Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier",
+                     "lat":  -20.454333,
+                     "lng":  -43.780806,
+                     "company":  "GERDAU MIGUEL BURNIER",
+                     "holder":  "",
+                     "details":  "TRANSITO LEGAL",
+                     "status":  "PENDENTE",
+                     "stage":  "Cadastro / mobilização",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Adicionar colaboradores no bancodoc e verificar validade da documentação com segurança do trabalho",
+                     "category":  "Mobilização/cadastro",
+                     "next_action":  "Avançar cadastro/mobilização com EQS."
+                 },
+                 {
+                     "id":  9,
+                     "row":  13,
+                     "start":  "",
+                     "site":  "MGMRN04",
+                     "cluster":  "METROPOLITANO",
+                     "address":  "Rodovia Mg 129 - S/N - Mina Do Germano - Samarco - Unidade Operacional Da Samarco",
+                     "lat":  -20.208788,
+                     "lng":  -43.500246,
+                     "company":  "SAMARCO",
+                     "holder":  "Tbsa",
+                     "details":  "",
+                     "status":  "EM TRATATIVA",
+                     "stage":  "Levantamento documental",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Em preenchimento de formularios enviados pela TBSA",
+                     "category":  "Documentação",
+                     "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                 },
+                 {
+                     "id":  10,
+                     "row":  14,
+                     "start":  "",
+                     "site":  "MGOPR23",
+                     "cluster":  "METROPOLITANO",
+                     "address":  "Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier",
+                     "lat":  -20.41708,
+                     "lng":  -43.86005,
+                     "company":  "VALE (Mina Fábrica)",
+                     "holder":  "Atc",
+                     "details":  "",
+                     "status":  "PENDENTE",
+                     "stage":  "Levantamento documental",
+                     "current_responsibility":  "EQS",
+                     "notes":  "PGR, ART, PCMSO e Técnicos: RG, CPF, CTPS, CNH, FOTO 3x4, ASO, NR 10, NR35, NR22, RAC01(sistema Ves Vale), RAC02(sistema Ves Vale), RAC10(sistema Ves Vale) e Formulário de Saúde RAC",
+                     "category":  "Documentação",
+                     "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                 },
+                 {
+                     "id":  11,
+                     "row":  15,
+                     "start":  "",
+                     "site":  "MGOPR80",
+                     "cluster":  "METROPOLITANO",
+                     "address":  "Estrada De Ferro Vitoria Minas - Km 13 - Zona Rural - Mina Timbopeba",
+                     "lat":  -20.26866,
+                     "lng":  -43.52737,
+                     "company":  "VALE (Minas Timbopeba)",
+                     "holder":  "Tbsa",
+                     "details":  "",
+                     "status":  "LIBERADO",
+                     "stage":  "Liberado / acompanhar",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Acesso mediante e-mail (Formulário)",
+                     "category":  "Liberação concluída",
+                     "next_action":  "Manter evidência e acompanhar validade do acesso."
+                 },
+                 {
+                     "id":  12,
+                     "row":  16,
+                     "start":  "",
+                     "site":  "MGJCE02",
+                     "cluster":  "METROPOLITANO",
+                     "address":  "Rua Pátio João Carlos Guedes - S/N - Ferrovia Do Aço - Na",
+                     "lat":  -20.59229,
+                     "lng":  -43.97062,
+                     "company":  "VRB",
+                     "holder":  "Tbsa",
+                     "details":  "",
+                     "status":  "LIBERADO",
+                     "stage":  "Liberado / acompanhar",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Acesso mediante e-mail",
+                     "category":  "Liberação concluída",
+                     "next_action":  "Manter evidência e acompanhar validade do acesso."
+                 },
+                 {
+                     "id":  13,
+                     "row":  17,
+                     "start":  "",
+                     "site":  "MGITA09",
+                     "cluster":  "METROPOLITANO",
+                     "address":  "Rodovia Mg 050 - Km 61 - Zona Rural - Arcelor Mittal / Faz Dos Coelhos",
+                     "lat":  -20.069125,
+                     "lng":  -44.662082,
+                     "company":  "ARCELOR MITTAL ITAÚNA",
+                     "holder":  "Tbsa",
+                     "details":  "",
+                     "status":  "PENDENTE",
+                     "stage":  "Levantamento documental",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Verificar documentação necessaria e dar start",
+                     "category":  "Documentação",
+                     "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                 },
+                 {
+                     "id":  14,
+                     "row":  18,
+                     "start":  "",
+                     "site":  "MGARC02",
+                     "cluster":  "METROPOLITANO",
+                     "address":  "Rodovia Mg 170 - Km 70 - Zona Rural - Csn - Silo De Farinha",
+                     "lat":  -20.31231,
+                     "lng":  -45.58585,
+                     "company":  "CSN - ARCOS",
+                     "holder":  "Claro",
+                     "details":  "",
+                     "status":  "PENDENTE",
+                     "stage":  "Levantamento documental",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Processo antigo, atualizar documentação e verificar se a mudanças nas equipes.",
+                     "category":  "Documentação",
+                     "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                 },
+                 {
+                     "id":  15,
+                     "row":  19,
+                     "start":  "",
+                     "site":  "MGCGH02/MGCGH12/MGCGH16/MGOPR33",
+                     "cluster":  "METROPOLITANO",
+                     "address":  "Rua Vic - S/N - Centro - Área Da Csn - Mineração Casa De Pedra",
+                     "lat":  -20.4675,
+                     "lng":  -43.9023,
+                     "company":  "CSN - CONGONHAS",
+                     "holder":  "",
+                     "details":  "",
+                     "status":  "LIBERADO",
+                     "stage":  "Liberado / acompanhar",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Liberado equipe energia / Pendente equipe zeladoria em processo de mobilização / Veiculo: agendamento selo de fumaça 22/06 e aguardando retorno gerente sobre CTM Roberto",
+                     "category":  "Liberação concluída",
+                     "next_action":  "Manter evidência e acompanhar validade do acesso."
+                 },
+                 {
+                     "id":  16,
+                     "row":  20,
+                     "start":  "",
+                     "site":  "MGOPR23",
+                     "cluster":  "METROPOLITANO",
+                     "address":  "Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier",
+                     "lat":  -20.41708,
+                     "lng":  -43.86005,
+                     "company":  "VALE FERROS",
+                     "holder":  "Atc",
+                     "details":  "",
+                     "status":  "PENDENTE",
+                     "stage":  "Levantamento documental",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Verificar documentação necessaria e dar start",
+                     "category":  "Documentação",
+                     "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                 },
+                 {
+                     "id":  17,
+                     "row":  21,
+                     "start":  "",
+                     "site":  "MGJML10",
+                     "cluster":  "METROPOLITANO",
+                     "address":  "Rua Dos Andrades - S/N - José Eloi - Arcelor Mittal Aços Planos",
+                     "lat":  -19.79297,
+                     "lng":  -43.17774,
+                     "company":  "ARCELOR MITTAL JM",
+                     "holder":  "Tbsa",
+                     "details":  "",
+                     "status":  "LIBERADO",
+                     "stage":  "Liberado / acompanhar",
+                     "current_responsibility":  "",
+                     "notes":  "",
+                     "category":  "Liberação concluída",
+                     "next_action":  "Manter evidência e acompanhar validade do acesso."
+                 },
+                 {
+                     "id":  18,
+                     "row":  22,
+                     "start":  "",
+                     "site":  "MGCOW05",
+                     "cluster":  "METROPOLITANO",
+                     "address":  "Avenida Getúlio Vargas, 100 - Centro Industrial",
+                     "lat":  -19.827388,
+                     "lng":  -43.129098,
+                     "company":  "ARCELOR MITTAL JM",
+                     "holder":  "Claro",
+                     "details":  "",
+                     "status":  "PENDENTE",
+                     "stage":  "Levantamento documental",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Verificar documentação necessaria e dar start",
+                     "category":  "Documentação",
+                     "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                 },
+                 {
+                     "id":  19,
+                     "row":  23,
+                     "start":  "",
+                     "site":  "MGPAMI6",
+                     "cluster":  "BH",
+                     "address":  "Avenida Antonio Abrãhao Caram, 1001 - São José - Estádio Mineirão",
+                     "lat":  -19.865967,
+                     "lng":  -43.971048,
+                     "company":  "MINEIRÃO",
+                     "holder":  "Claro",
+                     "details":  "",
+                     "status":  "LIBERADO",
+                     "stage":  "Liberado / acompanhar",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Carlos Souto e Nilson Pacheco liberados para atividades, acompanhamente e elaboração de orçamentos, solicitar via email.",
+                     "category":  "Liberação concluída",
+                     "next_action":  "Manter evidência e acompanhar validade do acesso."
+                 },
+                 {
+                     "id":  20,
+                     "row":  24,
+                     "start":  "",
+                     "site":  "MGCOW31",
+                     "cluster":  "BH",
+                     "address":  "Rodovia BR 040 Km 572, 233 - Distrito Industrial (Spal - Industria Brasileira de Bebidas",
+                     "lat":  -20.23333,
+                     "lng":  -43.96756,
+                     "company":  "COCA-COLA",
+                     "holder":  "Claro",
+                     "details":  "",
+                     "status":  "EM TRATATIVA",
+                     "stage":  "Aguardando SMS",
+                     "current_responsibility":  "SMS",
+                     "notes":  "Documentação de integração sendo enviada via portal SG3. Aguardando regularização do PCMSO pela EQS engenharia.",
+                     "category":  "Documentação",
+                     "next_action":  "Acompanhar retorno de SMS e registrar próxima pendência."
+                 },
+                 {
+                     "id":  21,
+                     "row":  25,
+                     "start":  "",
+                     "site":  "MGVAR25",
+                     "cluster":  "SUL",
+                     "address":  "Avenida Manoel Vida, 1000 - Industrial JK",
+                     "lat":  -21.587892,
+                     "lng":  -45.448986,
+                     "company":  "COOPER STANDARD",
+                     "holder":  "Sba",
+                     "details":  "",
+                     "status":  "EM TRATATIVA",
+                     "stage":  "Levantamento documental",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Levantamento de documentação junto a equipe, assim que documentação ok, será enviado via email para tatiana.Barbara@cooperstandard.com",
+                     "category":  "Documentação",
+                     "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                 },
+                 {
+                     "id":  22,
+                     "row":  26,
+                     "start":  "",
+                     "site":  "MGIPGI2",
+                     "cluster":  "LESTE",
+                     "address":  "Rua Kiyoshi Tsunawaki 41 - Das Águas - Hospital Mario Cunha",
+                     "lat":  -19.496736,
+                     "lng":  -42.53847,
+                     "company":  "HOSPITAL MARIO CUNHA",
+                     "holder":  "Claro",
+                     "details":  "",
+                     "status":  "LEVANTAMENTO DE DOCUMENTOS",
+                     "stage":  "Levantamento documental",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Levantamento de documentação para iniciar ambientação ao hospital.",
+                     "category":  "Documentação",
+                     "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                 }
+             ],
+    "critical":  [
+                     {
+                         "id":  16,
+                         "row":  20,
+                         "start":  "",
+                         "site":  "MGOPR23",
+                         "cluster":  "METROPOLITANO",
+                         "address":  "Rodovia Presidente Juscelino Kubitschek, 5690 - Miguel Burnier",
+                         "lat":  -20.41708,
+                         "lng":  -43.86005,
+                         "company":  "VALE FERROS",
+                         "holder":  "Atc",
+                         "details":  "",
+                         "status":  "PENDENTE",
+                         "stage":  "Levantamento documental",
+                         "current_responsibility":  "EQS",
+                         "notes":  "Verificar documentação necessaria e dar start",
+                         "category":  "Documentação",
+                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                     },
+                     {
+                         "id":  14,
+                         "row":  18,
+                         "start":  "",
+                         "site":  "MGARC02",
+                         "cluster":  "METROPOLITANO",
+                         "address":  "Rodovia Mg 170 - Km 70 - Zona Rural - Csn - Silo De Farinha",
+                         "lat":  -20.31231,
+                         "lng":  -45.58585,
+                         "company":  "CSN - ARCOS",
+                         "holder":  "Claro",
+                         "details":  "",
+                         "status":  "PENDENTE",
+                         "stage":  "Levantamento documental",
+                         "current_responsibility":  "EQS",
+                         "notes":  "Processo antigo, atualizar documentação e verificar se a mudanças nas equipes.",
+                         "category":  "Documentação",
+                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                     },
+                     {
+                         "id":  13,
+                         "row":  17,
+                         "start":  "",
+                         "site":  "MGITA09",
+                         "cluster":  "METROPOLITANO",
+                         "address":  "Rodovia Mg 050 - Km 61 - Zona Rural - Arcelor Mittal / Faz Dos Coelhos",
+                         "lat":  -20.069125,
+                         "lng":  -44.662082,
+                         "company":  "ARCELOR MITTAL ITAÚNA",
+                         "holder":  "Tbsa",
+                         "details":  "",
+                         "status":  "PENDENTE",
+                         "stage":  "Levantamento documental",
+                         "current_responsibility":  "EQS",
+                         "notes":  "Verificar documentação necessaria e dar start",
+                         "category":  "Documentação",
+                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                     },
+                     {
+                         "id":  18,
+                         "row":  22,
+                         "start":  "",
+                         "site":  "MGCOW05",
+                         "cluster":  "METROPOLITANO",
+                         "address":  "Avenida Getúlio Vargas, 100 - Centro Industrial",
+                         "lat":  -19.827388,
+                         "lng":  -43.129098,
+                         "company":  "ARCELOR MITTAL JM",
+                         "holder":  "Claro",
+                         "details":  "",
+                         "status":  "PENDENTE",
+                         "stage":  "Levantamento documental",
+                         "current_responsibility":  "EQS",
+                         "notes":  "Verificar documentação necessaria e dar start",
+                         "category":  "Documentação",
+                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                     },
+                     {
+                         "id":  22,
+                         "row":  26,
+                         "start":  "",
+                         "site":  "MGIPGI2",
+                         "cluster":  "LESTE",
+                         "address":  "Rua Kiyoshi Tsunawaki 41 - Das Águas - Hospital Mario Cunha",
+                         "lat":  -19.496736,
+                         "lng":  -42.53847,
+                         "company":  "HOSPITAL MARIO CUNHA",
+                         "holder":  "Claro",
+                         "details":  "",
+                         "status":  "LEVANTAMENTO DE DOCUMENTOS",
+                         "stage":  "Levantamento documental",
+                         "current_responsibility":  "EQS",
+                         "notes":  "Levantamento de documentação para iniciar ambientação ao hospital.",
+                         "category":  "Documentação",
+                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                     },
+                     {
+                         "id":  21,
+                         "row":  25,
+                         "start":  "",
+                         "site":  "MGVAR25",
+                         "cluster":  "SUL",
+                         "address":  "Avenida Manoel Vida, 1000 - Industrial JK",
+                         "lat":  -21.587892,
+                         "lng":  -45.448986,
+                         "company":  "COOPER STANDARD",
+                         "holder":  "Sba",
+                         "details":  "",
+                         "status":  "EM TRATATIVA",
+                         "stage":  "Levantamento documental",
+                         "current_responsibility":  "EQS",
+                         "notes":  "Levantamento de documentação junto a equipe, assim que documentação ok, será enviado via email para tatiana.Barbara@cooperstandard.com",
+                         "category":  "Documentação",
+                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                     }
+                 ],
+    "details":  {
+
+                }
+}
