@@ -1,13 +1,13 @@
 {
-    "generated_at":  "23/06/2026 14:00",
+    "generated_at":  "23/06/2026 15:13",
     "source_file":  "ACESSO PENDENCIAS.xlsx",
     "source_sheet":  "ACESSOS",
     "metrics":  {
-                    "total":  23,
-                    "liberado":  8,
+                    "total":  22,
+                    "liberado":  7,
                     "em_aberto":  15,
                     "sem_status":  0,
-                    "percent_liberado":  34.8
+                    "percent_liberado":  31.8
                 },
     "series":  {
                    "status":  [
@@ -17,7 +17,7 @@
                                   },
                                   {
                                       "label":  "LIBERADO",
-                                      "value":  8
+                                      "value":  7
                                   },
                                   {
                                       "label":  "EM TRATATIVA",
@@ -35,7 +35,7 @@
                                    },
                                    {
                                        "label":  "BH",
-                                       "value":  6
+                                       "value":  5
                                    },
                                    {
                                        "label":  "OESTE",
@@ -57,7 +57,7 @@
                                   },
                                   {
                                       "label":  "Tbsa",
-                                      "value":  6
+                                      "value":  5
                                   },
                                   {
                                       "label":  "Sem informação",
@@ -142,10 +142,6 @@
                                        "value":  1
                                    },
                                    {
-                                       "label":  "PREDIO CLARO",
-                                       "value":  1
-                                   },
-                                   {
                                        "label":  "SAMARCO",
                                        "value":  1
                                    },
@@ -177,7 +173,7 @@
                                     },
                                     {
                                         "label":  "Liberação concluída",
-                                        "value":  8
+                                        "value":  7
                                     },
                                     {
                                         "label":  "Tratativa com detentora",
@@ -195,7 +191,7 @@
                                  },
                                  {
                                      "label":  "Liberado / acompanhar",
-                                     "value":  8
+                                     "value":  7
                                  },
                                  {
                                      "label":  "Aguardando retorno",
@@ -213,7 +209,7 @@
                    "current_responsibility":  [
                                                   {
                                                       "label":  "EQS",
-                                                      "value":  20
+                                                      "value":  19
                                                   },
                                                   {
                                                       "label":  "Sem informação",
@@ -647,25 +643,6 @@
                      "notes":  "Levantamento de documentação para iniciar ambientação ao hospital.",
                      "category":  "Documentação",
                      "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
-                 },
-                 {
-                     "id":  23,
-                     "row":  27,
-                     "start":  "23/06/2025",
-                     "site":  "MGCEN07 - BHE ES - BHEESP",
-                     "cluster":  "BH",
-                     "address":  "Rua Espirito Santo - 1000 - Centro - Estação Embratel - Projeto 200 Cidades",
-                     "lat":  -19.923437,
-                     "lng":  -43.938667,
-                     "company":  "PREDIO CLARO",
-                     "holder":  "Tbsa",
-                     "details":  "",
-                     "status":  "LIBERADO",
-                     "stage":  "Liberado / acompanhar",
-                     "current_responsibility":  "EQS",
-                     "notes":  "TESTE TESTETESTE TES",
-                     "category":  "Liberação concluída",
-                     "next_action":  "Manter evidência e acompanhar validade do acesso."
                  }
              ],
     "critical":  [
