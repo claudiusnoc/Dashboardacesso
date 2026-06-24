@@ -1,36 +1,36 @@
 {
   "kind": "critique-panel",
-  "score": 4.4,
+  "score": 4.3,
   "axes": {
     "clarity": {
       "score": 4,
-      "notes": "O bloco Distribuicao por status agora comunica proporcao em leitura imediata, com total central e legenda operacional por status."
+      "notes": "No mobile, a coluna Proxima acao agora usa leitura empilhada e largura total, deixando claro o proximo passo sem comprimir o texto."
     },
     "hierarchy": {
       "score": 4,
-      "notes": "O donut cria um ponto focal claro no primeiro card da tela de bloqueios, enquanto a lista de clusters permanece em barras para comparacao secundaria."
+      "notes": "Demanda, responsavel, etapa e tempo mantem a estrutura atual; Proxima acao ganha respiro apenas no fim do cartao."
     },
     "typography": {
       "score": 4,
-      "notes": "Numero central, legenda e percentuais usam escala compacta e numerais tabulares, mantendo leitura limpa em painel executivo."
+      "notes": "O texto principal da acao passou a aceitar ate tres linhas no estado compacto e o apoio ate duas, reduzindo corte visual no print."
     },
     "motion": {
       "score": 4,
-      "notes": "Nao foram adicionadas animacoes novas; o grafico muda de formato sem criar movimento concorrente com o restante do dashboard."
+      "notes": "A interacao existente de expandir clicando no proprio texto foi preservada, sem botao extra nem mudanca brusca de comportamento."
     },
     "brand": {
       "score": 4,
-      "notes": "As cores seguem os tokens de status existentes e aparecem como segmentos/pontos, sem fundos genericos ou excesso de saturacao."
+      "notes": "A cor e o tratamento sobrio da tabela foram mantidos; a cor contextual do responsavel continua discreta."
     },
     "execution": {
       "score": 5,
-      "notes": "Alteracao concentrada no #view-bloqueios e na chamada de render do statusChart, com dashboard.html sincronizado com index.html."
+      "notes": "Ajuste limitado ao breakpoint max-width 760px, aplicado de forma identica em index.html e dashboard.html."
     }
   },
   "blockers": [],
   "warnings": [
-    "A validacao visual renderizada nao foi executada nesta passada; a checagem foi estatica por diff e consistencia entre HTMLs.",
-    "Existem alteracoes pendentes anteriores no repositorio, incluindo dados, scripts e assets, que nao foram revertidas."
+    "A validacao renderizada automatica continua indisponivel neste projeto.",
+    "A checagem feita nesta passada foi estatica por print, diff, seletores e consistencia entre index.html e dashboard.html."
   ],
-  "verdict": "pronto para revisao visual"
+  "verdict": "pronto para revisao visual da aba operacional no mobile"
 }

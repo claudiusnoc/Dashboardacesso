@@ -3387,11 +3387,108 @@
       }
       .app { padding: var(--space-3); }
       .topbar {
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+          "brand actions"
+          "nav nav";
+        align-items: center;
+        gap: 8px 10px;
+        top: 8px;
         border-radius: 16px;
-        margin-inline: calc(-1 * var(--space-3));
-        width: calc(100% + 2 * var(--space-3));
-        max-width: calc(100% + 2 * var(--space-3));
-        padding: 12px var(--space-3);
+        margin-inline: 0;
+        width: 100%;
+        max-width: 100%;
+        padding: 8px;
+      }
+      .topbar.is-condensed {
+        top: 8px;
+        width: 100%;
+        max-width: 100%;
+        margin-inline: 0;
+        padding: 6px 7px 7px;
+        border-radius: 18px;
+        gap: 6px 8px;
+      }
+      .topbar::after {
+        left: 14px;
+        right: 14px;
+        bottom: -10px;
+        height: 20px;
+        opacity: .18;
+      }
+      .brand {
+        grid-area: brand;
+        gap: 8px;
+        min-width: 0;
+      }
+      .nav-stack {
+        grid-area: nav;
+        width: 100%;
+        min-width: 0;
+        justify-self: stretch;
+      }
+      .meeting-chip {
+        grid-area: actions;
+        justify-self: end;
+        gap: 6px;
+        min-width: 0;
+      }
+      .brand .brand-logo,
+      .brand-logo {
+        min-width: 76px;
+        height: 34px;
+        padding: 4px 7px;
+        border-radius: 999px;
+      }
+      .brand .brand-logo img,
+      .brand-logo img {
+        max-width: 58px;
+        max-height: 22px;
+      }
+      .brand-copy span {
+        font-size: .625rem;
+        line-height: 1.08;
+        letter-spacing: 0;
+      }
+      .topbar.is-condensed .brand .brand-logo {
+        min-width: 64px;
+        height: 30px;
+        padding-inline: 6px;
+      }
+      .topbar.is-condensed .brand .brand-logo img {
+        max-width: 50px;
+        max-height: 19px;
+      }
+      .topbar.is-condensed .brand-copy span {
+        font-size: .5625rem;
+        line-height: 1.05;
+      }
+      .theme-toggle,
+      .topbar.is-condensed .theme-toggle {
+        width: 32px;
+        height: 32px;
+      }
+      .meeting-chip .brand-logo.eqs-mark {
+        display: none;
+      }
+      .tabs {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding: 3px;
+        scrollbar-width: none;
+      }
+      .tabs::-webkit-scrollbar {
+        display: none;
+      }
+      .tabs button,
+      .topbar.is-condensed .tabs button {
+        flex: 0 0 auto;
+        min-height: 28px;
+        padding: 0 10px;
+        font-size: .6875rem;
+        letter-spacing: 0;
       }
       .page-footer {
         flex-direction: column;
@@ -3401,9 +3498,8 @@
         border-radius: 16px;
       }
       .footer-updated { align-self: flex-end; }
-      .tabs { width: 100%; overflow-x: auto; justify-content: flex-start; }
       h1 { font-size: 1.4375rem; }
-      .meeting-chip { align-items: flex-start; flex-wrap: wrap; text-align: left; }
+      .meeting-chip { align-items: center; flex-wrap: nowrap; text-align: right; }
       .content-row { grid-template-columns: 1fr; }
       #view-bloqueios .status-donut {
         grid-template-columns: 1fr;
@@ -3477,6 +3573,30 @@
       .category-cell,
       .action-cell {
         width: auto;
+      }
+      .action-cell {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        padding-top: 10px;
+      }
+      .action-cell::before {
+        display: block;
+      }
+      .action-text {
+        display: block;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      .action-text strong {
+        -webkit-line-clamp: 3;
+        line-height: 1.28;
+      }
+      .action-text span {
+        -webkit-line-clamp: 2;
+      }
+      tr.is-expanded .action-cell {
+        padding-bottom: 10px;
       }
       .site-code {
         max-width: none;
