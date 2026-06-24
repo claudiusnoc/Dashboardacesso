@@ -1627,7 +1627,7 @@
 
     .kpi strong {
       display: block;
-      margin-top: 9px;
+      margin-top: 0;
       font-family: var(--font-display);
       font-size: 2rem;
       line-height: 1;
@@ -1642,6 +1642,44 @@
       color: var(--muted);
       font-size: var(--text-xs);
       line-height: 1.3;
+    }
+
+    .kpi-value {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-top: 9px;
+    }
+
+    .kpi-trend {
+      font-style: normal;
+      font-size: .85rem;
+      line-height: 1;
+      font-weight: 540;
+      opacity: 0;
+      transition: opacity .3s var(--ease-out);
+    }
+    .kpi-trend.is-up { opacity: 1; color: var(--green); }
+    .kpi-trend.is-down { opacity: 1; color: var(--claro); }
+    .kpi-trend.is-flat { opacity: 1; color: var(--quiet); }
+    .kpi-trend.is-neutral { opacity: 1; color: var(--quiet); }
+
+    .kpi-progress {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 3px;
+      background: color-mix(in srgb, var(--blue) 14%, transparent);
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      overflow: hidden;
+    }
+    .kpi-progress span {
+      display: block;
+      height: 100%;
+      background: var(--blue);
+      border-radius: inherit;
+      transition: width .6s var(--ease-out);
     }
 
     .overview {
@@ -4205,23 +4243,20 @@
     <div class="kpi-strip" data-od-id="kpi-strip" aria-label="Indicadores executivos rápidos">
       <div class="kpi red" data-kpi-overview="" tabindex="0" role="button" aria-label="Total de demandas">
         <span>Total</span>
-        <strong id="kpiTotal">—</strong>
-        <small>todas as demandas no recorte</small>
+        <div class="kpi-value"><strong id="kpiTotal">—</strong><i class="kpi-trend" data-trend="total" aria-hidden="true"></i></div>
       </div>
       <div class="kpi green" data-kpi-overview="LIBERADO" tabindex="0" role="button" aria-label="Demandas liberadas">
         <span>Liberadas</span>
-        <strong id="kpiLiberado">—</strong>
-        <small>acesso confirmado</small>
+        <div class="kpi-value"><strong id="kpiLiberado">—</strong><i class="kpi-trend" data-trend="liberated" aria-hidden="true"></i></div>
       </div>
       <div class="kpi amber" data-kpi-overview="__OPEN__" tabindex="0" role="button" aria-label="Demandas em aberto">
         <span>Em aberto</span>
-        <strong id="kpiAberto">—</strong>
-        <small>dependem de avanço</small>
+        <div class="kpi-value"><strong id="kpiAberto">—</strong><i class="kpi-trend" data-trend="open" aria-hidden="true"></i></div>
       </div>
       <div class="kpi blue" data-kpi-overview="__BOTTLENECK__" tabindex="0" role="button" aria-label="Gargalos que impactam o percentual liberado">
         <span>% Liberado</span>
-        <strong id="kpiPct">—</strong>
-        <small>sobre o total do recorte</small>
+        <div class="kpi-value"><strong id="kpiPct">—</strong><i class="kpi-trend" data-trend="pct" aria-hidden="true"></i></div>
+        <div class="kpi-progress" aria-hidden="true"><span id="kpiPctBar"></span></div>
       </div>
     </div>
 
@@ -5466,6 +5501,40 @@ let cursor = 0;
       $("kpiLiberado").textContent = liberated;
       $("kpiAberto").textContent = open;
       $("kpiPct").textContent = `${Math.round(pct)}%`;
+
+      // % Liberado progress bar
+      const pctBar = $("kpiPctBar");
+      if (pctBar) pctBar.style.width = `${Math.round(pct)}%`;
+
+      // Trend arrows (vs previous snapshot, full dataset only)
+      const snapKey = "od-kpi-snapshot";
+      const isFullSet = !$("searchFilter").value.trim();
+      let prevSnap = null;
+      try { prevSnap = JSON.parse(localStorage.getItem(snapKey)); } catch (e) {}
+      const trendEls = {
+        total: document.querySelector('[data-trend="total"]'),
+        liberated: document.querySelector('[data-trend="liberated"]'),
+        open: document.querySelector('[data-trend="open"]'),
+        pct: document.querySelector('[data-trend="pct"]')
+      };
+      const cur = { total, liberated, open, pct: Math.round(pct) };
+      Object.keys(trendEls).forEach(key => {
+        const el = trendEls[key];
+        if (!el) return;
+        el.className = "kpi-trend";
+        el.textContent = "";
+        if (!isFullSet || !prevSnap || typeof prevSnap[key] !== "number") return;
+        const p = prevSnap[key];
+        if (cur[key] === p) { el.classList.add("is-flat"); el.textContent = "\u2192"; return; }
+        const up = cur[key] > p;
+        el.textContent = up ? "\u2191" : "\u2193";
+        if (key === "total") { el.classList.add("is-neutral"); return; }
+        const improved = key === "open" ? !up : up;
+        el.classList.add(improved ? "is-up" : "is-down");
+      });
+      if (isFullSet) {
+        try { localStorage.setItem(snapKey, JSON.stringify({ total, liberated, open, pct: Math.round(pct), ts: Date.now() })); } catch (e) {}
+      }
 
       // Radar: mapa geográfico de MG
       const panelRows = panelLensRows(rows);
