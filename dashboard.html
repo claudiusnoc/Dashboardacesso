@@ -698,12 +698,7 @@
     }
 
     .mg-live-marker.is-single::after {
-      content: "";
-      width: 38%;
-      height: 38%;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, .72);
-      box-shadow: 0 0 0 1px rgba(255, 255, 255, .18);
+      content: none;
     }
 
     .mg-live-marker.is-group {
@@ -715,7 +710,7 @@
 
     .mg-live-marker span {
       font-family: var(--font-command);
-      font-size: 9px;
+      font-size: max(10px, calc(var(--marker-size) * 0.3));
       line-height: 1;
       font-weight: 800;
       font-variant-numeric: tabular-nums;
@@ -729,7 +724,7 @@
 
     .mg-live-marker:hover,
     .mg-live-marker:focus-visible {
-      transform: scale(1.12);
+      transform: scale(1.16);
       outline: none;
       border-color: #fff;
       box-shadow:
@@ -4563,6 +4558,7 @@
     let panelKpiLens = "";
     let operationalOwnerFilter = "";
     let operationalExpandedId = "";
+    let mapPointIds = null;
 
     const PANEL_LENSES = {
       "": {
@@ -4621,6 +4617,9 @@
     }
 
     function filteredRows() {
+      if (mapPointIds && mapPointIds.size) {
+        return DATA.rows.filter(row => mapPointIds.has(row.id));
+      }
       const q = $("searchFilter").value.trim().toLowerCase();
       if (!q) return DATA.rows;
       return DATA.rows.filter(row => {
@@ -5412,10 +5411,10 @@ let cursor = 0;
 
     function openMapPointDetails(group) {
       const first = group.rows[0];
-      const search = group.rows.length === 1
+      mapPointIds = new Set(group.rows.map(row => row.id));
+      $("searchFilter").value = group.rows.length === 1
         ? first.site
         : (first.address || first.site || first.company || "");
-      $("searchFilter").value = search;
       overviewStatus = "";
       activateView("geral");
       render();
@@ -5443,14 +5442,15 @@ let cursor = 0;
         const isClusterDrill = group.groupByCluster && group.rows.length > 1;
         const isGroupedMarker = isClusterDrill || group.rows.length > 1;
         const size = isGroupedMarker
-          ? Math.round(20 + (group.rows.length / maxVol) * 16)
-          : 14;
+          ? Math.round(26 + (group.rows.length / maxVol) * 20)
+          : 22;
         const el = document.createElement("button");
         el.type = "button";
         el.className = `mg-live-marker ${isGroupedMarker ? "is-group" : "is-single"}`;
         el.style.setProperty("--marker-color", STATUS_COLORS[domStatus] || STATUS_COLORS["SEM STATUS"]);
         el.style.setProperty("--marker-size", size + "px");
-        el.innerHTML = isGroupedMarker ? '<span>' + group.rows.length + '</span>' : '<span></span>';
+        const markerCount = group.rows.length;
+        el.innerHTML = (isGroupedMarker && markerCount > 1) ? '<span>' + markerCount + '</span>' : '<span></span>';
         const markerLabel = isClusterDrill ? mapClusterName(group.rows[0]) : group.rows[0].site;
         el.setAttribute("aria-label", `${group.rows.length} registro${group.rows.length === 1 ? "" : "s"} em ${markerLabel}; status dominante ${domStatus}`);
 
@@ -5813,11 +5813,13 @@ statusDonut("statusChart", countBy(rows, "status", STATUS_ORDER), {
       panelKpiLens = "";
       operationalOwnerFilter = "";
       operationalExpandedId = "";
+      mapPointIds = null;
       $("searchFilter").value = "";
       render();
     }
 
     function clearBaseFilters() {
+      mapPointIds = null;
       $("searchFilter").value = "";
     }
 
@@ -5857,7 +5859,7 @@ statusDonut("statusChart", countBy(rows, "status", STATUS_ORDER), {
 
       $("generatedAtBottom").textContent = DATA.generated_at;
 
-    $("searchFilter").addEventListener("input", render);
+    $("searchFilter").addEventListener("input", () => { mapPointIds = null; render(); });
     document.querySelectorAll("[data-tab]").forEach(tab => tab.addEventListener("click", () => activateView(tab.dataset.tab)));
     document.querySelector(".tabs")?.addEventListener("keydown", event => {
       const tabs = [...document.querySelectorAll("[data-tab]")];
