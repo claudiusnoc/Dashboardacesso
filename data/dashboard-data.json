@@ -1,13 +1,13 @@
 {
-    "generated_at":  "29/06/2026 08:40",
+    "generated_at":  "30/06/2026 09:35",
     "source_file":  "ACESSO PENDENCIAS.xlsx",
     "source_sheet":  "ACESSOS",
     "metrics":  {
-                    "total":  22,
+                    "total":  23,
                     "liberado":  7,
-                    "em_aberto":  15,
+                    "em_aberto":  16,
                     "sem_status":  0,
-                    "percent_liberado":  31.8
+                    "percent_liberado":  30.4
                 },
     "series":  {
                    "status":  [
@@ -25,7 +25,7 @@
                                   },
                                   {
                                       "label":  "LEVANTAMENTO DE DOCUMENTOS",
-                                      "value":  2
+                                      "value":  3
                                   }
                               ],
                    "cluster":  [
@@ -35,7 +35,7 @@
                                    },
                                    {
                                        "label":  "BH",
-                                       "value":  5
+                                       "value":  6
                                    },
                                    {
                                        "label":  "OESTE",
@@ -65,7 +65,7 @@
                                   },
                                   {
                                       "label":  "Atc",
-                                      "value":  2
+                                      "value":  3
                                   },
                                   {
                                       "label":  "Sba",
@@ -91,6 +91,10 @@
                                    },
                                    {
                                        "label":  "ARCELOR MITTAL ITAÚNA",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "ARENA MRV",
                                        "value":  1
                                    },
                                    {
@@ -169,7 +173,7 @@
                    "category":  [
                                     {
                                         "label":  "Documentação",
-                                        "value":  12
+                                        "value":  13
                                     },
                                     {
                                         "label":  "Liberação concluída",
@@ -187,7 +191,7 @@
                    "stage":  [
                                  {
                                      "label":  "Levantamento documental",
-                                     "value":  11
+                                     "value":  12
                                  },
                                  {
                                      "label":  "Liberado / acompanhar",
@@ -209,7 +213,7 @@
                    "current_responsibility":  [
                                                   {
                                                       "label":  "EQS",
-                                                      "value":  19
+                                                      "value":  20
                                                   },
                                                   {
                                                       "label":  "Sem informação",
@@ -643,6 +647,25 @@
                      "notes":  "Levantamento de documentação para iniciar ambientação ao hospital.",
                      "category":  "Documentação",
                      "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                 },
+                 {
+                     "id":  23,
+                     "row":  27,
+                     "start":  "26/06/2026",
+                     "site":  "MGDCAI3",
+                     "cluster":  "BH",
+                     "address":  "Rua Cristina Maria de Assis, 202 - Califórnia",
+                     "lat":  -19.930084,
+                     "lng":  -44.014021,
+                     "company":  "ARENA MRV",
+                     "holder":  "Atc",
+                     "details":  "",
+                     "status":  "LEVANTAMENTO DE DOCUMENTOS",
+                     "stage":  "Levantamento documental",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Levantar documentação informada e entrar em contato com ATC john.andrade@americantower.com",
+                     "category":  "Documentação",
+                     "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
                  }
              ],
     "critical":  [
@@ -657,44 +680,6 @@
                          "lng":  -43.86005,
                          "company":  "VALE FERROS",
                          "holder":  "Atc",
-                         "details":  "",
-                         "status":  "PENDENTE",
-                         "stage":  "Levantamento documental",
-                         "current_responsibility":  "EQS",
-                         "notes":  "Verificar documentação necessaria e dar start",
-                         "category":  "Documentação",
-                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
-                     },
-                     {
-                         "id":  14,
-                         "row":  18,
-                         "start":  "",
-                         "site":  "MGARC02",
-                         "cluster":  "METROPOLITANO",
-                         "address":  "Rodovia Mg 170 - Km 70 - Zona Rural - Csn - Silo De Farinha",
-                         "lat":  -20.31231,
-                         "lng":  -45.58585,
-                         "company":  "CSN - ARCOS",
-                         "holder":  "Claro",
-                         "details":  "",
-                         "status":  "PENDENTE",
-                         "stage":  "Levantamento documental",
-                         "current_responsibility":  "EQS",
-                         "notes":  "Processo antigo, atualizar documentação e verificar se a mudanças nas equipes.",
-                         "category":  "Documentação",
-                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
-                     },
-                     {
-                         "id":  13,
-                         "row":  17,
-                         "start":  "",
-                         "site":  "MGITA09",
-                         "cluster":  "METROPOLITANO",
-                         "address":  "Rodovia Mg 050 - Km 61 - Zona Rural - Arcelor Mittal / Faz Dos Coelhos",
-                         "lat":  -20.069125,
-                         "lng":  -44.662082,
-                         "company":  "ARCELOR MITTAL ITAÚNA",
-                         "holder":  "Tbsa",
                          "details":  "",
                          "status":  "PENDENTE",
                          "stage":  "Levantamento documental",
@@ -723,6 +708,44 @@
                          "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
                      },
                      {
+                         "id":  13,
+                         "row":  17,
+                         "start":  "",
+                         "site":  "MGITA09",
+                         "cluster":  "METROPOLITANO",
+                         "address":  "Rodovia Mg 050 - Km 61 - Zona Rural - Arcelor Mittal / Faz Dos Coelhos",
+                         "lat":  -20.069125,
+                         "lng":  -44.662082,
+                         "company":  "ARCELOR MITTAL ITAÚNA",
+                         "holder":  "Tbsa",
+                         "details":  "",
+                         "status":  "PENDENTE",
+                         "stage":  "Levantamento documental",
+                         "current_responsibility":  "EQS",
+                         "notes":  "Verificar documentação necessaria e dar start",
+                         "category":  "Documentação",
+                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                     },
+                     {
+                         "id":  14,
+                         "row":  18,
+                         "start":  "",
+                         "site":  "MGARC02",
+                         "cluster":  "METROPOLITANO",
+                         "address":  "Rodovia Mg 170 - Km 70 - Zona Rural - Csn - Silo De Farinha",
+                         "lat":  -20.31231,
+                         "lng":  -45.58585,
+                         "company":  "CSN - ARCOS",
+                         "holder":  "Claro",
+                         "details":  "",
+                         "status":  "PENDENTE",
+                         "stage":  "Levantamento documental",
+                         "current_responsibility":  "EQS",
+                         "notes":  "Processo antigo, atualizar documentação e verificar se a mudanças nas equipes.",
+                         "category":  "Documentação",
+                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                     },
+                     {
                          "id":  22,
                          "row":  26,
                          "start":  "",
@@ -742,21 +765,21 @@
                          "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
                      },
                      {
-                         "id":  21,
-                         "row":  25,
-                         "start":  "",
-                         "site":  "MGVAR25",
-                         "cluster":  "SUL",
-                         "address":  "Avenida Manoel Vida, 1000 - Industrial JK",
-                         "lat":  -21.587892,
-                         "lng":  -45.448986,
-                         "company":  "COOPER STANDARD",
-                         "holder":  "Sba",
+                         "id":  23,
+                         "row":  27,
+                         "start":  "26/06/2026",
+                         "site":  "MGDCAI3",
+                         "cluster":  "BH",
+                         "address":  "Rua Cristina Maria de Assis, 202 - Califórnia",
+                         "lat":  -19.930084,
+                         "lng":  -44.014021,
+                         "company":  "ARENA MRV",
+                         "holder":  "Atc",
                          "details":  "",
-                         "status":  "EM TRATATIVA",
+                         "status":  "LEVANTAMENTO DE DOCUMENTOS",
                          "stage":  "Levantamento documental",
                          "current_responsibility":  "EQS",
-                         "notes":  "Levantamento de documentação junto a equipe, assim que documentação ok, será enviado via email para tatiana.Barbara@cooperstandard.com",
+                         "notes":  "Levantar documentação informada e entrar em contato com ATC john.andrade@americantower.com",
                          "category":  "Documentação",
                          "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
                      }
