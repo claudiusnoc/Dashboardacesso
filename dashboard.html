@@ -1548,24 +1548,23 @@
     }
 
     .kpi-strip {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
-      gap: var(--space-3);
-      margin-bottom: var(--space-4);
+      display: flex;
+      gap: 14px;
+      margin-bottom: 21px;
     }
 
     .kpi {
       --kpi-active: var(--claro);
       position: relative;
-      width: 100%;
-      min-height: 96px;
-      padding: 12px 14px;
+      flex: 1;
+      min-height: 109px;
+      padding: 16px 21px;
       border: 1px solid var(--line);
-      border-radius: var(--radius-sm);
+      border-radius: 13px;
       background: var(--surface);
       color: inherit;
       cursor: pointer;
-      overflow: hidden;
+      overflow: visible;
       text-align: left;
     }
 
@@ -1574,10 +1573,9 @@
     }
 
     .kpi.is-active {
-      border-color: color-mix(in srgb, var(--kpi-active) 34%, var(--line));
-      box-shadow:
-        inset 0 0 0 1px color-mix(in srgb, var(--kpi-active) 10%, transparent),
-        0 8px 22px color-mix(in srgb, var(--kpi-active) 7%, transparent);
+      border-color: var(--line);
+      box-shadow: none;
+      background: color-mix(in srgb, var(--kpi-active) 5%, var(--surface));
     }
 
     .kpi.is-active small {
@@ -1590,20 +1588,8 @@
     }
 
     .kpi:after {
-      content: "";
-      position: absolute;
-      right: 12px;
-      top: 12px;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--slate);
+      display: none;
     }
-
-    .kpi.green:after { background: var(--green); }
-    .kpi.amber:after { background: var(--amber); }
-    .kpi.blue:after { background: var(--blue); }
-    .kpi.red:after { background: var(--claro); }
 
     .kpi.green { --kpi-active: var(--green); }
     .kpi.amber { --kpi-active: var(--amber); }
@@ -1633,7 +1619,7 @@
 
     .kpi small {
       display: block;
-      margin-top: 8px;
+      margin-top: 5px;
       color: var(--muted);
       font-size: var(--text-xs);
       line-height: 1.3;
@@ -1647,26 +1633,17 @@
     }
 
     .kpi-trend {
-      font-style: normal;
-      font-size: .85rem;
-      line-height: 1;
-      font-weight: 540;
-      opacity: 0;
-      transition: opacity .3s var(--ease-out);
+      display: none;
     }
-    .kpi-trend.is-up { opacity: 1; color: var(--green); }
-    .kpi-trend.is-down { opacity: 1; color: var(--claro); }
-    .kpi-trend.is-flat { opacity: 1; color: var(--quiet); }
-    .kpi-trend.is-neutral { opacity: 1; color: var(--quiet); }
 
     .kpi-progress {
       position: absolute;
       left: 0;
       right: 0;
       bottom: 0;
-      height: 3px;
+      height: 4px;
       background: color-mix(in srgb, var(--blue) 14%, transparent);
-      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      border-radius: 0;
       overflow: hidden;
     }
     .kpi-progress span {
@@ -1676,6 +1653,7 @@
       border-radius: inherit;
       transition: width .6s var(--ease-out);
     }
+
 
     .overview {
       display: grid;
@@ -4358,19 +4336,22 @@
     <div class="kpi-strip" data-od-id="kpi-strip" aria-label="Indicadores executivos rápidos">
       <div class="kpi red" data-kpi-overview="" tabindex="0" role="button" aria-label="Total de demandas">
         <span>Total</span>
-        <div class="kpi-value"><strong id="kpiTotal">—</strong><i class="kpi-trend" data-trend="total" aria-hidden="true"></i></div>
+        <div class="kpi-value"><strong id="kpiTotal">—</strong></div>
+        <small>demandas</small>
       </div>
       <div class="kpi green" data-kpi-overview="LIBERADO" tabindex="0" role="button" aria-label="Demandas liberadas">
         <span>Liberadas</span>
-        <div class="kpi-value"><strong id="kpiLiberado">—</strong><i class="kpi-trend" data-trend="liberated" aria-hidden="true"></i></div>
+        <div class="kpi-value"><strong id="kpiLiberado">—</strong></div>
+        <small>de 22</small>
       </div>
       <div class="kpi amber" data-kpi-overview="__OPEN__" tabindex="0" role="button" aria-label="Demandas em aberto">
         <span>Em aberto</span>
-        <div class="kpi-value"><strong id="kpiAberto">—</strong><i class="kpi-trend" data-trend="open" aria-hidden="true"></i></div>
+        <div class="kpi-value"><strong id="kpiAberto">—</strong></div>
+        <small>em tratamento</small>
       </div>
       <div class="kpi blue" data-kpi-overview="__BOTTLENECK__" tabindex="0" role="button" aria-label="Gargalos que impactam o percentual liberado">
         <span>% Liberado</span>
-        <div class="kpi-value"><strong id="kpiPct">—</strong><i class="kpi-trend" data-trend="pct" aria-hidden="true"></i></div>
+        <div class="kpi-value"><strong id="kpiPct">—</strong></div>
         <div class="kpi-progress" aria-hidden="true"><span id="kpiPctBar"></span></div>
       </div>
     </div>
