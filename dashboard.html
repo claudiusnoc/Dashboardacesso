@@ -3188,6 +3188,76 @@
       box-shadow: 0 0 0 2px color-mix(in srgb, #22c55e 22%, transparent);
     }
 
+    .creator-signature {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-family: var(--font-command);
+      font-size: var(--text-xs);
+      line-height: 1.2;
+      letter-spacing: 0.01em;
+    }
+
+    .creator-signature__line {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 5px;
+      padding: 6px 0;
+    }
+
+    .creator-signature__prefix {
+      opacity: .72;
+    }
+
+    .creator-signature__name {
+      color: var(--fg);
+      font-family: var(--font-display);
+      font-size: .875rem;
+      font-weight: 750;
+      letter-spacing: -0.01em;
+    }
+
+    .creator-signature__links {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .creator-signature__link {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+      border-radius: 999px;
+      color: color-mix(in srgb, var(--fg) 72%, var(--muted));
+      background: rgba(255, 255, 255, .36);
+      text-decoration: none;
+      transition: color .16s var(--ease-out), border-color .16s var(--ease-out), background .16s var(--ease-out), transform .16s var(--ease-out);
+    }
+
+    .creator-signature__link:hover {
+      color: var(--claro);
+      border-color: color-mix(in srgb, var(--claro) 34%, var(--line));
+      background: color-mix(in srgb, var(--claro) 8%, rgba(255, 255, 255, .58));
+      transform: translateY(-1px);
+    }
+
+    .creator-signature__link:focus-visible {
+      outline: none;
+      box-shadow: var(--focus);
+    }
+
+    .creator-signature__link svg {
+      width: 14px;
+      height: 14px;
+      display: block;
+    }
+
     .empty {
       display: grid;
       gap: 7px;
@@ -3471,6 +3541,12 @@
         border-radius: 16px;
       }
       .footer-updated { align-self: flex-end; }
+      .creator-signature {
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 8px;
+        text-align: right;
+      }
       h1 { font-size: 1.4375rem; }
       .meeting-chip { align-items: center; flex-wrap: nowrap; text-align: right; }
       .content-row { grid-template-columns: 1fr; }
@@ -4061,6 +4137,26 @@
         background: rgba(255, 255, 255, .12);
       }
 
+      .creator-signature {
+        color: var(--muted);
+      }
+
+      .creator-signature__name {
+        color: var(--fg);
+      }
+
+      .creator-signature__link {
+        color: color-mix(in srgb, var(--fg) 76%, var(--muted));
+        border-color: rgba(255, 255, 255, .12);
+        background: rgba(255, 255, 255, .045);
+      }
+
+      .creator-signature__link:hover {
+        color: #fff;
+        border-color: color-mix(in srgb, var(--claro) 44%, rgba(255, 255, 255, .16));
+        background: color-mix(in srgb, var(--claro) 16%, rgba(255, 255, 255, .06));
+      }
+
       .empty {
         background: rgba(255, 255, 255, .04);
         color: var(--quiet);
@@ -4276,6 +4372,12 @@
       }
       .page-footer::before,
       .page-footer::after { display: none; }
+
+      .creator-signature {
+        margin-top: 8px;
+        justify-content: flex-end;
+        font-size: 8pt;
+      }
 
       table { font-size: 9pt; }
       th, td { padding: 6px 8px; }
@@ -4500,6 +4602,20 @@
         Última atualização: <strong id="generatedAtBottom"></strong>
       </div>
     </footer>
+    <div class="creator-signature" aria-label="Assinatura do criador">
+      <span class="creator-signature__line">
+        <span class="creator-signature__prefix">Criado por</span>
+        <strong class="creator-signature__name">Claudius Igor</strong>
+      </span>
+      <span class="creator-signature__links" aria-label="Links profissionais">
+        <a class="creator-signature__link" href="https://www.instagram.com/instakoti" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Claudius Igor">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg>
+        </a>
+        <a class="creator-signature__link" href="https://www.linkedin.com/in/claudiusigor" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de Claudius Igor">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.94 8.98H3.98V20h2.96V8.98ZM5.46 4a1.7 1.7 0 1 0 0 3.4 1.7 1.7 0 0 0 0-3.4ZM20 13.78c0-3.02-1.62-4.43-3.78-4.43-1.74 0-2.52.96-2.95 1.63v-1.4h-2.84c.04.92 0 10.42 0 10.42h2.96v-5.82c0-.31.02-.62.11-.84.24-.62.8-1.27 1.73-1.27 1.22 0 1.71.96 1.71 2.36V20H20v-6.22Z"></path></svg>
+        </a>
+      </span>
+    </div>
   </main>
 
   <script>
