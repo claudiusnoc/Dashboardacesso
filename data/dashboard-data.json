@@ -1,27 +1,27 @@
 {
-    "generated_at":  "02/07/2026 14:00",
+    "generated_at":  "06/07/2026 09:51",
     "source_file":  "ACESSO PENDENCIAS.xlsx",
     "source_sheet":  "ACESSOS",
     "metrics":  {
                     "total":  23,
-                    "liberado":  7,
-                    "em_aberto":  16,
+                    "liberado":  6,
+                    "em_aberto":  17,
                     "sem_status":  0,
-                    "percent_liberado":  30.4
+                    "percent_liberado":  26.1
                 },
     "series":  {
                    "status":  [
                                   {
                                       "label":  "PENDENTE",
-                                      "value":  9
+                                      "value":  11
                                   },
                                   {
                                       "label":  "LIBERADO",
-                                      "value":  7
+                                      "value":  6
                                   },
                                   {
                                       "label":  "EM TRATATIVA",
-                                      "value":  4
+                                      "value":  3
                                   },
                                   {
                                       "label":  "LEVANTAMENTO DE DOCUMENTOS",
@@ -173,19 +173,19 @@
                    "category":  [
                                     {
                                         "label":  "Documentação",
-                                        "value":  13
+                                        "value":  12
                                     },
                                     {
                                         "label":  "Liberação concluída",
-                                        "value":  7
+                                        "value":  6
                                     },
                                     {
                                         "label":  "Tratativa com detentora",
-                                        "value":  2
+                                        "value":  3
                                     },
                                     {
                                         "label":  "Mobilização/cadastro",
-                                        "value":  1
+                                        "value":  2
                                     }
                                 ],
                    "stage":  [
@@ -195,36 +195,32 @@
                                  },
                                  {
                                      "label":  "Liberado / acompanhar",
-                                     "value":  7
+                                     "value":  6
                                  },
                                  {
                                      "label":  "Aguardando retorno",
                                      "value":  2
                                  },
                                  {
-                                     "label":  "Aguardando SMS",
-                                     "value":  1
+                                     "label":  "Cadastro / mobilização",
+                                     "value":  2
                                  },
                                  {
-                                     "label":  "Cadastro / mobilização",
+                                     "label":  "Enviado / em validação",
                                      "value":  1
                                  }
                              ],
                    "current_responsibility":  [
                                                   {
                                                       "label":  "EQS",
-                                                      "value":  20
-                                                  },
-                                                  {
-                                                      "label":  "Sem informação",
-                                                      "value":  1
+                                                      "value":  19
                                                   },
                                                   {
                                                       "label":  "CLARO",
-                                                      "value":  1
+                                                      "value":  3
                                                   },
                                                   {
-                                                      "label":  "SMS",
+                                                      "label":  "Sem informação",
                                                       "value":  1
                                                   }
                                               ]
@@ -356,12 +352,12 @@
                      "company":  "GERDAU OURO BRANCO",
                      "holder":  "",
                      "details":  "TRANSITO LEGAL",
-                     "status":  "LIBERADO",
-                     "stage":  "Liberado / acompanhar",
-                     "current_responsibility":  "EQS",
-                     "notes":  "Documentação atualizada periodicamente via bancodoc.",
-                     "category":  "Liberação concluída",
-                     "next_action":  "Manter evidência e acompanhar validade do acesso."
+                     "status":  "PENDENTE",
+                     "stage":  "Cadastro / mobilização",
+                     "current_responsibility":  "CLARO",
+                     "notes":  "Frota legal, depende da CLARO",
+                     "category":  "Mobilização/cadastro",
+                     "next_action":  "Avançar cadastro/mobilização com CLARO."
                  },
                  {
                      "id":  8,
@@ -377,10 +373,10 @@
                      "details":  "TRANSITO LEGAL",
                      "status":  "PENDENTE",
                      "stage":  "Cadastro / mobilização",
-                     "current_responsibility":  "EQS",
-                     "notes":  "Adicionar colaboradores no bancodoc e verificar validade da documentação com segurança do trabalho",
+                     "current_responsibility":  "CLARO",
+                     "notes":  "Frota legal, depende da CLARO",
                      "category":  "Mobilização/cadastro",
-                     "next_action":  "Avançar cadastro/mobilização com EQS."
+                     "next_action":  "Avançar cadastro/mobilização com CLARO."
                  },
                  {
                      "id":  9,
@@ -394,10 +390,10 @@
                      "company":  "SAMARCO",
                      "holder":  "Tbsa",
                      "details":  "",
-                     "status":  "EM TRATATIVA",
+                     "status":  "PENDENTE",
                      "stage":  "Levantamento documental",
                      "current_responsibility":  "EQS",
-                     "notes":  "Em preenchimento de formularios enviados pela TBSA",
+                     "notes":  "Em preenchimento de formularios e alinhamento com TBSA.",
                      "category":  "Documentação",
                      "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
                  },
@@ -511,7 +507,7 @@
                      "status":  "LIBERADO",
                      "stage":  "Liberado / acompanhar",
                      "current_responsibility":  "EQS",
-                     "notes":  "Liberado equipe energia / Pendente equipe zeladoria em processo de mobilização / Veiculo: agendamento selo de fumaça 22/06 e aguardando retorno gerente sobre CTM Roberto",
+                     "notes":  "Liberado equipe energia / Pendente equipe zeladoria em processo de mobilização / Veiculo: agendamento selo de fumaça até 20/07.",
                      "category":  "Liberação concluída",
                      "next_action":  "Manter evidência e acompanhar validade do acesso."
                  },
@@ -604,11 +600,11 @@
                      "holder":  "Claro",
                      "details":  "",
                      "status":  "EM TRATATIVA",
-                     "stage":  "Aguardando SMS",
-                     "current_responsibility":  "SMS",
-                     "notes":  "Documentação de integração sendo enviada via portal SG3. Aguardando regularização do PCMSO pela EQS engenharia.",
-                     "category":  "Documentação",
-                     "next_action":  "Acompanhar retorno de SMS e registrar próxima pendência."
+                     "stage":  "Enviado / em validação",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Documentação de integração sendo enviada via portal SG3, após revisões.",
+                     "category":  "Tratativa com detentora",
+                     "next_action":  "Atualizar responsável e próximo passo operacional."
                  },
                  {
                      "id":  21,
