@@ -1,19 +1,23 @@
 {
-    "generated_at":  "06/07/2026 14:00",
+    "generated_at":  "07/07/2026 14:11",
     "source_file":  "ACESSO PENDENCIAS.xlsx",
     "source_sheet":  "ACESSOS",
     "metrics":  {
-                    "total":  23,
+                    "total":  32,
                     "liberado":  6,
-                    "em_aberto":  17,
-                    "sem_status":  0,
-                    "percent_liberado":  26.1
+                    "em_aberto":  26,
+                    "sem_status":  9,
+                    "percent_liberado":  18.8
                 },
     "series":  {
                    "status":  [
                                   {
                                       "label":  "PENDENTE",
                                       "value":  11
+                                  },
+                                  {
+                                      "label":  "SEM STATUS",
+                                      "value":  9
                                   },
                                   {
                                       "label":  "LIBERADO",
@@ -32,6 +36,10 @@
                                    {
                                        "label":  "METROPOLITANO",
                                        "value":  13
+                                   },
+                                   {
+                                       "label":  "Sem informação",
+                                       "value":  9
                                    },
                                    {
                                        "label":  "BH",
@@ -57,6 +65,10 @@
                                   },
                                   {
                                       "label":  "Tbsa",
+                                      "value":  7
+                                  },
+                                  {
+                                      "label":  "Atc",
                                       "value":  5
                                   },
                                   {
@@ -64,12 +76,20 @@
                                       "value":  4
                                   },
                                   {
-                                      "label":  "Atc",
+                                      "label":  "Sba",
                                       "value":  3
                                   },
                                   {
-                                      "label":  "Sba",
+                                      "label":  "HIGHLINE",
                                       "value":  2
+                                  },
+                                  {
+                                      "label":  "Csn",
+                                      "value":  1
+                                  },
+                                  {
+                                      "label":  "Oi",
+                                      "value":  1
                                   },
                                   {
                                       "label":  "Qmc",
@@ -81,6 +101,10 @@
                                   }
                               ],
                    "company":  [
+                                   {
+                                       "label":  "Sem informação",
+                                       "value":  9
+                                   },
                                    {
                                        "label":  "ARCELOR MITTAL JM",
                                        "value":  2
@@ -173,7 +197,7 @@
                    "category":  [
                                     {
                                         "label":  "Documentação",
-                                        "value":  12
+                                        "value":  21
                                     },
                                     {
                                         "label":  "Liberação concluída",
@@ -192,6 +216,10 @@
                                  {
                                      "label":  "Levantamento documental",
                                      "value":  12
+                                 },
+                                 {
+                                     "label":  "Sem informação",
+                                     "value":  9
                                  },
                                  {
                                      "label":  "Liberado / acompanhar",
@@ -216,12 +244,12 @@
                                                       "value":  19
                                                   },
                                                   {
-                                                      "label":  "CLARO",
-                                                      "value":  3
+                                                      "label":  "Sem informação",
+                                                      "value":  10
                                                   },
                                                   {
-                                                      "label":  "Sem informação",
-                                                      "value":  1
+                                                      "label":  "CLARO",
+                                                      "value":  3
                                                   }
                                               ]
                },
@@ -662,6 +690,177 @@
                      "notes":  "Levantar documentação informada e entrar em contato com ATC john.andrade@americantower.com",
                      "category":  "Documentação",
                      "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                 },
+                 {
+                     "id":  24,
+                     "row":  33,
+                     "start":  "",
+                     "site":  "MGIBT05",
+                     "cluster":  "",
+                     "address":  "Rua Dois - 144 - Palmeiras - Proximo A Propriedade Da Copasa",
+                     "lat":  null,
+                     "lng":  null,
+                     "company":  "",
+                     "holder":  "Tbsa",
+                     "details":  "",
+                     "status":  "SEM STATUS",
+                     "stage":  "",
+                     "current_responsibility":  "",
+                     "notes":  "",
+                     "category":  "Documentação",
+                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                 },
+                 {
+                     "id":  25,
+                     "row":  34,
+                     "start":  "",
+                     "site":  "MGCEN3I",
+                     "cluster":  "",
+                     "address":  "Rua Dos Tamôios, S/N - Centro - Prédio HGA",
+                     "lat":  null,
+                     "lng":  null,
+                     "company":  "",
+                     "holder":  "HIGHLINE",
+                     "details":  "",
+                     "status":  "SEM STATUS",
+                     "stage":  "",
+                     "current_responsibility":  "",
+                     "notes":  "",
+                     "category":  "Documentação",
+                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                 },
+                 {
+                     "id":  26,
+                     "row":  35,
+                     "start":  "",
+                     "site":  "MGPAM16",
+                     "cluster":  "",
+                     "address":  "Rua Olinda Ferreira Lopes, 26 - Santa Amélia",
+                     "lat":  null,
+                     "lng":  null,
+                     "company":  "",
+                     "holder":  "Sba",
+                     "details":  "",
+                     "status":  "SEM STATUS",
+                     "stage":  "",
+                     "current_responsibility":  "",
+                     "notes":  "",
+                     "category":  "Documentação",
+                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                 },
+                 {
+                     "id":  27,
+                     "row":  36,
+                     "start":  "",
+                     "site":  "MGRAC03_001",
+                     "cluster":  "",
+                     "address":  "Via de Acesso Vargem Grande, S/N - Zona Rural",
+                     "lat":  null,
+                     "lng":  null,
+                     "company":  "",
+                     "holder":  "Csn",
+                     "details":  "",
+                     "status":  "SEM STATUS",
+                     "stage":  "",
+                     "current_responsibility":  "",
+                     "notes":  "",
+                     "category":  "Documentação",
+                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                 },
+                 {
+                     "id":  28,
+                     "row":  37,
+                     "start":  "",
+                     "site":  "MGBRT25",
+                     "cluster":  "",
+                     "address":  "Avenida Raja Gabaglia - 1686 - Gutierrez - Edificio Tuma",
+                     "lat":  null,
+                     "lng":  null,
+                     "company":  "",
+                     "holder":  "Tbsa",
+                     "details":  "",
+                     "status":  "SEM STATUS",
+                     "stage":  "",
+                     "current_responsibility":  "",
+                     "notes":  "",
+                     "category":  "Documentação",
+                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                 },
+                 {
+                     "id":  29,
+                     "row":  38,
+                     "start":  "",
+                     "site":  "MGBAR20",
+                     "cluster":  "",
+                     "address":  "Rua Do Minério, S/N - Milionários",
+                     "lat":  null,
+                     "lng":  null,
+                     "company":  "",
+                     "holder":  "Atc",
+                     "details":  "",
+                     "status":  "SEM STATUS",
+                     "stage":  "",
+                     "current_responsibility":  "",
+                     "notes":  "",
+                     "category":  "Documentação",
+                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                 },
+                 {
+                     "id":  30,
+                     "row":  39,
+                     "start":  "",
+                     "site":  "MGBRT48",
+                     "cluster":  "",
+                     "address":  "Rua Japão, 74 - Alto Barroca",
+                     "lat":  null,
+                     "lng":  null,
+                     "company":  "",
+                     "holder":  "HighLine",
+                     "details":  "",
+                     "status":  "SEM STATUS",
+                     "stage":  "",
+                     "current_responsibility":  "",
+                     "notes":  "",
+                     "category":  "Documentação",
+                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                 },
+                 {
+                     "id":  31,
+                     "row":  40,
+                     "start":  "",
+                     "site":  "MGLGS09",
+                     "cluster":  "",
+                     "address":  "Rua Das Árvores, 290 - Jardim Ipê",
+                     "lat":  null,
+                     "lng":  null,
+                     "company":  "",
+                     "holder":  "Atc",
+                     "details":  "",
+                     "status":  "SEM STATUS",
+                     "stage":  "",
+                     "current_responsibility":  "",
+                     "notes":  "",
+                     "category":  "Documentação",
+                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                 },
+                 {
+                     "id":  32,
+                     "row":  41,
+                     "start":  "",
+                     "site":  "MGOUP35",
+                     "cluster":  "",
+                     "address":  "Rua Itapecerica, 738 - Lagoinha",
+                     "lat":  null,
+                     "lng":  null,
+                     "company":  "",
+                     "holder":  "Oi",
+                     "details":  "",
+                     "status":  "SEM STATUS",
+                     "stage":  "",
+                     "current_responsibility":  "",
+                     "notes":  "",
+                     "category":  "Documentação",
+                     "next_action":  "Atualizar responsável e próximo passo operacional."
                  }
              ],
     "critical":  [
