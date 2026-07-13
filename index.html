@@ -16,8 +16,8 @@
       --font-ui: Aptos, "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
       --font-display: Bahnschrift, "DIN Condensed", "DIN Alternate", "Arial Narrow", Arial, sans-serif;
       --font-command: "Segoe UI Semibold", Aptos, "Segoe UI", system-ui, sans-serif;
-      --text-xs: .75rem;
-      --text-sm: .8125rem;
+      --text-xs: .875rem;
+      --text-sm: .9375rem;
       --text-md: .9375rem;
       --text-base: 1.0625rem;
       --text-lg: 1.1875rem;
@@ -54,7 +54,7 @@
       --shadow-tight: 0 4px 8px rgba(17, 24, 39, .06);
       --focus: 0 0 0 3px rgba(213, 43, 30, .22);
       --ease-out: cubic-bezier(.22, 1, .36, 1);
-      --presentation-zoom: 1;
+      --presentation-zoom: .825;
     }
 
     * { box-sizing: border-box; }
@@ -982,7 +982,7 @@
     .focus-row span {
       color: var(--muted);
       font-size: var(--text-xs);
-      line-height: 1.25;
+      line-height: 1.4;
     }
 
     .decision-count {
@@ -2248,6 +2248,7 @@
     #view-painel .decision-row span,
     #view-painel .focus-row span {
       color: var(--quiet);
+      line-height: 1.4;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
