@@ -5404,7 +5404,12 @@ let cursor = 0;
     }
 
     function validCoords(row) {
-      return Number.isFinite(row.lat) && Number.isFinite(row.lng);
+      return Number.isFinite(row.lat)
+        && Number.isFinite(row.lng)
+        && row.lat >= -90
+        && row.lat <= 90
+        && row.lng >= -180
+        && row.lng <= 180;
     }
 
     function dominantStatus(counts) {

@@ -196,6 +196,22 @@ try {
     return $null
   }
 
+  function Normalize-Coordinate {
+    param(
+      $Value,
+      [double]$MaxAbs
+    )
+
+    $number = Convert-OptionalDouble $Value
+    if ($null -eq $number) { return $null }
+
+    while ([math]::Abs($number) -gt $MaxAbs) {
+      $number = $number / 10
+    }
+
+    return $number
+  }
+
   $dataRows = @()
   foreach ($row in ($rows | Where-Object { [int]$_.r -gt [int]$headerRow.r })) {
     $cells = @{}
@@ -210,6 +226,8 @@ try {
     $stage = ([string]$cells[$headers["ETAPA"]]).Trim()
     $owner = ([string]$cells[$headers["RESPONSABILIDADE ATUAL"]]).Trim()
     $category = Get-Category $status $stage
+    $lat = Normalize-Coordinate -Value (Get-CellByHeader $cells $headers "LATITUDE") -MaxAbs 90
+    $lng = Normalize-Coordinate -Value (Get-CellByHeader $cells $headers "LONGITUDE") -MaxAbs 180
 
     $dataRows += [ordered]@{
       id = $dataRows.Count + 1
@@ -218,8 +236,8 @@ try {
       site = $site
       cluster = ([string]$cells[$headers["CLUSTER"]]).Trim()
       address = ([string]$cells[$headers["ENDERECO"]]).Trim()
-      lat = Convert-OptionalDouble (Get-CellByHeader $cells $headers "LATITUDE")
-      lng = Convert-OptionalDouble (Get-CellByHeader $cells $headers "LONGITUDE")
+      lat = $lat
+      lng = $lng
       company = ([string]$cells[$headers["EMPRESA"]]).Trim()
       holder = ([string]$cells[$headers["DETENTORA"]]).Trim()
       details = ([string]$cells[$headers["DETALHES PENDENCIA"]]).Trim()

@@ -1,5 +1,5 @@
 param(
-  [string]$WorkbookPath = "C:\Users\Claudius\OneDrive - EQS Engenharia Ltda\ACESSO PENDENCIAS.xlsx",
+  [string]$WorkbookPath = "C:\Users\Claudius\OneDrive - EQS Engenharia Ltda\(Claudius)\ACESSO\ACESSO PENDENCIAS.xlsx",
   [string]$Branch = "main",
   [string]$CommitMessage = "Atualiza dados do dashboard",
   [switch]$SkipGit,
@@ -98,12 +98,40 @@ function Resolve-WorkbookPath {
     return (Resolve-Path -LiteralPath $ExplicitPath).Path
   }
 
-  $candidate = Join-Path $env:USERPROFILE "OneDrive - EQS Engenharia Ltda\ACESSO PENDENCIAS.xlsx"
+  $candidate = Join-Path $env:USERPROFILE "OneDrive - EQS Engenharia Ltda\(Claudius)\ACESSO\ACESSO PENDENCIAS.xlsx"
   if (-not (Test-Path -LiteralPath $candidate)) {
     throw "Planilha nao encontrada: $candidate"
   }
 
   return (Resolve-Path -LiteralPath $candidate).Path
+}
+
+function Get-WorkingTreeChanges {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string]$GitPath
+  )
+
+  $previousErrorActionPreference = $ErrorActionPreference
+  $ErrorActionPreference = "Continue"
+  try {
+    $output = & $GitPath status --porcelain 2>&1
+    $exitCode = $LASTEXITCODE
+  } finally {
+    $ErrorActionPreference = $previousErrorActionPreference
+  }
+
+  if ($exitCode -ne 0) {
+    throw "Nao foi possivel consultar o status do Git."
+  }
+
+  $lines = @(
+    @($output) |
+      Where-Object { $null -ne $_ -and -not [string]::IsNullOrWhiteSpace([string]$_) } |
+      ForEach-Object { [string]$_ }
+  )
+
+  return $lines
 }
 
 try {
@@ -132,7 +160,15 @@ try {
   if (-not $SkipGit) {
     Invoke-LoggedCommand -FilePath $GitExe -Arguments @("fetch", "origin", $Branch) | Out-Null
     Invoke-LoggedCommand -FilePath $GitExe -Arguments @("checkout", $Branch) | Out-Null
-    Invoke-LoggedCommand -FilePath $GitExe -Arguments @("pull", "--rebase", "origin", $Branch) | Out-Null
+    $workingTreeChanges = Get-WorkingTreeChanges -GitPath $GitExe
+    if ($workingTreeChanges.Count -gt 0) {
+      Write-Log "Repositorio com alteracoes locais; pull --rebase sera ignorado para evitar travamento."
+      foreach ($change in $workingTreeChanges) {
+        Write-Log ("  ALTERADO: " + $change)
+      }
+    } else {
+      Invoke-LoggedCommand -FilePath $GitExe -Arguments @("pull", "--rebase", "origin", $Branch) | Out-Null
+    }
     Invoke-LoggedCommand -FilePath $GitExe -Arguments @("status", "--short", "--branch") | Out-Null
   }
 
