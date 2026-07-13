@@ -5643,7 +5643,7 @@ let cursor = 0;
         center: MAP_INITIAL_VIEW.center,
         zoom: MAP_INITIAL_VIEW.zoom,
         attributionControl: true,
-        cooperativeGestures: true
+        cooperativeGestures: false
       });
       mgMap.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), "top-right");
       mgMap.on("load", () => {
