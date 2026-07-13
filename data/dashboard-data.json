@@ -1,31 +1,27 @@
 {
-    "generated_at":  "10/07/2026 14:00",
+    "generated_at":  "13/07/2026 11:19",
     "source_file":  "ACESSO PENDENCIAS.xlsx",
     "source_sheet":  "ACESSOS",
     "metrics":  {
                     "total":  32,
-                    "liberado":  6,
-                    "em_aberto":  26,
-                    "sem_status":  9,
-                    "percent_liberado":  18.8
+                    "liberado":  10,
+                    "em_aberto":  22,
+                    "sem_status":  0,
+                    "percent_liberado":  31.2
                 },
     "series":  {
                    "status":  [
                                   {
                                       "label":  "PENDENTE",
-                                      "value":  11
-                                  },
-                                  {
-                                      "label":  "SEM STATUS",
-                                      "value":  9
+                                      "value":  14
                                   },
                                   {
                                       "label":  "LIBERADO",
-                                      "value":  6
+                                      "value":  10
                                   },
                                   {
                                       "label":  "EM TRATATIVA",
-                                      "value":  3
+                                      "value":  5
                                   },
                                   {
                                       "label":  "LEVANTAMENTO DE DOCUMENTOS",
@@ -34,16 +30,12 @@
                               ],
                    "cluster":  [
                                    {
+                                       "label":  "BH",
+                                       "value":  15
+                                   },
+                                   {
                                        "label":  "METROPOLITANO",
                                        "value":  13
-                                   },
-                                   {
-                                       "label":  "Sem informação",
-                                       "value":  9
-                                   },
-                                   {
-                                       "label":  "BH",
-                                       "value":  6
                                    },
                                    {
                                        "label":  "OESTE",
@@ -102,12 +94,12 @@
                               ],
                    "company":  [
                                    {
-                                       "label":  "Sem informação",
-                                       "value":  9
-                                   },
-                                   {
                                        "label":  "ARCELOR MITTAL JM",
                                        "value":  2
+                                   },
+                                   {
+                                       "label":  "Sem informação",
+                                       "value":  1
                                    },
                                    {
                                        "label":  "ANGLO AMERICAN",
@@ -138,6 +130,30 @@
                                        "value":  1
                                    },
                                    {
+                                       "label":  "DETENTORA AMERICAN TOWER",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "DETENTORA ATC",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "DETENTORA HIGHLINE",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "DETENTORA OI",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "DETENTORA SBA",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "EDIFICIO TUMA",
+                                       "value":  1
+                                   },
+                                   {
                                        "label":  "GERDAU MIGUEL BURNIER",
                                        "value":  1
                                    },
@@ -158,6 +174,10 @@
                                        "value":  1
                                    },
                                    {
+                                       "label":  "MINERADORA",
+                                       "value":  1
+                                   },
+                                   {
                                        "label":  "NESTLÉ",
                                        "value":  1
                                    },
@@ -167,6 +187,10 @@
                                    },
                                    {
                                        "label":  "PALÁCIO DO GOVERNO",
+                                       "value":  1
+                                   },
+                                   {
+                                       "label":  "PREDIO HGA",
                                        "value":  1
                                    },
                                    {
@@ -197,19 +221,19 @@
                    "category":  [
                                     {
                                         "label":  "Documentação",
-                                        "value":  21
+                                        "value":  14
                                     },
                                     {
                                         "label":  "Liberação concluída",
-                                        "value":  6
-                                    },
-                                    {
-                                        "label":  "Tratativa com detentora",
-                                        "value":  3
+                                        "value":  10
                                     },
                                     {
                                         "label":  "Mobilização/cadastro",
-                                        "value":  2
+                                        "value":  4
+                                    },
+                                    {
+                                        "label":  "Tratativa com detentora",
+                                        "value":  4
                                     }
                                 ],
                    "stage":  [
@@ -218,19 +242,19 @@
                                      "value":  12
                                  },
                                  {
-                                     "label":  "Sem informação",
-                                     "value":  9
-                                 },
-                                 {
                                      "label":  "Liberado / acompanhar",
-                                     "value":  6
-                                 },
-                                 {
-                                     "label":  "Aguardando retorno",
-                                     "value":  2
+                                     "value":  10
                                  },
                                  {
                                      "label":  "Cadastro / mobilização",
+                                     "value":  4
+                                 },
+                                 {
+                                     "label":  "Aguardando retorno",
+                                     "value":  3
+                                 },
+                                 {
+                                     "label":  "Regularização documental",
                                      "value":  2
                                  },
                                  {
@@ -241,14 +265,14 @@
                    "current_responsibility":  [
                                                   {
                                                       "label":  "EQS",
-                                                      "value":  19
-                                                  },
-                                                  {
-                                                      "label":  "Sem informação",
-                                                      "value":  10
+                                                      "value":  24
                                                   },
                                                   {
                                                       "label":  "CLARO",
+                                                      "value":  5
+                                                  },
+                                                  {
+                                                      "label":  "Sem informação",
                                                       "value":  3
                                                   }
                                               ]
@@ -693,177 +717,234 @@
                  },
                  {
                      "id":  24,
-                     "row":  33,
+                     "row":  28,
                      "start":  "",
                      "site":  "MGIBT05",
-                     "cluster":  "",
+                     "cluster":  "BH",
                      "address":  "Rua Dois - 144 - Palmeiras - Proximo A Propriedade Da Copasa",
-                     "lat":  null,
-                     "lng":  null,
+                     "lat":  -199764,
+                     "lng":  -440737,
                      "company":  "",
                      "holder":  "Tbsa",
                      "details":  "",
-                     "status":  "SEM STATUS",
-                     "stage":  "",
-                     "current_responsibility":  "",
-                     "notes":  "",
-                     "category":  "Documentação",
-                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                     "status":  "LIBERADO",
+                     "stage":  "Liberado / acompanhar",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Portão e gradil Chave AN1, QTM padrão CLARO",
+                     "category":  "Liberação concluída",
+                     "next_action":  "Manter evidência e acompanhar validade do acesso."
                  },
                  {
                      "id":  25,
-                     "row":  34,
+                     "row":  29,
                      "start":  "",
                      "site":  "MGCEN3I",
-                     "cluster":  "",
+                     "cluster":  "BH",
                      "address":  "Rua Dos Tamôios, S/N - Centro - Prédio HGA",
-                     "lat":  null,
-                     "lng":  null,
-                     "company":  "",
+                     "lat":  -199204,
+                     "lng":  -439391,
+                     "company":  "PREDIO HGA",
                      "holder":  "HIGHLINE",
                      "details":  "",
-                     "status":  "SEM STATUS",
-                     "stage":  "",
-                     "current_responsibility":  "",
-                     "notes":  "",
-                     "category":  "Documentação",
-                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                     "status":  "EM TRATATIVA",
+                     "stage":  "Cadastro / mobilização",
+                     "current_responsibility":  "CLARO",
+                     "notes":  "Enviar lista atualizada colaboradores CGS OI.",
+                     "category":  "Mobilização/cadastro",
+                     "next_action":  "Avançar cadastro/mobilização com CLARO."
                  },
                  {
                      "id":  26,
-                     "row":  35,
+                     "row":  30,
                      "start":  "",
                      "site":  "MGPAM16",
-                     "cluster":  "",
+                     "cluster":  "BH",
                      "address":  "Rua Olinda Ferreira Lopes, 26 - Santa Amélia",
-                     "lat":  null,
-                     "lng":  null,
-                     "company":  "",
+                     "lat":  -1983911,
+                     "lng":  -4397533,
+                     "company":  "DETENTORA SBA",
                      "holder":  "Sba",
                      "details":  "",
-                     "status":  "SEM STATUS",
-                     "stage":  "",
-                     "current_responsibility":  "",
-                     "notes":  "",
+                     "status":  "PENDENTE",
+                     "stage":  "Regularização documental",
+                     "current_responsibility":  "CLARO",
+                     "notes":  "Restrição juridica, falta de pagamento locação SBA",
                      "category":  "Documentação",
-                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                     "next_action":  "Concluir checklist documental com CLARO e reenviar para validação."
                  },
                  {
                      "id":  27,
-                     "row":  36,
+                     "row":  31,
                      "start":  "",
                      "site":  "MGRAC03_001",
-                     "cluster":  "",
+                     "cluster":  "BH",
                      "address":  "Via de Acesso Vargem Grande, S/N - Zona Rural",
-                     "lat":  null,
-                     "lng":  null,
-                     "company":  "",
+                     "lat":  -20185,
+                     "lng":  -43857877,
+                     "company":  "MINERADORA",
                      "holder":  "Csn",
                      "details":  "",
-                     "status":  "SEM STATUS",
-                     "stage":  "",
-                     "current_responsibility":  "",
-                     "notes":  "",
-                     "category":  "Documentação",
-                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                     "status":  "PENDENTE",
+                     "stage":  "Aguardando retorno",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Colaborador irá ao local para realizar levantamento dos procedimentos para acesso dia 17/07.",
+                     "category":  "Tratativa com detentora",
+                     "next_action":  "Reforçar contato com EQS e registrar retorno."
                  },
                  {
                      "id":  28,
-                     "row":  37,
+                     "row":  32,
                      "start":  "",
                      "site":  "MGBRT25",
-                     "cluster":  "",
+                     "cluster":  "BH",
                      "address":  "Avenida Raja Gabaglia - 1686 - Gutierrez - Edificio Tuma",
-                     "lat":  null,
-                     "lng":  null,
-                     "company":  "",
+                     "lat":  -199489,
+                     "lng":  -439613,
+                     "company":  "EDIFICIO TUMA",
                      "holder":  "Tbsa",
                      "details":  "",
-                     "status":  "SEM STATUS",
-                     "stage":  "",
+                     "status":  "PENDENTE",
+                     "stage":  "Regularização documental",
                      "current_responsibility":  "",
-                     "notes":  "",
+                     "notes":  "Restrição juridica, falta de pagamento locação TBSA",
                      "category":  "Documentação",
-                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                     "next_action":  "Concluir checklist documental e reenviar para validação."
                  },
                  {
                      "id":  29,
-                     "row":  38,
+                     "row":  33,
                      "start":  "",
                      "site":  "MGBAR20",
-                     "cluster":  "",
+                     "cluster":  "BH",
                      "address":  "Rua Do Minério, S/N - Milionários",
-                     "lat":  null,
-                     "lng":  null,
-                     "company":  "",
+                     "lat":  -19974084,
+                     "lng":  -44002871,
+                     "company":  "DETENTORA AMERICAN TOWER",
                      "holder":  "Atc",
                      "details":  "",
-                     "status":  "SEM STATUS",
-                     "stage":  "",
+                     "status":  "LIBERADO",
+                     "stage":  "Liberado / acompanhar",
                      "current_responsibility":  "",
-                     "notes":  "",
-                     "category":  "Documentação",
-                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                     "notes":  "liberado, acompanhar, detentora American Tower",
+                     "category":  "Liberação concluída",
+                     "next_action":  "Manter evidência e acompanhar validade do acesso."
                  },
                  {
                      "id":  30,
-                     "row":  39,
+                     "row":  34,
                      "start":  "",
                      "site":  "MGBRT48",
-                     "cluster":  "",
+                     "cluster":  "BH",
                      "address":  "Rua Japão, 74 - Alto Barroca",
-                     "lat":  null,
-                     "lng":  null,
-                     "company":  "",
+                     "lat":  -19931944,
+                     "lng":  -43966944,
+                     "company":  "DETENTORA HIGHLINE",
                      "holder":  "HighLine",
                      "details":  "",
-                     "status":  "SEM STATUS",
-                     "stage":  "",
-                     "current_responsibility":  "",
-                     "notes":  "",
-                     "category":  "Documentação",
-                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                     "status":  "LIBERADO",
+                     "stage":  "Liberado / acompanhar",
+                     "current_responsibility":  "EQS",
+                     "notes":  "liberação mediante envio carta comodato V10 enviada ao Filipe Claro",
+                     "category":  "Liberação concluída",
+                     "next_action":  "Manter evidência e acompanhar validade do acesso."
                  },
                  {
                      "id":  31,
-                     "row":  40,
+                     "row":  35,
                      "start":  "",
                      "site":  "MGLGS09",
-                     "cluster":  "",
+                     "cluster":  "BH",
                      "address":  "Rua Das Árvores, 290 - Jardim Ipê",
-                     "lat":  null,
-                     "lng":  null,
-                     "company":  "",
+                     "lat":  -1965583,
+                     "lng":  -4391306,
+                     "company":  "DETENTORA ATC",
                      "holder":  "Atc",
                      "details":  "",
-                     "status":  "SEM STATUS",
-                     "stage":  "",
-                     "current_responsibility":  "",
-                     "notes":  "",
-                     "category":  "Documentação",
-                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                     "status":  "LIBERADO",
+                     "stage":  "Liberado / acompanhar",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Realizar acesso via contato NOC ATC.",
+                     "category":  "Liberação concluída",
+                     "next_action":  "Manter evidência e acompanhar validade do acesso."
                  },
                  {
                      "id":  32,
-                     "row":  41,
+                     "row":  36,
                      "start":  "",
                      "site":  "MGOUP35",
-                     "cluster":  "",
+                     "cluster":  "BH",
                      "address":  "Rua Itapecerica, 738 - Lagoinha",
-                     "lat":  null,
-                     "lng":  null,
-                     "company":  "",
+                     "lat":  -19907397,
+                     "lng":  -43945302,
+                     "company":  "DETENTORA OI",
                      "holder":  "Oi",
                      "details":  "",
-                     "status":  "SEM STATUS",
-                     "stage":  "",
-                     "current_responsibility":  "",
-                     "notes":  "",
-                     "category":  "Documentação",
-                     "next_action":  "Atualizar responsável e próximo passo operacional."
+                     "status":  "EM TRATATIVA",
+                     "stage":  "Cadastro / mobilização",
+                     "current_responsibility":  "EQS",
+                     "notes":  "Acesso mediante agendamento com sindico.",
+                     "category":  "Mobilização/cadastro",
+                     "next_action":  "Avançar cadastro/mobilização com EQS."
                  }
              ],
     "critical":  [
+                     {
+                         "id":  21,
+                         "row":  25,
+                         "start":  "",
+                         "site":  "MGVAR25",
+                         "cluster":  "SUL",
+                         "address":  "Avenida Manoel Vida, 1000 - Industrial JK",
+                         "lat":  -21.587892,
+                         "lng":  -45.448986,
+                         "company":  "COOPER STANDARD",
+                         "holder":  "Sba",
+                         "details":  "",
+                         "status":  "EM TRATATIVA",
+                         "stage":  "Levantamento documental",
+                         "current_responsibility":  "EQS",
+                         "notes":  "Levantamento de documentação junto a equipe, assim que documentação ok, será enviado via email para tatiana.Barbara@cooperstandard.com",
+                         "category":  "Documentação",
+                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                     },
+                     {
+                         "id":  22,
+                         "row":  26,
+                         "start":  "",
+                         "site":  "MGIPGI2",
+                         "cluster":  "LESTE",
+                         "address":  "Rua Kiyoshi Tsunawaki 41 - Das Águas - Hospital Mario Cunha",
+                         "lat":  -19.496736,
+                         "lng":  -42.53847,
+                         "company":  "HOSPITAL MARIO CUNHA",
+                         "holder":  "Claro",
+                         "details":  "",
+                         "status":  "LEVANTAMENTO DE DOCUMENTOS",
+                         "stage":  "Levantamento documental",
+                         "current_responsibility":  "EQS",
+                         "notes":  "Levantamento de documentação para iniciar ambientação ao hospital.",
+                         "category":  "Documentação",
+                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                     },
+                     {
+                         "id":  20,
+                         "row":  24,
+                         "start":  "",
+                         "site":  "MGCOW31",
+                         "cluster":  "BH",
+                         "address":  "Rodovia BR 040 Km 572, 233 - Distrito Industrial (Spal - Industria Brasileira de Bebidas",
+                         "lat":  -20.23333,
+                         "lng":  -43.96756,
+                         "company":  "COCA-COLA",
+                         "holder":  "Claro",
+                         "details":  "",
+                         "status":  "EM TRATATIVA",
+                         "stage":  "Enviado / em validação",
+                         "current_responsibility":  "EQS",
+                         "notes":  "Documentação de integração sendo enviada via portal SG3, após revisões.",
+                         "category":  "Tratativa com detentora",
+                         "next_action":  "Atualizar responsável e próximo passo operacional."
+                     },
                      {
                          "id":  16,
                          "row":  20,
@@ -903,80 +984,23 @@
                          "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
                      },
                      {
-                         "id":  13,
-                         "row":  17,
+                         "id":  27,
+                         "row":  31,
                          "start":  "",
-                         "site":  "MGITA09",
-                         "cluster":  "METROPOLITANO",
-                         "address":  "Rodovia Mg 050 - Km 61 - Zona Rural - Arcelor Mittal / Faz Dos Coelhos",
-                         "lat":  -20.069125,
-                         "lng":  -44.662082,
-                         "company":  "ARCELOR MITTAL ITAÚNA",
-                         "holder":  "Tbsa",
-                         "details":  "",
-                         "status":  "PENDENTE",
-                         "stage":  "Levantamento documental",
-                         "current_responsibility":  "EQS",
-                         "notes":  "Verificar documentação necessaria e dar start",
-                         "category":  "Documentação",
-                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
-                     },
-                     {
-                         "id":  14,
-                         "row":  18,
-                         "start":  "",
-                         "site":  "MGARC02",
-                         "cluster":  "METROPOLITANO",
-                         "address":  "Rodovia Mg 170 - Km 70 - Zona Rural - Csn - Silo De Farinha",
-                         "lat":  -20.31231,
-                         "lng":  -45.58585,
-                         "company":  "CSN - ARCOS",
-                         "holder":  "Claro",
-                         "details":  "",
-                         "status":  "PENDENTE",
-                         "stage":  "Levantamento documental",
-                         "current_responsibility":  "EQS",
-                         "notes":  "Processo antigo, atualizar documentação e verificar se a mudanças nas equipes.",
-                         "category":  "Documentação",
-                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
-                     },
-                     {
-                         "id":  22,
-                         "row":  26,
-                         "start":  "",
-                         "site":  "MGIPGI2",
-                         "cluster":  "LESTE",
-                         "address":  "Rua Kiyoshi Tsunawaki 41 - Das Águas - Hospital Mario Cunha",
-                         "lat":  -19.496736,
-                         "lng":  -42.53847,
-                         "company":  "HOSPITAL MARIO CUNHA",
-                         "holder":  "Claro",
-                         "details":  "",
-                         "status":  "LEVANTAMENTO DE DOCUMENTOS",
-                         "stage":  "Levantamento documental",
-                         "current_responsibility":  "EQS",
-                         "notes":  "Levantamento de documentação para iniciar ambientação ao hospital.",
-                         "category":  "Documentação",
-                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
-                     },
-                     {
-                         "id":  23,
-                         "row":  27,
-                         "start":  "26/06/2026",
-                         "site":  "MGDCAI3",
+                         "site":  "MGRAC03_001",
                          "cluster":  "BH",
-                         "address":  "Rua Cristina Maria de Assis, 202 - Califórnia",
-                         "lat":  -19.930084,
-                         "lng":  -44.014021,
-                         "company":  "ARENA MRV",
-                         "holder":  "Atc",
+                         "address":  "Via de Acesso Vargem Grande, S/N - Zona Rural",
+                         "lat":  -20185,
+                         "lng":  -43857877,
+                         "company":  "MINERADORA",
+                         "holder":  "Csn",
                          "details":  "",
-                         "status":  "LEVANTAMENTO DE DOCUMENTOS",
-                         "stage":  "Levantamento documental",
+                         "status":  "PENDENTE",
+                         "stage":  "Aguardando retorno",
                          "current_responsibility":  "EQS",
-                         "notes":  "Levantar documentação informada e entrar em contato com ATC john.andrade@americantower.com",
-                         "category":  "Documentação",
-                         "next_action":  "Concluir checklist documental com EQS e reenviar para validação."
+                         "notes":  "Colaborador irá ao local para realizar levantamento dos procedimentos para acesso dia 17/07.",
+                         "category":  "Tratativa com detentora",
+                         "next_action":  "Reforçar contato com EQS e registrar retorno."
                      }
                  ],
     "details":  {
