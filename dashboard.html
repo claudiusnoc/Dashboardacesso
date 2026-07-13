@@ -4698,6 +4698,14 @@
       return String(value || "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     }
 
+    function sitePrimary(row) {
+      return row.site || row.company || "Sem identificação";
+    }
+
+    function siteSecondary(row, tail = "") {
+      return [row.company, tail].filter(Boolean).join(" · ");
+    }
+
     function emptyState(title, detail, actionLabel = "") {
       return `<div class="empty" role="status">
         <strong>${esc(title)}</strong>
@@ -5040,7 +5048,7 @@ let cursor = 0;
         <div class="doc-group"><h3>Tratativas em destaque</h3>
         ${critical.map(row => `<div class="doc">
           <div class="doc-ico">#</div>
-          <div><strong>${esc(row.company)}</strong><span>${esc(row.site)} · ${esc(row.notes || row.details || "Sem observação detalhada")}</span></div>
+          <div><strong>${esc(sitePrimary(row))}</strong><span>${esc(siteSecondary(row, row.notes || row.details || "Sem observação detalhada"))}</span></div>
           <span class="pill ${statusClass(row.status)}">${esc(row.status)}</span>
         </div>`).join("")}</div>` : emptyState("Sem tratativas críticas", "O filtro atual não contém casos destacados.");
     }
@@ -5083,7 +5091,7 @@ let cursor = 0;
       }).slice(0, 6);
       const actionText = row => lens === "LIBERADO" ? "Acesso confirmado; manter evidencia atualizada." : row.next_action;
       $("focusSites").innerHTML = focus.length ? focus.map((row, i) => `<div class="focus-row" style="--i:${i}">
-        <div><strong>${esc(row.company)}</strong><span>${esc(row.site)} · ${esc(actionText(row))}</span></div>
+        <div><strong>${esc(sitePrimary(row))}</strong><span>${esc(siteSecondary(row, actionText(row)))}</span></div>
         <span class="pill ${statusClass(row.status)}">${esc(row.status)}</span>
       </div>`).join("") : emptyState("Sem sites no recorte", "Revise filtro de status ou busca para ampliar a lista.");
     }
@@ -5247,7 +5255,7 @@ let cursor = 0;
         tr.classList.toggle("is-expanded", expanded);
         tr.style.setProperty("--owner-color", ownerConfig.color);
         if (demandCell) {
-          demandCell.innerHTML = `<strong>${esc(row.company)}</strong><span><span class="site-code" title="${esc(row.site)}">${esc(row.site)}</span> · ${esc(row.cluster)} · ${esc(row.holder || "Sem detentora")}</span>`;
+          demandCell.innerHTML = `<strong>${esc(sitePrimary(row))}</strong><span>${esc(siteSecondary(row, [row.cluster, row.holder || "Sem detentora"].filter(Boolean).join(" · ")))}</span>`;
         }
         if (actionCell) {
           actionCell.innerHTML = `<button type="button" class="action-text" data-operational-expand="${esc(row.id)}" aria-expanded="${expanded ? "true" : "false"}"><strong>${esc(row.next_action)}</strong>${support ? `<span>${esc(support)}</span>` : ""}</button>`;
@@ -5273,7 +5281,7 @@ let cursor = 0;
         const support = [row.notes, row.details].filter(Boolean).join(" | ");
         const ownerConfig = OPERATIONAL_OWNERS[row.owner] || OPERATIONAL_OWNERS[""];
         return `<tr style="--owner-color:${ownerConfig.color}">
-          <td class="company-cell demand-cell" data-label="Demanda"><strong>${esc(row.company)}</strong><span><span class="site-code" title="${esc(row.site)}">${esc(row.site)}</span> · ${esc(row.cluster)} · ${esc(row.holder || "Sem detentora")}</span></td>
+          <td class="company-cell demand-cell" data-label="Demanda"><strong>${esc(sitePrimary(row))}</strong><span>${esc(siteSecondary(row, [row.cluster, row.holder || "Sem detentora"].filter(Boolean).join(" · ")))}</span></td>
           <td class="owner-cell" data-label="Com quem está"><span class="owner-badge"><i class="owner-dot"></i><span>${esc(ownerConfig.label)}</span></span></td>
           <td class="stage-cell" data-label="Etapa"><div class="stage-track"><strong>${esc(row.stage.label)}</strong><div class="stage-steps" aria-hidden="true">${stageSteps(row.stage)}</div></div></td>
           <td class="age-cell" data-label="Tempo"><span class="age-pill">${esc(ageLabel(row))}</span></td>
