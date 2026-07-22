@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Portal de Acessos">
+  <defs>
+    <linearGradient id="surface" x1="8" y1="6" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1e3150"/>
+      <stop offset="1" stop-color="#101b2f"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#surface)"/>
+  <rect x="13" y="15" width="38" height="34" rx="9" fill="#f8fafc"/>
+  <path d="M13 24a9 9 0 0 1 9-9h1v34h-1a9 9 0 0 1-9-9z" fill="#e4231f"/>
+  <path d="M13 35h10v14h-1a9 9 0 0 1-9-9z" fill="#2f62aa"/>
+  <circle cx="37" cy="30" r="5" fill="#17243b"/>
+  <path d="M34.8 34h4.4l1.5 8h-7.4z" fill="#17243b"/>
+</svg>
