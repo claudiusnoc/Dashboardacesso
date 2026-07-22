@@ -1,0 +1,36 @@
+{
+  "name": "portal-acessos-claro-mg",
+  "private": true,
+  "version": "0.2.0",
+  "description": "Portal interno para gestao de acessos a sites da Claro em Minas Gerais.",
+  "homepage": "https://claudiusnoc.github.io/Dashboardacesso/",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/create-spa-fallback.mjs",
+    "preview": "vite preview",
+    "import:employees": "python scripts/import-funcionarios.py",
+    "load:employees": "node scripts/load-collaborators.mjs",
+    "check:employees": "node scripts/verify-collaborators.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@fontsource-variable/archivo": "^5.2.8",
+    "@fontsource/barlow": "^5.2.8",
+    "@supabase/supabase-js": "^2.52.1",
+    "lucide-react": "^0.468.0",
+    "maplibre-gl": "^5.24.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.1.1",
+    "recharts": "^3.9.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "prettier": "^3.9.5",
+    "supabase": "^2.109.1",
+    "vite": "^6.0.7"
+  }
+}

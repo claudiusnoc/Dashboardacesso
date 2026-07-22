@@ -1,3 +1,17 @@
 *.xlsx
 ~$*.xlsx
 logs/
+.env
+.env.local
+dist/
+node_modules/
+.vite/
+data/import/*.json
+scripts/__pycache__/
+supabase/.temp/
+.playwright-cli/
+output/playwright/
+
+# Artefatos locais de exploração visual e referência
+design-previews/
+documentacao-patronal-*.png

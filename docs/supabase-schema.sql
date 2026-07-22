@@ -1,0 +1,2 @@
+-- Schema legado substituido por migrations versionadas.
+-- Aplique, em ordem, os arquivos de supabase/migrations/.

@@ -1,0 +1,26 @@
+project_id = "claro-acessos-mg"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+
+[db]
+port = 54322
+major_version = 15
+
+[auth]
+enabled = true
+site_url = "https://claudiusnoc.github.io/Dashboardacesso/"
+additional_redirect_urls = [
+  "http://localhost:5177",
+  "http://127.0.0.1:5177",
+  "https://claudiusnoc.github.io/Dashboardacesso/",
+  "https://claudiusnoc.github.io/Dashboardacesso/casos",
+]
+enable_signup = false
+
+[storage]
+enabled = true
+file_size_limit = "25MiB"
