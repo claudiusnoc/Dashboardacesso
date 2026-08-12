@@ -118,14 +118,19 @@ export default function CaseDocumentationPanel({
     async function loadDocuments() {
       setLoading((current) => current || documents.length === 0);
       setMessage("");
-      const { data, error } = await supabase
-        .from("case_documents")
-        .select(
-          "id,collaborator_id,requirement_id,name,status,due_date,evidence_note,updated_at,requirement:document_requirements(category,description)",
-        )
-        .eq("case_id", caseId)
-        .eq("document_scope", "collaborator")
-        .order("name");
+      const result = isOperation
+        ? await supabase
+            .from("case_documents")
+            .select(
+              "id,collaborator_id,requirement_id,name,status,due_date,evidence_note,updated_at,requirement:document_requirements(category,description)",
+            )
+            .eq("case_id", caseId)
+            .eq("document_scope", "collaborator")
+            .order("name")
+        : await supabase.rpc("get_case_collaborator_documents_safe", {
+            p_case_id: caseId,
+          });
+      const { data, error } = result;
 
       if (!active) return;
       setLoading(false);
@@ -133,28 +138,44 @@ export default function CaseDocumentationPanel({
         setMessage(error.message);
         return;
       }
-      setDocuments(data || []);
+      setDocuments(
+        isOperation
+          ? data || []
+          : (data || []).map((document) => ({
+              ...document,
+              collaborator_name: document.collaborator_name || "Nome nao informado",
+              collaborator_cpf_masked: document.collaborator_cpf_masked || "***.***.***-**",
+              requirement: {
+                category: document.category,
+                description: document.requirement_description,
+              },
+            })),
+      );
     }
 
     loadDocuments();
     return () => {
       active = false;
     };
-  }, [caseId, refreshKey]);
+  }, [caseId, isOperation, refreshKey]);
 
   const panelCollaborators = useMemo(() => {
-    if (collaborators.length) return collaborators;
-    if (!isOperation && documents.length) {
-      return [
-        {
-          id: "visible-documents",
-          full_name: "Documentos disponibilizados",
-          cpf: "",
-          city: "",
-        },
-      ];
-    }
-    return [];
+    if (isOperation) return collaborators;
+    const people = new Map(
+      collaborators.map((person) => [person.id, person]),
+    );
+    documents.forEach((document) => {
+      if (!document.collaborator_id || people.has(document.collaborator_id)) {
+        return;
+      }
+      people.set(document.collaborator_id, {
+        id: document.collaborator_id,
+        full_name: document.collaborator_name || "Nome nao informado",
+        cpf: document.collaborator_cpf_masked || "***.***.***-**",
+        city: "",
+      });
+    });
+    return Array.from(people.values());
   }, [collaborators, documents, isOperation]);
 
   useEffect(() => {
@@ -177,17 +198,14 @@ export default function CaseDocumentationPanel({
 
   const documentsByPerson = useMemo(() => {
     const groups = new Map();
-    if (!collaborators.length && !isOperation && documents.length) {
-      groups.set("visible-documents", documents);
-      return groups;
-    }
     documents.forEach((document) => {
-      const key = document.collaborator_id || "case";
+      const key = document.collaborator_id;
+      if (!key) return;
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key).push(document);
     });
     return groups;
-  }, [collaborators.length, documents, isOperation]);
+  }, [documents]);
 
   const visibleCollaborators = useMemo(() => {
     const term = query.trim().toLocaleLowerCase("pt-BR");

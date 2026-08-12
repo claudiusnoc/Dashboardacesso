@@ -16,19 +16,40 @@ O portal aceita somente estes domínios:
 
 A validação no frontend orienta o usuário. A autorização real permanece no Supabase, por meio do perfil, das políticas RLS, das funções e das regras de Storage.
 
-O link mágico usa `shouldCreateUser: false`, impedindo a criação automática de contas a partir da tela de login.
+O link mágico usa `shouldCreateUser: true`: um e-mail de domínio autorizado
+recebe o link, confirma a posse da caixa de entrada e a conta é criada
+automaticamente. O gatilho de `auth.users` recusa qualquer domínio fora da
+lista, então o auto-cadastro continua restrito aos domínios corporativos.
 
 ## Papéis de acesso
 
-Novos perfis devem começar como `cliente_claro`. Promova manualmente apenas operadores EQS autorizados:
+O papel é atribuído automaticamente pelo domínio do e-mail:
 
-```sql
-update public.app_users
-set role = 'operacao_eqs'
-where email = 'nome@eqsengenharia.com.br';
-```
+- `@eqsengenharia.com.br` → `operacao_eqs` (acesso total: casos, sites, colaboradores e documentos)
+- `@claro.com.br` → `cliente_claro` (consulta autorizada, sem ações operacionais)
 
-Não conceda `operacao_eqs` automaticamente a todo o domínio. Esse papel permite alterar casos, sites, colaboradores e documentos.
+O papel `operacao_eqs` permite alterar casos, sites, colaboradores e
+documentos. A atribuição automática por domínio é a política atual do portal;
+ajustes pontuais continuam possíveis via SQL no Supabase.
+
+## Criar senha após o primeiro acesso
+
+O primeiro acesso é feito pelo link mágico, que comprova a posse do e-mail.
+Depois de entrar, o portal oferece a etapa **Defina sua senha**:
+
+1. O usuário informa a nova senha e a confirmação.
+2. O frontend valida a política: mínimo de 8 caracteres, com letras e números.
+3. A senha é gravada na identidade Auth com `supabase.auth.updateUser`.
+4. Nas próximas entradas, o usuário pode usar **Login + Senha** diretamente.
+
+O lembrete aparece uma vez por sessão e pode ser dispensado; a opção
+**Definir senha** permanece disponível na barra lateral enquanto o usuário não
+definir uma senha. O portal consulta a existência de senha pela função
+`public.current_user_has_password()`, que lê `auth.users` com `security definer`
+e devolve apenas um booleano ao frontend.
+
+Para reforçar a política no servidor, mantenha o tamanho mínimo de senha em 8
+caracteres em **Authentication > Providers > Email** do projeto hospedado.
 
 ## Configuração no Supabase hospedado
 

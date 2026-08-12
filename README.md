@@ -163,9 +163,10 @@ O repositório precisa ter estas variáveis configuradas em **Settings > Secrets
 
 ## Segurança
 
-- Cadastros públicos ficam desabilitados; o login usa `shouldCreateUser: false`.
-- Apenas e-mails corporativos permitidos podem receber perfil válido.
-- O papel `operacao_eqs` deve ser concedido manualmente e somente a responsáveis autorizados.
+- O link mágico provisiona automaticamente contas para e-mails corporativos autorizados (`shouldCreateUser: true`).
+- O papel é atribuído pelo domínio: `@eqsengenharia.com.br` vira `operacao_eqs` (acesso total) e `@claro.com.br` vira `cliente_claro` (consulta autorizada).
+- Domínios fora da lista são recusados no banco pelo gatilho de criação de usuário.
+- Após o primeiro acesso por link mágico, o usuário define uma senha própria e pode entrar com login e senha.
 - A chave pública do Supabase não substitui RLS: políticas e funções do banco são a barreira de autorização.
 - Documentos ficam em bucket privado, com acesso controlado.
 - Arquivos `.env*`, artefatos de build e dados temporários de importação são ignorados pelo Git.

@@ -11099,3 +11099,271 @@ textarea {
     animation: none !important;
   }
 }
+
+/* Modo teste de visualizacao ------------------------------------------- */
+.sidebar .sidebar-test-view {
+  width: 48px;
+  flex: 0 0 auto;
+  display: grid;
+  gap: 4px;
+  margin-top: 14px;
+  overflow: hidden;
+  transition: width 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.sidebar:hover .sidebar-test-view,
+.sidebar:has(:focus-visible) .sidebar-test-view {
+  width: var(--sidebar-content-width);
+}
+.sidebar-test-view-label {
+  display: none;
+  margin: 0 11px 3px;
+  color: #778498;
+  font-size: 10px;
+  font-weight: 720;
+  letter-spacing: 0.075em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+.sidebar:hover .sidebar-test-view-label,
+.sidebar:has(:focus-visible) .sidebar-test-view-label {
+  display: block;
+}
+.sidebar .sidebar-test-view button {
+  width: 48px;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: visible;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #9ba8ba;
+  font-family: "Archivo Variable", "Archivo", Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 590;
+  letter-spacing: -0.012em;
+  cursor: pointer;
+  transition:
+    width 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    padding 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 160ms ease-out,
+    background-color 160ms ease-out,
+    transform 140ms ease-out;
+}
+.sidebar .sidebar-test-view button svg {
+  flex: 0 0 19px;
+  stroke-width: 1.8;
+}
+.sidebar:hover .sidebar-test-view button,
+.sidebar:has(:focus-visible) .sidebar-test-view button {
+  width: var(--sidebar-content-width);
+}
+.sidebar .sidebar-test-view button:hover {
+  background: #202937;
+  color: #f8fafc;
+}
+.sidebar .sidebar-test-view button:active {
+  transform: translateY(1px);
+}
+.sidebar .sidebar-test-view .sidebar-test-view-toggle {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #c3cedd;
+}
+@media (hover: none) and (min-width: 761px), (max-width: 760px) {
+  .sidebar .sidebar-test-view,
+  .sidebar:hover .sidebar-test-view,
+  .sidebar:has(:focus-visible) .sidebar-test-view {
+    width: var(--sidebar-content-width);
+  }
+  .sidebar .sidebar-test-view button,
+  .sidebar:hover .sidebar-test-view button,
+  .sidebar:has(:focus-visible) .sidebar-test-view button {
+    width: var(--sidebar-content-width);
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+  .sidebar-test-view-label {
+    display: block;
+  }
+}
+
+
+/* Definir senha apos primeiro acesso ----------------------------------- */
+.sidebar .sidebar-password-cta {
+  width: 48px;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #9ba8ba;
+  font-family: "Archivo Variable", "Archivo", Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 590;
+  letter-spacing: -0.012em;
+  cursor: pointer;
+  transition:
+    width 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    padding 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 160ms ease-out,
+    background-color 160ms ease-out,
+    transform 140ms ease-out;
+}
+.sidebar .sidebar-password-cta svg {
+  flex: 0 0 19px;
+  stroke-width: 1.8;
+  transition:
+    color 160ms ease-out,
+    transform 160ms ease-out;
+}
+.sidebar:hover .sidebar-password-cta,
+.sidebar:has(:focus-visible) .sidebar-password-cta {
+  width: var(--sidebar-content-width);
+}
+.sidebar .sidebar-password-cta:hover {
+  background: #202937;
+  color: #f8fafc;
+}
+.sidebar .sidebar-password-cta:hover svg {
+  transform: translateX(1px);
+}
+.sidebar .sidebar-password-cta:active {
+  transform: translateY(1px);
+}
+@media (hover: none) and (min-width: 761px), (max-width: 760px) {
+  .sidebar .sidebar-password-cta,
+  .sidebar:hover .sidebar-password-cta,
+  .sidebar:has(:focus-visible) .sidebar-password-cta {
+    width: var(--sidebar-content-width);
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+}
+.password-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(9, 14, 22, 0.58);
+  backdrop-filter: blur(6px);
+}
+.password-dialog {
+  width: min(440px, 100%);
+  padding: 26px;
+  border: 1px solid #dfe6f0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(9, 18, 33, 0.28);
+}
+.password-dialog-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  background: #eaf1fb;
+  color: #315e9f;
+}
+.password-dialog-eyebrow {
+  margin: 0 0 4px;
+  color: #5a6e90;
+  font-size: 11px;
+  font-weight: 720;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.password-dialog h2 {
+  margin: 0 0 8px;
+  color: #16243a;
+  font-family: "Archivo Variable", "Archivo", Arial, sans-serif;
+  font-size: 22px;
+  font-weight: 720;
+  letter-spacing: -0.02em;
+}
+.password-dialog-lead {
+  margin: 0 0 18px;
+  color: #5a6e90;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.password-dialog-form {
+  display: grid;
+  gap: 14px;
+}
+.password-dialog-form > label {
+  display: grid;
+  gap: 6px;
+  color: #33445f;
+  font-size: 12px;
+  font-weight: 680;
+}
+.password-dialog-form .signin-field input {
+  padding-right: 14px;
+}
+.password-dialog-form .signin-field.has-action input {
+  padding-right: 46px;
+}
+.password-dialog-form .signin-field-action {
+  position: absolute;
+  right: 6px;
+  z-index: 1;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #72829a;
+  cursor: pointer;
+}
+.password-dialog-form .signin-field-action:hover {
+  color: #315e9f;
+}
+.password-dialog-hint {
+  margin: -6px 0 0;
+  color: #72829a;
+  font-size: 11px;
+  font-weight: 620;
+  line-height: 1.45;
+}
+.password-dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+.password-dialog-actions .button.primary {
+  min-width: 118px;
+}
+.password-dialog-done {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 8px 0 2px;
+  text-align: center;
+}
+.password-dialog-done > svg {
+  margin-bottom: 4px;
+  color: #159568;
+}
+.password-dialog-done strong {
+  color: #16243a;
+  font-size: 15px;
+}
+.password-dialog-done span {
+  color: #5a6e90;
+  font-size: 13px;
+}
+.password-dialog-done button {
+  margin-top: 14px;
+}

@@ -1,4 +1,5 @@
 import {
+  useCallback,
   createContext,
   lazy,
   Suspense,
@@ -10,6 +11,7 @@ import {
 } from "react";
 import {
   ArrowLeft,
+  ArrowLeftRight,
   BellRing,
   Building2,
   CalendarClock,
@@ -22,6 +24,8 @@ import {
   Clock3,
   ClipboardList,
   Database,
+  Eye,
+  EyeOff,
   FileClock,
   FileText,
   KeyRound,
@@ -109,6 +113,10 @@ const COLLABORATOR_PAGE_SIZE = 10;
 const MISSING_CLUSTER_VALUE = "__missing_cluster__";
 const PORTAL_EMAIL_DOMAINS = new Set(["claro.com.br", "eqsengenharia.com.br"]);
 const PORTAL_ROLES = new Set(["operacao_eqs", "cliente_claro"]);
+const PASSWORD_PROMPT_KEY = "portal-acessos:password-prompt:v1";
+let passwordPromptShownThisSession = false;
+const passwordPromptDismissedKey = (userId) =>
+  `${PASSWORD_PROMPT_KEY}:${userId}`;
 const CASES_UI_PREFERENCES_KEY = "portal-acessos:cases-ui:v1";
 const CASES_VIEW_OPTIONS = new Set([
   "all",
@@ -351,20 +359,49 @@ function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [hasPassword, setHasPassword] = useState(false);
   const hydrationVersion = useRef(0);
   const profileRef = useRef(null);
+
+  function applyProfile(nextProfile) {
+    profileRef.current = nextProfile;
+    setProfile(nextProfile);
+  }
+
+  async function refreshHasPassword() {
+    if (!supabase) {
+      setHasPassword(false);
+      return false;
+    }
+    const { data, error } = await supabase.rpc("current_user_has_password");
+    if (error) return false;
+    setHasPassword(Boolean(data));
+    return Boolean(data);
+  }
+
+  const switchTestRole = useCallback(
+    async (role) => {
+      if (!supabase || !profile?.can_switch_role) return false;
+      const { error } = await supabase.rpc("set_portal_test_role", {
+        p_role: role,
+      });
+      if (error) return false;
+      applyProfile({ ...profile, test_role: role });
+      return true;
+    },
+    [profile],
+  );
+
   useEffect(() => {
     let active = true;
-    const updateProfile = (nextProfile) => {
-      profileRef.current = nextProfile;
-      setProfile(nextProfile);
-    };
+    const updateProfile = applyProfile;
     async function hydrate(next, event) {
       const version = ++hydrationVersion.current;
       if (!active) return;
       setSession(next);
       if (!next) {
         updateProfile(null);
+        setHasPassword(false);
         setLoading(false);
         return;
       }
@@ -393,7 +430,7 @@ function AuthProvider({ children }) {
       setLoading(true);
       const { data } = await supabase
         .from("app_users")
-        .select("id,name,email,role,auth_user_id")
+        .select("id,name,email,role,auth_user_id,test_role,can_switch_role")
         .eq("auth_user_id", next.user.id)
         .single();
       const validProfile =
@@ -403,6 +440,7 @@ function AuthProvider({ children }) {
       if (active && version === hydrationVersion.current) {
         updateProfile(validProfile ? data : null);
         setLoading(false);
+        refreshHasPassword();
       }
     }
     supabase.auth
@@ -417,6 +455,7 @@ function AuthProvider({ children }) {
       data.subscription.unsubscribe();
     };
   }, []);
+  const effectiveRole = profile?.test_role || profile?.role || "";
   const value = useMemo(
     () => ({
       session,
@@ -430,9 +469,14 @@ function AuthProvider({ children }) {
         normalizedPortalEmail(profile.email) ===
           normalizedPortalEmail(session.user?.email),
       ),
-      isOperation: profile?.role === "operacao_eqs",
+      isOperation: effectiveRole === "operacao_eqs",
+      hasPassword,
+      refreshHasPassword,
+      canSwitchRole: Boolean(profile?.can_switch_role),
+      testRole: profile?.test_role || null,
+      switchTestRole,
     }),
-    [session, profile, loading],
+    [session, profile, loading, hasPassword, effectiveRole, switchTestRole],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
@@ -874,7 +918,9 @@ function Login() {
     const { error: authError } = await supabase.auth.signInWithOtp({
       email: normalizedEmail,
       options: {
-        shouldCreateUser: false,
+        // Contas são provisionadas automaticamente para domínios autorizados;
+        // o gatilho no banco atribui o papel conforme o domínio do e-mail.
+        shouldCreateUser: true,
         emailRedirectTo: new URL(
           "casos",
           new URL(import.meta.env.BASE_URL, window.location.origin),
@@ -1057,6 +1103,10 @@ function Login() {
             <p className="signin-domain-hint">
               Apenas @claro.com.br e @eqsengenharia.com.br
             </p>
+            <p className="signin-code-hint">
+              Primeira vez? Entre com o link por e-mail e crie sua senha no
+              primeiro acesso.
+            </p>
 
             {method === "password" && (
               <label htmlFor="signin-password">
@@ -1236,9 +1286,11 @@ function RestrictedPortalSession() {
 }
 
 function AppShell({ children, contentClassName = "", shellClassName = "" }) {
-  const { profile, isOperation } = useAuth();
+  const { profile, isOperation, hasPassword, canSwitchRole, testRole, switchTestRole } =
+    useAuth();
   const { activeSequence, requestScanline } = usePortalRouteTransition();
   const [open, setOpen] = useState(false);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -1250,6 +1302,24 @@ function AppShell({ children, contentClassName = "", shellClassName = "" }) {
 
     return () => window.clearTimeout(timer);
   }, [profile?.id]);
+
+  useEffect(() => {
+    if (!profile?.id || hasPassword || passwordPromptShownThisSession) {
+      return undefined;
+    }
+    let dismissed = false;
+    try {
+      dismissed =
+        window.localStorage.getItem(passwordPromptDismissedKey(profile.id)) ===
+        "1";
+    } catch {
+      dismissed = false;
+    }
+    if (dismissed) return undefined;
+    passwordPromptShownThisSession = true;
+    const timer = window.setTimeout(() => setPasswordDialogOpen(true), 1100);
+    return () => window.clearTimeout(timer);
+  }, [profile?.id, hasPassword]);
 
   const navigationGroups = [
     {
@@ -1369,13 +1439,74 @@ function AppShell({ children, contentClassName = "", shellClassName = "" }) {
             </div>
           ))}
         </nav>
+        {canSwitchRole && (
+          <div className="sidebar-test-view">
+            <span className="sidebar-test-view-label">Modo teste</span>
+            {testRole ? (
+              <button
+                type="button"
+                className="sidebar-test-view-toggle"
+                onClick={() =>
+                  switchTestRole(
+                    testRole === "operacao_eqs" ? "cliente_claro" : "operacao_eqs",
+                  )
+                }
+                title={
+                  testRole === "operacao_eqs"
+                    ? "Ver como Cliente"
+                    : "Ver como Operador"
+                }
+              >
+                <ArrowLeftRight size={19} strokeWidth={1.8} aria-hidden="true" />
+                <span className="nav-label">
+                  Ver como {testRole === "operacao_eqs" ? "Cliente" : "Operador"}
+                </span>
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="sidebar-test-view-option"
+                  onClick={() => switchTestRole("operacao_eqs")}
+                  title="Ver como Operador"
+                >
+                  <Eye size={19} strokeWidth={1.8} aria-hidden="true" />
+                  <span className="nav-label">Ver como Operador</span>
+                </button>
+                <button
+                  type="button"
+                  className="sidebar-test-view-option"
+                  onClick={() => switchTestRole("cliente_claro")}
+                  title="Ver como Cliente"
+                >
+                  <Eye size={19} strokeWidth={1.8} aria-hidden="true" />
+                  <span className="nav-label">Ver como Cliente</span>
+                </button>
+              </>
+            )}
+          </div>
+        )}
+        {!hasPassword && (
+          <button
+            type="button"
+            className="sidebar-password-cta"
+            onClick={() => setPasswordDialogOpen(true)}
+            title="Definir senha"
+          >
+            <KeyRound size={19} strokeWidth={1.8} aria-hidden="true" />
+            <span className="nav-label">Definir senha</span>
+          </button>
+        )}
         <div className="user-block">
           <span className="avatar" aria-hidden="true">
             {profileInitials}
           </span>
           <span>
             <strong>{profile.name}</strong>
-            <small>{isOperation ? "Operação EQS" : "Cliente Claro"}</small>
+            <small>
+              {isOperation ? "Operação EQS" : "Cliente Claro"}
+              {testRole ? " · teste" : ""}
+            </small>
           </span>
           <button
             className="icon-button sidebar-signout"
@@ -1410,6 +1541,188 @@ function AppShell({ children, contentClassName = "", shellClassName = "" }) {
             : ""}
         </span>
       </main>
+      <PasswordSetupDialog
+        open={passwordDialogOpen}
+        onClose={() => setPasswordDialogOpen(false)}
+      />
+    </div>
+  );
+}
+
+function PasswordSetupDialog({ open, onClose }) {
+  const { profile, refreshHasPassword } = useAuth();
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    setPassword("");
+    setConfirm("");
+    setShowPassword(false);
+    setBusy(false);
+    setError("");
+    setDone(false);
+  }, [open]);
+
+  if (!open) return null;
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    if (busy || done) return;
+    if (password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+      setError("A senha precisa ter pelo menos 8 caracteres, com letras e números.");
+      return;
+    }
+    if (password !== confirm) {
+      setError("As senhas não conferem.");
+      return;
+    }
+    setBusy(true);
+    setError("");
+    const { error: updateError } = await supabase.auth.updateUser({
+      password,
+    });
+    if (updateError) {
+      setBusy(false);
+      setError(
+        "Não foi possível definir a senha agora. Tente novamente em instantes.",
+      );
+      return;
+    }
+    await refreshHasPassword();
+    setBusy(false);
+    setDone(true);
+  }
+
+  function handleSkip() {
+    try {
+      window.localStorage.setItem(
+        passwordPromptDismissedKey(profile?.id || "guest"),
+        "1",
+      );
+    } catch {
+      // O lembrete pode reaparecer se o navegador bloquear o storage.
+    }
+    onClose();
+  }
+
+  return (
+    <div
+      className="password-dialog-backdrop"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget && !busy) handleSkip();
+      }}
+    >
+      <section
+        className="password-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="password-dialog-title"
+      >
+        <span className="password-dialog-icon" aria-hidden="true">
+          <KeyRound size={22} />
+        </span>
+        <p className="password-dialog-eyebrow">Acesso direto</p>
+        <h2 id="password-dialog-title">Defina sua senha</h2>
+        <p className="password-dialog-lead">
+          Você entrou pelo link mágico. Crie uma senha para entrar direto com
+          login e senha nas próximas vezes.
+        </p>
+        {done ? (
+          <div className="password-dialog-done">
+            <CircleCheckBig size={28} aria-hidden="true" />
+            <strong>Senha criada com sucesso</strong>
+            <span>Agora você pode entrar com seu e-mail e senha.</span>
+            <button
+              type="button"
+              className="button primary"
+              onClick={onClose}
+            >
+              Concluir
+            </button>
+          </div>
+        ) : (
+          <form
+            className="password-dialog-form"
+            onSubmit={handleSubmit}
+            aria-busy={busy}
+          >
+            <label htmlFor="password-setup-new">
+              Nova senha
+              <span className="signin-field has-action">
+                <KeyRound size={18} aria-hidden="true" />
+                <input
+                  id="password-setup-new"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(event) => {
+                    setPassword(event.target.value);
+                    setError("");
+                  }}
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
+                />
+                <button
+                  type="button"
+                  className="signin-field-action"
+                  onClick={() => setShowPassword((visible) => !visible)}
+                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff size={17} aria-hidden="true" />
+                  ) : (
+                    <Eye size={17} aria-hidden="true" />
+                  )}
+                </button>
+              </span>
+            </label>
+            <label htmlFor="password-setup-confirm">
+              Confirmar senha
+              <span className="signin-field">
+                <KeyRound size={18} aria-hidden="true" />
+                <input
+                  id="password-setup-confirm"
+                  type={showPassword ? "text" : "password"}
+                  value={confirm}
+                  onChange={(event) => {
+                    setConfirm(event.target.value);
+                    setError("");
+                  }}
+                  autoComplete="new-password"
+                  required
+                />
+              </span>
+            </label>
+            <p className="password-dialog-hint">
+              Mínimo de 8 caracteres, com letras e números.
+            </p>
+            {error && <Alert type="error">{error}</Alert>}
+            <div className="password-dialog-actions">
+              <button
+                type="button"
+                className="signin-secondary-action"
+                onClick={handleSkip}
+                disabled={busy}
+              >
+                Agora não
+              </button>
+              <button
+                type="submit"
+                className="button primary"
+                disabled={busy || !password || !confirm}
+              >
+                {busy ? "Criando senha..." : "Criar senha"}
+              </button>
+            </div>
+          </form>
+        )}
+      </section>
     </div>
   );
 }
@@ -2809,7 +3122,7 @@ function CaseDetailPage() {
           </form>
           <CaseDocumentationPanel
             caseId={id}
-            collaborators={linkedCollaborators}
+            collaborators={isOperation ? linkedCollaborators : safeCollaborators}
             isOperation={isOperation}
             refreshKey={documentRefreshKey}
             onManageDocuments={setDocumentPerson}
@@ -2843,23 +3156,23 @@ function CaseDetailPage() {
                 {safeCollaborators.map((collaborator, index) => (
                   <article
                     className="client-case-collaborator"
-                    key={`${collaborator.abbreviated_name}-${index}`}
+                    key={`${collaborator.full_name}-${index}`}
                   >
                     <span
                       className="client-case-collaborator-mark"
                       aria-hidden="true"
                     >
-                      {collaborator.abbreviated_name
+                      {collaborator.full_name
                         .split(" ")
                         .slice(0, 2)
                         .map((part) => part.replace(".", ""))
                         .join("")}
                     </span>
                     <div>
-                      <strong>{collaborator.abbreviated_name}</strong>
+                      <strong>{collaborator.full_name}</strong>
                       <span>
                         <Check size={13} aria-hidden="true" />
-                        CPF protegido · <b>{collaborator.cpf_masked}</b>
+                        <b>{collaborator.cpf_masked}</b>
                       </span>
                     </div>
                   </article>

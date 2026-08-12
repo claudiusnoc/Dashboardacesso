@@ -200,7 +200,7 @@ export default function DocumentChecklist({
           name: requirement.name,
           status: "pendente",
           document_scope: "collaborator",
-          is_client_visible: false,
+          is_client_visible: true,
         })),
       );
       if (error) {
