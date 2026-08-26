@@ -60,14 +60,24 @@ import {
   refreshAccessCasesList,
 } from "./lib/accessCasesListCache";
 import { prefetchSitesMapCatalog } from "./lib/sitesMapCatalogCache";
+import { caseDetailChanges } from "./lib/caseDetailAudit";
 import CollaboratorManager, {
   AsoBadge,
   formatCpf,
 } from "./components/CollaboratorManager";
 import CaseDocumentationPanel from "./components/CaseDocumentationPanel";
 import CaseCard from "./components/CaseCard";
+import CaseChangeHistory from "./components/CaseChangeHistory";
+import InfiniteCaseMasonry from "./components/InfiniteCaseMasonry";
+import AutoResizeTextarea from "./components/AutoResizeTextarea";
+import BloomSelect from "./components/BloomSelect";
 import DocumentChecklist from "./components/DocumentChecklist";
 import MultiSelectFilter from "./components/MultiSelectFilter";
+import {
+  AnimatedNumber,
+  StatefulActionButton,
+  TiltSurface,
+} from "./components/MotionPrimitives";
 import {
   SiteTypeIcon,
   getSiteTypeColor,
@@ -113,8 +123,7 @@ const COLLABORATOR_PAGE_SIZE = 10;
 const MISSING_CLUSTER_VALUE = "__missing_cluster__";
 const PORTAL_EMAIL_DOMAINS = new Set(["claro.com.br", "eqsengenharia.com.br"]);
 const PORTAL_ROLES = new Set(["operacao_eqs", "cliente_claro"]);
-const PASSWORD_PROMPT_KEY = "portal-acessos:password-prompt:v1";
-let passwordPromptShownThisSession = false;
+const PASSWORD_PROMPT_KEY = "portal-acessos:password-prompt:v2";
 const passwordPromptDismissedKey = (userId) =>
   `${PASSWORD_PROMPT_KEY}:${userId}`;
 const CASES_UI_PREFERENCES_KEY = "portal-acessos:cases-ui:v1";
@@ -146,6 +155,37 @@ const STATUS_LABELS = {
   "LEVANTAMENTO DE DOCUMENTOS": "Levantamento de documentos",
   LIBERADO: "Liberado",
   CANCELADO: "Cancelado",
+};
+
+const WORKFLOW_STAGE_DESCRIPTIONS = {
+  blockage_identified: "Impedimento mapeado e aguardando direcionamento",
+  documents_preparation: "Documentos e requisitos em organização",
+  holder_validation: "Material enviado para análise da detentora",
+  new_access_attempt: "Nova janela de acesso em planejamento",
+  access_released: "Acesso autorizado e fluxo concluído",
+};
+
+const RESPONSIBILITY_OPTION_META = {
+  "": {
+    label: "A definir",
+    description: "Responsável ainda não designado",
+    Icon: ClipboardList,
+  },
+  EQS: {
+    label: "Equipe EQS",
+    description: "Preparação e condução operacional",
+    Icon: UsersRound,
+  },
+  CLARO: {
+    label: "Equipe Claro",
+    description: "Validação e direcionamento do cliente",
+    Icon: Building2,
+  },
+  DETENTORA: {
+    label: "Detentora do site",
+    description: "Liberação e requisitos do local",
+    Icon: MapPinned,
+  },
 };
 
 const REGIONAL_BANNER_COLORS = {
@@ -360,6 +400,7 @@ function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hasPassword, setHasPassword] = useState(false);
+  const [passwordStatusReady, setPasswordStatusReady] = useState(false);
   const hydrationVersion = useRef(0);
   const profileRef = useRef(null);
 
@@ -371,11 +412,16 @@ function AuthProvider({ children }) {
   async function refreshHasPassword() {
     if (!supabase) {
       setHasPassword(false);
+      setPasswordStatusReady(false);
       return false;
     }
     const { data, error } = await supabase.rpc("current_user_has_password");
-    if (error) return false;
+    if (error) {
+      setPasswordStatusReady(false);
+      return false;
+    }
     setHasPassword(Boolean(data));
+    setPasswordStatusReady(true);
     return Boolean(data);
   }
 
@@ -402,6 +448,7 @@ function AuthProvider({ children }) {
       if (!next) {
         updateProfile(null);
         setHasPassword(false);
+        setPasswordStatusReady(false);
         setLoading(false);
         return;
       }
@@ -427,6 +474,7 @@ function AuthProvider({ children }) {
       }
 
       updateProfile(null);
+      setPasswordStatusReady(false);
       setLoading(true);
       const { data } = await supabase
         .from("app_users")
@@ -471,12 +519,21 @@ function AuthProvider({ children }) {
       ),
       isOperation: effectiveRole === "operacao_eqs",
       hasPassword,
+      passwordStatusReady,
       refreshHasPassword,
       canSwitchRole: Boolean(profile?.can_switch_role),
       testRole: profile?.test_role || null,
       switchTestRole,
     }),
-    [session, profile, loading, hasPassword, effectiveRole, switchTestRole],
+    [
+      session,
+      profile,
+      loading,
+      hasPassword,
+      passwordStatusReady,
+      effectiveRole,
+      switchTestRole,
+    ],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
@@ -663,7 +720,12 @@ function SmartCardLoginVisual({
 
       <div className="signin-smart-stage" aria-hidden="true">
         <span className="signin-smart-grid" />
-        <article className="signin-smart-card">
+        <TiltSurface
+          as="article"
+          className="signin-smart-card"
+          max={4}
+          disabled={state !== "idle"}
+        >
           <span className="signin-smart-card-edge" />
           <div className="signin-smart-factor">
             <span className="signin-smart-avatar">{credential.initials}</span>
@@ -719,7 +781,7 @@ function SmartCardLoginVisual({
           <span className="signin-smart-approved">
             {isMagicLink ? "LINK EMITIDO" : "AUTORIZADA"}
           </span>
-        </article>
+        </TiltSurface>
 
         <div className="signin-smart-reader">
           <span className="signin-smart-reader-back" />
@@ -1286,11 +1348,19 @@ function RestrictedPortalSession() {
 }
 
 function AppShell({ children, contentClassName = "", shellClassName = "" }) {
-  const { profile, isOperation, hasPassword, canSwitchRole, testRole, switchTestRole } =
-    useAuth();
+  const {
+    profile,
+    isOperation,
+    hasPassword,
+    passwordStatusReady,
+    canSwitchRole,
+    testRole,
+    switchTestRole,
+  } = useAuth();
   const { activeSequence, requestScanline } = usePortalRouteTransition();
   const [open, setOpen] = useState(false);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+  const promptedPasswordUserId = useRef(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -1304,22 +1374,30 @@ function AppShell({ children, contentClassName = "", shellClassName = "" }) {
   }, [profile?.id]);
 
   useEffect(() => {
-    if (!profile?.id || hasPassword || passwordPromptShownThisSession) {
+    if (
+      !profile?.id ||
+      !passwordStatusReady ||
+      hasPassword ||
+      promptedPasswordUserId.current === profile.id
+    ) {
       return undefined;
     }
     let dismissed = false;
     try {
       dismissed =
-        window.localStorage.getItem(passwordPromptDismissedKey(profile.id)) ===
-        "1";
+        window.sessionStorage.getItem(
+          passwordPromptDismissedKey(profile.id),
+        ) === "1";
     } catch {
       dismissed = false;
     }
     if (dismissed) return undefined;
-    passwordPromptShownThisSession = true;
-    const timer = window.setTimeout(() => setPasswordDialogOpen(true), 1100);
+    const timer = window.setTimeout(() => {
+      promptedPasswordUserId.current = profile.id;
+      setPasswordDialogOpen(true);
+    }, 1100);
     return () => window.clearTimeout(timer);
-  }, [profile?.id, hasPassword]);
+  }, [profile?.id, hasPassword, passwordStatusReady]);
 
   const navigationGroups = [
     {
@@ -1568,6 +1646,22 @@ function PasswordSetupDialog({ open, onClose }) {
     setDone(false);
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    function handleKeyDown(event) {
+      if (event.key === "Escape" && !busy) handleSkip();
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [busy, onClose, open, profile?.id]);
+
   if (!open) return null;
 
   async function handleSubmit(event) {
@@ -1600,7 +1694,7 @@ function PasswordSetupDialog({ open, onClose }) {
 
   function handleSkip() {
     try {
-      window.localStorage.setItem(
+      window.sessionStorage.setItem(
         passwordPromptDismissedKey(profile?.id || "guest"),
         "1",
       );
@@ -1664,6 +1758,7 @@ function PasswordSetupDialog({ open, onClose }) {
                     setError("");
                   }}
                   autoComplete="new-password"
+                  autoFocus
                   required
                   minLength={8}
                 />
@@ -2013,6 +2108,7 @@ function CasesPage() {
           .filter(Boolean),
       ),
     ].join(", ");
+  const masonryResetKey = `${query}|${view}|${selectedClusters?.join(",") || "all"}|${selectedStages?.join(",") || "all"}`;
   const metrics = [
     {
       filter: "all",
@@ -2087,7 +2183,9 @@ function CasesPage() {
               <Icon size={18} />
             </span>
             <div>
-              <strong>{value}</strong>
+              <strong>
+                <AnimatedNumber value={value} />
+              </strong>
               <span>{label}</span>
               {detail && <small>{detail}</small>}
             </div>
@@ -2169,16 +2267,17 @@ function CasesPage() {
           />
         </section>
       ) : display === "cards" ? (
-        <section className="case-card-grid">
-          {filtered.map((item) => (
+        <InfiniteCaseMasonry
+          items={filtered}
+          resetKey={masonryResetKey}
+          renderItem={(item) => (
             <CaseCard
               item={item}
               clusters={clustersFor(item)}
               holders={holdersFor(item)}
-              key={item.id}
             />
-          ))}
-        </section>
+          )}
+        />
       ) : (
         <section className="case-list">
           <div className="list-head">
@@ -2746,12 +2845,17 @@ function NewCasePage() {
 
 function CaseDetailPage() {
   const { id } = useParams(),
-    { isOperation } = useAuth(),
+    { isOperation, profile } = useAuth(),
     navigate = useNavigate();
   const [item, setItem] = useState(null),
     [form, setForm] = useState(null),
-    [error, setError] = useState(""),
-    [saved, setSaved] = useState(false);
+    [error, setError] = useState("");
+  const [saveState, setSaveState] = useState("idle");
+  const [saveReceipt, setSaveReceipt] = useState(null);
+  const [changeHistory, setChangeHistory] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState("");
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [collaboratorCount, setCollaboratorCount] = useState(0);
   const [linkedCollaborators, setLinkedCollaborators] = useState([]);
@@ -2761,6 +2865,17 @@ function CaseDetailPage() {
   const [safeCollaboratorsError, setSafeCollaboratorsError] = useState("");
   const [documentPerson, setDocumentPerson] = useState(null);
   const [documentRefreshKey, setDocumentRefreshKey] = useState(0);
+
+  const changedFields = useMemo(() => {
+    if (!item || !form) return [];
+    return caseDetailChanges(item, form, workflowLabel);
+  }, [form, item]);
+
+  function updateCaseForm(patch) {
+    setForm((current) => ({ ...current, ...patch }));
+    setSaveState("idle");
+    setSaveReceipt(null);
+  }
 
   function refreshDocuments() {
     setDocumentRefreshKey((current) => current + 1);
@@ -2792,6 +2907,81 @@ function CaseDetailPage() {
   useEffect(() => {
     loadCase();
   }, [id]);
+
+  const loadChangeHistory = useCallback(
+    async ({ silent = false } = {}) => {
+      if (!isOperation) return;
+      if (!silent) setHistoryLoading(true);
+      setHistoryError("");
+
+      const { data: auditRows, error: auditError } = await supabase
+        .from("audit_log")
+        .select(
+          "id,actor_auth_user_id,before_data,after_data,created_at,action,entity_type,entity_id",
+        )
+        .eq("entity_type", "access_cases")
+        .eq("entity_id", id)
+        .eq("action", "UPDATE")
+        .order("created_at", { ascending: false })
+        .limit(40);
+
+      if (auditError) {
+        setHistoryLoading(false);
+        setHistoryError("Não foi possível consultar o histórico agora.");
+        return;
+      }
+
+      const actorIds = [
+        ...new Set(
+          (auditRows || [])
+            .map((row) => row.actor_auth_user_id)
+            .filter(Boolean),
+        ),
+      ];
+      let users = [];
+      if (actorIds.length) {
+        const { data: userRows } = await supabase
+          .from("app_users")
+          .select("auth_user_id,name,email")
+          .in("auth_user_id", actorIds);
+        users = userRows || [];
+      }
+      const usersByAuthId = new Map(
+        users.map((user) => [user.auth_user_id, user]),
+      );
+      const entries = (auditRows || [])
+        .map((row) => {
+          const changes = caseDetailChanges(
+            row.before_data,
+            row.after_data,
+            workflowLabel,
+          );
+          const actor = usersByAuthId.get(row.actor_auth_user_id);
+          const actorName =
+            actor?.name ||
+            (row.actor_auth_user_id === profile?.auth_user_id
+              ? profile?.name
+              : "Usuário não identificado");
+          return {
+            id: row.id,
+            actorName,
+            actorInitials: initialsFor(actorName),
+            createdAt: row.created_at,
+            changes,
+          };
+        })
+        .filter((entry) => entry.changes.length)
+        .slice(0, 12);
+
+      setChangeHistory(entries);
+      setHistoryLoading(false);
+    },
+    [id, isOperation, profile?.auth_user_id, profile?.name],
+  );
+
+  useEffect(() => {
+    loadChangeHistory();
+  }, [loadChangeHistory]);
   useEffect(() => {
     if (isOperation) {
       setSafeCollaborators([]);
@@ -2824,7 +3014,10 @@ function CaseDetailPage() {
   }, [id, isOperation]);
   async function save(event) {
     event.preventDefault();
-    setSaved(false);
+    if (!changedFields.length || saveState === "loading") return;
+    const receiptFields = changedFields.map(({ key, label }) => ({ key, label }));
+    setSaveState("loading");
+    setSaveReceipt(null);
     setError("");
     let workflowData = null;
     if (form.workflow_stage !== item.workflow_stage) {
@@ -2836,6 +3029,7 @@ function CaseDetailPage() {
         .single();
       if (workflowError) {
         setError(errorMessage(workflowError));
+        setSaveState("error");
         return;
       }
       workflowData = data;
@@ -2844,15 +3038,17 @@ function CaseDetailPage() {
       current_responsibility: form.current_responsibility,
       next_action: form.next_action,
       notes: form.notes,
+      ...(profile?.id ? { updated_by: profile.id } : {}),
     };
     const { data, error: saveError } = await supabase
       .from("access_cases")
       .update(payload)
       .eq("id", id)
-      .select("current_responsibility,next_action,notes,updated_at")
+      .select("current_responsibility,next_action,notes,updated_by,updated_at")
       .single();
     if (saveError) {
       setError(errorMessage(saveError));
+      setSaveState("error");
       return;
     }
     let caseEvents = null;
@@ -2871,7 +3067,13 @@ function CaseDetailPage() {
       case_events: caseEvents || current.case_events,
     }));
     setForm((current) => ({ ...current, ...data, ...(workflowData || {}) }));
-    setSaved(true);
+    setSaveReceipt({
+      actorName: profile?.name || "Usuário autenticado",
+      createdAt: data.updated_at || new Date().toISOString(),
+      fields: receiptFields,
+    });
+    setSaveState("success");
+    await loadChangeHistory({ silent: true });
   }
   async function deleteCase() {
     if (!isOperation || deleteBusy) return;
@@ -2927,13 +3129,24 @@ function CaseDetailPage() {
   const regional =
     primarySite.eqs_cluster || primarySite.claro_cluster || "Não informado";
   const siteName = primarySite.holder || "Local não informado";
+  const workflowSelectOptions = WORKFLOW_STAGES.map(
+    ({ key, label, Icon }) => ({
+      value: key,
+      label,
+      description: WORKFLOW_STAGE_DESCRIPTIONS[key],
+      Icon,
+    }),
+  );
   const responsibilityOptions = [
-    ...new Set(
-      [form.current_responsibility, "EQS", "CLARO", "DETENTORA"].filter(
-        Boolean,
-      ),
-    ),
-  ];
+    ...new Set(["", form.current_responsibility, "EQS", "CLARO", "DETENTORA"]),
+  ].map((value) => ({
+    value: value || "",
+    label: RESPONSIBILITY_OPTION_META[value]?.label || value,
+    description:
+      RESPONSIBILITY_OPTION_META[value]?.description ||
+      "Responsável cadastrado nesta demanda",
+    Icon: RESPONSIBILITY_OPTION_META[value]?.Icon || UsersRound,
+  }));
   const timeline = (item.case_events || [])
     .slice()
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -3034,56 +3247,47 @@ function CaseDetailPage() {
           </section>
 
           <form className="case-operation-panel" onSubmit={save}>
+            <header className="case-operation-heading">
+              <span aria-hidden="true">
+                <Pencil size={17} />
+              </span>
+              <div>
+                <h2>Atualização operacional</h2>
+                <p>
+                  Registre a situação atual e deixe o próximo movimento claro
+                  para toda a equipe.
+                </p>
+              </div>
+            </header>
             <div className="case-operation-top">
               <div className="case-operation-controls">
-                <div className="case-stage-control">
-                  <label>
-                    Etapa atual
-                    <select
-                      value={form.workflow_stage}
-                      onChange={(event) =>
-                        setForm({
-                          ...form,
-                          workflow_stage: event.target.value,
-                        })
-                      }
-                      disabled={!isOperation}
-                    >
-                      {WORKFLOW_STAGES.map((stage) => (
-                        <option value={stage.key} key={stage.key}>
-                          {stage.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-                <label>
-                  Responsável atual
-                  <select
-                    value={form.current_responsibility || ""}
-                    onChange={(event) =>
-                      setForm({
-                        ...form,
-                        current_responsibility: event.target.value,
-                      })
-                    }
-                    disabled={!isOperation}
-                  >
-                    <option value="">Não informado</option>
-                    {responsibilityOptions.map((option) => (
-                      <option value={option} key={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <BloomSelect
+                  label="Etapa atual"
+                  value={form.workflow_stage}
+                  options={workflowSelectOptions}
+                  onChange={(workflowStage) =>
+                    updateCaseForm({ workflow_stage: workflowStage })
+                  }
+                  disabled={!isOperation}
+                />
+                <BloomSelect
+                  label="Responsável atual"
+                  value={form.current_responsibility || ""}
+                  options={responsibilityOptions}
+                  onChange={(currentResponsibility) =>
+                    updateCaseForm({
+                      current_responsibility: currentResponsibility,
+                    })
+                  }
+                  disabled={!isOperation}
+                />
               </div>
               <label className="counted-field case-next-action">
                 Próximo passo
-                <textarea
+                <AutoResizeTextarea
                   value={form.next_action || ""}
                   onChange={(event) =>
-                    setForm({ ...form, next_action: event.target.value })
+                    updateCaseForm({ next_action: event.target.value })
                   }
                   readOnly={!isOperation}
                   maxLength={500}
@@ -3095,10 +3299,10 @@ function CaseDetailPage() {
             </div>
             <label className="counted-field case-notes-field">
               Observações
-              <textarea
+              <AutoResizeTextarea
                 value={form.notes || ""}
                 onChange={(event) =>
-                  setForm({ ...form, notes: event.target.value })
+                  updateCaseForm({ notes: event.target.value })
                 }
                 readOnly={!isOperation}
                 maxLength={1000}
@@ -3110,14 +3314,73 @@ function CaseDetailPage() {
             </label>
             {isOperation && (
               <footer className="case-operation-actions">
-                {saved && (
-                  <span className="success-text">
-                    <Check size={17} />
-                    Alterações salvas
+                <div
+                  className={`case-pending-status ${changedFields.length ? "has-changes" : ""}`}
+                  aria-live="polite"
+                >
+                  <i aria-hidden="true" />
+                  <span>
+                    <strong>
+                      {changedFields.length
+                        ? `${changedFields.length} ${changedFields.length === 1 ? "alteração pendente" : "alterações pendentes"}`
+                        : "Bloco sincronizado"}
+                    </strong>
+                    <small>
+                      {changedFields.length
+                        ? changedFields.map(({ label }) => label).join(" · ")
+                        : "Nenhuma edição aguardando registro"}
+                    </small>
                   </span>
-                )}
-                <button className="button primary">Salvar alterações</button>
+                </div>
+                <StatefulActionButton
+                  type="submit"
+                  className="case-save-button"
+                  state={saveState}
+                  disabled={!changedFields.length}
+                />
               </footer>
+            )}
+            {isOperation && saveState === "error" && error && (
+              <div className="case-save-error" role="alert">
+                <TriangleAlert size={17} aria-hidden="true" />
+                <span>
+                  <strong>Atualização não registrada</strong>
+                  <small>{error}</small>
+                </span>
+              </div>
+            )}
+            {isOperation && saveReceipt && (
+              <aside className="case-save-receipt" role="status">
+                <span className="case-save-receipt-icon" aria-hidden="true">
+                  <CircleCheckBig size={20} />
+                </span>
+                <div className="case-save-receipt-copy">
+                  <strong>Registro concluído e identificado</strong>
+                  <span>
+                    {saveReceipt.actorName} · {formatCaseUpdate(saveReceipt.createdAt)}
+                  </span>
+                  <div>
+                    {saveReceipt.fields.map((field) => (
+                      <small key={field.key}>{field.label}</small>
+                    ))}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setHistoryOpen(true)}
+                >
+                  Ver no histórico
+                </button>
+              </aside>
+            )}
+            {isOperation && (
+              <CaseChangeHistory
+                entries={changeHistory}
+                error={historyError}
+                loading={historyLoading}
+                open={historyOpen}
+                onToggle={() => setHistoryOpen((current) => !current)}
+              />
             )}
           </form>
           <CaseDocumentationPanel
@@ -3127,7 +3390,9 @@ function CaseDetailPage() {
             refreshKey={documentRefreshKey}
             onManageDocuments={setDocumentPerson}
           />
-          {error && <Alert type="error">{error}</Alert>}
+          {error && saveState !== "error" && (
+            <Alert type="error">{error}</Alert>
+          )}
         </div>
 
         <aside className="case-detail-sidebar">
@@ -3974,7 +4239,9 @@ function CollaboratorsPage() {
               <Icon size={20} />
             </span>
             <span className="collaborator-metric-copy">
-              <strong>{value}</strong>
+              <strong>
+                <AnimatedNumber value={value} />
+              </strong>
               <span>{label}</span>
               <small>{detail}</small>
             </span>
