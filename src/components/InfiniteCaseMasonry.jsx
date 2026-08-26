@@ -7,7 +7,10 @@ import {
   useState,
 } from "react";
 import { Check, LoaderCircle } from "lucide-react";
-import { createMasonryLayout } from "../lib/masonryLayout";
+import {
+  createMasonryLayout,
+  getMasonryCardMinHeight,
+} from "../lib/masonryLayout";
 
 const INITIAL_ITEMS = 15;
 const ITEMS_PER_BATCH = 10;
@@ -184,6 +187,7 @@ export default function InfiniteCaseMasonry({
         {visibleItems.map((item, index) => {
           const key = visibleKeys[index];
           const position = layout.positions[index];
+          const cardMinHeight = getMasonryCardMinHeight(index, layout.columns);
 
           return (
             <div
@@ -198,6 +202,7 @@ export default function InfiniteCaseMasonry({
               key={key}
               style={{
                 "--masonry-delay": `${Math.min(index % itemsPerBatch, 7) * 34}ms`,
+                "--masonry-card-min-height": `${cardMinHeight}px`,
                 width: position?.width ? `${position.width}px` : "100%",
                 transform: `translate3d(${position?.x || 0}px, ${position?.y || 0}px, 0)`,
               }}

@@ -60,7 +60,13 @@ import {
   refreshAccessCasesList,
 } from "./lib/accessCasesListCache";
 import { prefetchSitesMapCatalog } from "./lib/sitesMapCatalogCache";
-import { caseDetailChanges } from "./lib/caseDetailAudit";
+import {
+  activityFromAuditRow,
+  activityFromEventRow,
+  activityFromRpcRow,
+  caseDetailChanges,
+  mergeCaseActivities,
+} from "./lib/caseDetailAudit";
 import CollaboratorManager, {
   AsoBadge,
   formatCpf,
@@ -1526,7 +1532,9 @@ function AppShell({ children, contentClassName = "", shellClassName = "" }) {
                 className="sidebar-test-view-toggle"
                 onClick={() =>
                   switchTestRole(
-                    testRole === "operacao_eqs" ? "cliente_claro" : "operacao_eqs",
+                    testRole === "operacao_eqs"
+                      ? "cliente_claro"
+                      : "operacao_eqs",
                   )
                 }
                 title={
@@ -1535,9 +1543,14 @@ function AppShell({ children, contentClassName = "", shellClassName = "" }) {
                     : "Ver como Operador"
                 }
               >
-                <ArrowLeftRight size={19} strokeWidth={1.8} aria-hidden="true" />
+                <ArrowLeftRight
+                  size={19}
+                  strokeWidth={1.8}
+                  aria-hidden="true"
+                />
                 <span className="nav-label">
-                  Ver como {testRole === "operacao_eqs" ? "Cliente" : "Operador"}
+                  Ver como{" "}
+                  {testRole === "operacao_eqs" ? "Cliente" : "Operador"}
                 </span>
               </button>
             ) : (
@@ -1667,8 +1680,14 @@ function PasswordSetupDialog({ open, onClose }) {
   async function handleSubmit(event) {
     event.preventDefault();
     if (busy || done) return;
-    if (password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) {
-      setError("A senha precisa ter pelo menos 8 caracteres, com letras e números.");
+    if (
+      password.length < 8 ||
+      !/[A-Za-z]/.test(password) ||
+      !/\d/.test(password)
+    ) {
+      setError(
+        "A senha precisa ter pelo menos 8 caracteres, com letras e números.",
+      );
       return;
     }
     if (password !== confirm) {
@@ -1731,11 +1750,7 @@ function PasswordSetupDialog({ open, onClose }) {
             <CircleCheckBig size={28} aria-hidden="true" />
             <strong>Senha criada com sucesso</strong>
             <span>Agora você pode entrar com seu e-mail e senha.</span>
-            <button
-              type="button"
-              className="button primary"
-              onClick={onClose}
-            >
+            <button type="button" className="button primary" onClick={onClose}>
               Concluir
             </button>
           </div>
@@ -2856,6 +2871,11 @@ function CaseDetailPage() {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState("");
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyHasMore, setHistoryHasMore] = useState(false);
+  const [historyTotal, setHistoryTotal] = useState(0);
+  const [historyLoadingMore, setHistoryLoadingMore] = useState(false);
+  const [historyCursor, setHistoryCursor] = useState(null);
+  const [highlightedHistoryId, setHighlightedHistoryId] = useState(null);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [collaboratorCount, setCollaboratorCount] = useState(0);
   const [linkedCollaborators, setLinkedCollaborators] = useState([]);
@@ -2909,24 +2929,67 @@ function CaseDetailPage() {
   }, [id]);
 
   const loadChangeHistory = useCallback(
-    async ({ silent = false } = {}) => {
-      if (!isOperation) return;
-      if (!silent) setHistoryLoading(true);
+    async ({
+      silent = false,
+      append = false,
+      highlightLatest = false,
+    } = {}) => {
+      if (!silent && !append) setHistoryLoading(true);
+      if (append) setHistoryLoadingMore(true);
       setHistoryError("");
+
+      const cursor = append ? historyCursor : null;
+      const { data: rpcRows, error: rpcError } = await supabase.rpc(
+        "get_case_activity_history",
+        {
+          p_case_id: id,
+          p_limit: 26,
+          p_before_at: cursor?.createdAt || null,
+          p_before_key: cursor?.id || null,
+        },
+      );
+
+      if (!rpcError) {
+        const page = (rpcRows || []).slice(0, 25).map(activityFromRpcRow);
+        setChangeHistory((current) => (append ? [...current, ...page] : page));
+        if (!append) {
+          setHistoryTotal(Number(rpcRows?.[0]?.total_count || page.length));
+        }
+        setHistoryHasMore((rpcRows || []).length > 25);
+        const last = page.at(-1);
+        setHistoryCursor(
+          last ? { createdAt: last.createdAt, id: last.id } : null,
+        );
+        if (highlightLatest && page[0]) setHighlightedHistoryId(page[0].id);
+        setHistoryLoading(false);
+        setHistoryLoadingMore(false);
+        return;
+      }
+
+      // Compatibilidade temporária até a migration da RPC chegar ao ambiente.
+      const eventEntries = (item?.case_events || []).map((event) =>
+        activityFromEventRow(event),
+      );
+      if (!isOperation) {
+        setChangeHistory(eventEntries);
+        setHistoryTotal(eventEntries.length);
+        setHistoryHasMore(false);
+        setHistoryLoading(false);
+        setHistoryLoadingMore(false);
+        return;
+      }
 
       const { data: auditRows, error: auditError } = await supabase
         .from("audit_log")
-        .select(
-          "id,actor_auth_user_id,before_data,after_data,created_at,action,entity_type,entity_id",
-        )
+        .select("id,actor_auth_user_id,before_data,after_data,created_at")
         .eq("entity_type", "access_cases")
         .eq("entity_id", id)
         .eq("action", "UPDATE")
         .order("created_at", { ascending: false })
         .limit(40);
-
       if (auditError) {
         setHistoryLoading(false);
+        setHistoryLoadingMore(false);
         setHistoryError("Não foi possível consultar o histórico agora.");
         return;
       }
@@ -2938,50 +3001,47 @@ function CaseDetailPage() {
             .filter(Boolean),
         ),
       ];
-      let users = [];
-      if (actorIds.length) {
-        const { data: userRows } = await supabase
-          .from("app_users")
-          .select("auth_user_id,name,email")
-          .in("auth_user_id", actorIds);
-        users = userRows || [];
-      }
+      const { data: userRows } = actorIds.length
+        ? await supabase
+            .from("app_users")
+            .select("auth_user_id,name")
+            .in("auth_user_id", actorIds)
+        : { data: [] };
       const usersByAuthId = new Map(
-        users.map((user) => [user.auth_user_id, user]),
+        (userRows || []).map((user) => [user.auth_user_id, user]),
       );
-      const entries = (auditRows || [])
+      const auditEntries = (auditRows || [])
         .map((row) => {
-          const changes = caseDetailChanges(
-            row.before_data,
-            row.after_data,
-            workflowLabel,
-          );
           const actor = usersByAuthId.get(row.actor_auth_user_id);
           const actorName =
             actor?.name ||
             (row.actor_auth_user_id === profile?.auth_user_id
               ? profile?.name
               : "Usuário não identificado");
-          return {
-            id: row.id,
-            actorName,
-            actorInitials: initialsFor(actorName),
-            createdAt: row.created_at,
-            changes,
-          };
+          return activityFromAuditRow(row, actorName, workflowLabel);
         })
-        .filter((entry) => entry.changes.length)
-        .slice(0, 12);
-
+        .filter(Boolean);
+      const entries = mergeCaseActivities(auditEntries, eventEntries);
       setChangeHistory(entries);
+      setHistoryTotal(entries.length);
+      setHistoryHasMore(false);
+      if (highlightLatest && entries[0]) setHighlightedHistoryId(entries[0].id);
       setHistoryLoading(false);
+      setHistoryLoadingMore(false);
     },
-    [id, isOperation, profile?.auth_user_id, profile?.name],
+    [
+      historyCursor,
+      id,
+      isOperation,
+      item?.case_events,
+      profile?.auth_user_id,
+      profile?.name,
+    ],
   );
 
   useEffect(() => {
-    loadChangeHistory();
-  }, [loadChangeHistory]);
+    if (item?.id) loadChangeHistory();
+  }, [item?.id, isOperation]);
   useEffect(() => {
     if (isOperation) {
       setSafeCollaborators([]);
@@ -3015,7 +3075,10 @@ function CaseDetailPage() {
   async function save(event) {
     event.preventDefault();
     if (!changedFields.length || saveState === "loading") return;
-    const receiptFields = changedFields.map(({ key, label }) => ({ key, label }));
+    const receiptFields = changedFields.map(({ key, label }) => ({
+      key,
+      label,
+    }));
     setSaveState("loading");
     setSaveReceipt(null);
     setError("");
@@ -3073,7 +3136,7 @@ function CaseDetailPage() {
       fields: receiptFields,
     });
     setSaveState("success");
-    await loadChangeHistory({ silent: true });
+    await loadChangeHistory({ silent: true, highlightLatest: true });
   }
   async function deleteCase() {
     if (!isOperation || deleteBusy) return;
@@ -3129,14 +3192,12 @@ function CaseDetailPage() {
   const regional =
     primarySite.eqs_cluster || primarySite.claro_cluster || "Não informado";
   const siteName = primarySite.holder || "Local não informado";
-  const workflowSelectOptions = WORKFLOW_STAGES.map(
-    ({ key, label, Icon }) => ({
-      value: key,
-      label,
-      description: WORKFLOW_STAGE_DESCRIPTIONS[key],
-      Icon,
-    }),
-  );
+  const workflowSelectOptions = WORKFLOW_STAGES.map(({ key, label, Icon }) => ({
+    value: key,
+    label,
+    description: WORKFLOW_STAGE_DESCRIPTIONS[key],
+    Icon,
+  }));
   const responsibilityOptions = [
     ...new Set(["", form.current_responsibility, "EQS", "CLARO", "DETENTORA"]),
   ].map((value) => ({
@@ -3147,9 +3208,6 @@ function CaseDetailPage() {
       "Responsável cadastrado nesta demanda",
     Icon: RESPONSIBILITY_OPTION_META[value]?.Icon || UsersRound,
   }));
-  const timeline = (item.case_events || [])
-    .slice()
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   return (
     <AppShell
       shellClassName="case-detail-shell"
@@ -3357,7 +3415,8 @@ function CaseDetailPage() {
                 <div className="case-save-receipt-copy">
                   <strong>Registro concluído e identificado</strong>
                   <span>
-                    {saveReceipt.actorName} · {formatCaseUpdate(saveReceipt.createdAt)}
+                    {saveReceipt.actorName} ·{" "}
+                    {formatCaseUpdate(saveReceipt.createdAt)}
                   </span>
                   <div>
                     {saveReceipt.fields.map((field) => (
@@ -3365,27 +3424,29 @@ function CaseDetailPage() {
                     ))}
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setHistoryOpen(true)}
-                >
+                <button type="button" onClick={() => setHistoryOpen(true)}>
                   Ver no histórico
                 </button>
               </aside>
             )}
-            {isOperation && (
-              <CaseChangeHistory
-                entries={changeHistory}
-                error={historyError}
-                loading={historyLoading}
-                open={historyOpen}
-                onToggle={() => setHistoryOpen((current) => !current)}
-              />
-            )}
           </form>
+          <CaseChangeHistory
+            entries={changeHistory}
+            total={historyTotal}
+            error={historyError}
+            loading={historyLoading}
+            open={historyOpen}
+            onOpenChange={setHistoryOpen}
+            onLoadMore={() => loadChangeHistory({ append: true })}
+            hasMore={historyHasMore}
+            loadingMore={historyLoadingMore}
+            highlightedId={highlightedHistoryId}
+          />
           <CaseDocumentationPanel
             caseId={id}
-            collaborators={isOperation ? linkedCollaborators : safeCollaborators}
+            collaborators={
+              isOperation ? linkedCollaborators : safeCollaborators
+            }
             isOperation={isOperation}
             refreshKey={documentRefreshKey}
             onManageDocuments={setDocumentPerson}
@@ -3448,26 +3509,6 @@ function CaseDetailPage() {
                 Nenhum colaborador vinculado a esta demanda.
               </p>
             )}
-          </section>
-          <section className="side-panel case-timeline-panel">
-            <header className="detail-side-heading">
-              <Clock3 size={23} />
-              <h2>Linha do tempo</h2>
-            </header>
-            <div className="case-timeline-list">
-              {timeline.map((event) => (
-                <div className="timeline-line" key={event.id}>
-                  <strong>{caseEventLabel(event.event_type)}</strong>
-                  <span>{event.description}</span>
-                  <small>
-                    {new Date(event.created_at).toLocaleString("pt-BR")}
-                  </small>
-                </div>
-              ))}
-              {!timeline.length && (
-                <p className="muted-block">Nenhum evento registrado.</p>
-              )}
-            </div>
           </section>
           <Suspense
             fallback={

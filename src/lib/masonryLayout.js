@@ -1,6 +1,21 @@
 const safeNumber = (value, fallback) =>
   Number.isFinite(value) && value > 0 ? value : fallback;
 
+const CARD_HEIGHT_RHYTHM = [0, 30, 12, 46, 22, 36, 8, 40];
+
+export function getMasonryCardMinHeight(index, columns, baseHeight = 238) {
+  const safeIndex = Math.max(0, Math.floor(index) || 0);
+  const safeColumns = Math.max(1, Math.floor(columns) || 1);
+  const safeBaseHeight = safeNumber(baseHeight, 238);
+
+  if (safeColumns === 1) return safeBaseHeight;
+
+  const row = Math.floor(safeIndex / safeColumns);
+  const rhythmIndex = (safeIndex + row * 2) % CARD_HEIGHT_RHYTHM.length;
+
+  return safeBaseHeight + CARD_HEIGHT_RHYTHM[rhythmIndex];
+}
+
 export function getMasonryColumnCount(
   width,
   { minColumnWidth = 248, maxColumns = 5, gap = 12 } = {},
