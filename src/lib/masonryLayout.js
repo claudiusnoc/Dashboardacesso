@@ -29,7 +29,6 @@ export function createMasonryLayout({
   maxColumns = 5,
   gap = 12,
   estimatedHeight = 268,
-  laneOffsets = [],
 }) {
   const safeKeys = Array.isArray(keys) ? keys : [];
   const safeWidth = Math.max(0, Number(width) || 0);
@@ -42,9 +41,7 @@ export function createMasonryLayout({
   const columnWidth = safeWidth
     ? (safeWidth - safeGap * (columns - 1)) / columns
     : 0;
-  const laneHeights = Array.from({ length: columns }, (_, lane) =>
-    Math.max(0, Number(laneOffsets[lane]) || 0),
-  );
+  const laneHeights = Array.from({ length: columns }, () => 0);
   const positions = safeKeys.map((key, index) => {
     const lane =
       index < columns ? index : laneHeights.indexOf(Math.min(...laneHeights));

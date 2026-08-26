@@ -12,7 +12,6 @@ import { createMasonryLayout } from "../lib/masonryLayout";
 const INITIAL_ITEMS = 15;
 const ITEMS_PER_BATCH = 10;
 const LOAD_DELAY_MS = 160;
-const LANE_OFFSETS = [0, 30, 12, 42, 20];
 const defaultGetItemKey = (item) => item.id;
 
 const sameMeasurements = (current, next) => {
@@ -59,7 +58,6 @@ export default function InfiniteCaseMasonry({
         keys: visibleKeys,
         heights: itemHeights,
         width: containerWidth,
-        laneOffsets: LANE_OFFSETS,
       }),
     [containerWidth, itemHeights, visibleKeys],
   );
