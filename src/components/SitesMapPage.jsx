@@ -10,6 +10,7 @@ import {
   RotateCcw,
   Search,
   SlidersHorizontal,
+  UsersRound,
   X,
   ZoomIn,
   ZoomOut,
@@ -1203,6 +1204,31 @@ export default function SitesMapPage() {
                   </dd>
                 </div>
               </dl>
+              <section
+                className="site-map-responsible-team"
+                aria-labelledby="site-map-responsible-team-title"
+              >
+                <div className="site-map-responsible-team-heading">
+                  <UsersRound size={17} aria-hidden="true" />
+                  <strong id="site-map-responsible-team-title">
+                    Técnicos responsáveis
+                  </strong>
+                </div>
+                <dl>
+                  <div>
+                    <dt>Técnico 1</dt>
+                    <dd>{valueOrMissing(detail.energy_technician_1)}</dd>
+                  </div>
+                  <div>
+                    <dt>Técnico 2</dt>
+                    <dd>{valueOrMissing(detail.energy_technician_2)}</dd>
+                  </div>
+                  <div className="wide">
+                    <dt>Técnico 3</dt>
+                    <dd>{valueOrMissing(detail.energy_technician_3)}</dd>
+                  </div>
+                </dl>
+              </section>
               <section className="site-map-related-cases">
                 <div>
                   <Building2 size={17} />

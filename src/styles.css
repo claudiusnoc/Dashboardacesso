@@ -10704,6 +10704,23 @@ textarea {
   font-size: 0.8125rem;
   line-height: 1.4;
 }
+.site-map-responsible-team {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e9ef;
+}
+.site-map-responsible-team-heading {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #263244;
+}
+.site-map-responsible-team-heading strong {
+  font-size: 0.875rem;
+}
+.site-map-responsible-team dl {
+  margin-top: 12px;
+}
 .site-map-related-cases {
   margin-top: 20px;
   padding-top: 16px;

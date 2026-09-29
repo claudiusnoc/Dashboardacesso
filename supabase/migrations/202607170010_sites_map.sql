@@ -108,6 +108,9 @@ begin
     'holder', s.holder,
     'eqs_cluster', s.eqs_cluster,
     'priority_level', s.priority_level,
+    'energy_technician_1', s.energy_technician_1,
+    'energy_technician_2', s.energy_technician_2,
+    'energy_technician_3', s.energy_technician_3,
     'cases', coalesce(
       (
         select jsonb_agg(
