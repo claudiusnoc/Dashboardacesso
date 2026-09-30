@@ -1,5 +1,4 @@
--- Expõe os técnicos de energia no detalhe do Mapa de Sites.
--- A função mantém o controle de acesso já utilizado pelo mapa.
+-- Expõe a quantidade de estações que cada site carrega no detalhe do mapa.
 
 create or replace function public.get_site_map_detail(p_site_id uuid)
 returns jsonb

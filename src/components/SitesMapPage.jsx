@@ -77,6 +77,11 @@ const STATUS_LABELS = {
   CANCELADO: "Cancelado",
 };
 
+function priorityRank(value) {
+  const match = normalizedText(value).match(/NIVEL\s*(\d+)/);
+  return match ? Number(match[1]) : Number.MAX_SAFE_INTEGER;
+}
+
 function valueOrMissing(value) {
   return value || "Não informado";
 }
@@ -410,7 +415,11 @@ export default function SitesMapPage() {
       municipalities: normalizedOptions(catalog, "municipality"),
       holders: normalizedOptions(catalog, "holder"),
       clusters: normalizedOptions(catalog, "eqs_cluster"),
-      priorities: normalizedOptions(catalog, "priority_level"),
+      priorities: normalizedOptions(catalog, "priority_level").sort(
+        (a, b) =>
+          priorityRank(a.label) - priorityRank(b.label) ||
+          String(a.label).localeCompare(String(b.label), "pt-BR"),
+      ),
     }),
     [catalog],
   );
@@ -1195,6 +1204,10 @@ export default function SitesMapPage() {
                 <div>
                   <dt>Prioridade</dt>
                   <dd>{valueOrMissing(detail.priority_level)}</dd>
+                </div>
+                <div>
+                  <dt>Estações que carrega</dt>
+                  <dd>{valueOrMissing(detail.loaded_station_count)}</dd>
                 </div>
                 <div>
                   <dt>Coordenadas</dt>
