@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Building2,
   ChevronDown,
   CircleAlert,
   Layers3,
@@ -10,12 +9,12 @@ import {
   RotateCcw,
   Search,
   SlidersHorizontal,
-  UsersRound,
   X,
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import SiteMapDetailPanel from "./SiteMapDetailPanel";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { supabase } from "../lib/supabase";
@@ -25,7 +24,6 @@ import {
 } from "../lib/sitesMapCatalogCache";
 import {
   SITE_TYPE_COLORS as TYPE_COLORS,
-  SiteTypeIcon,
   drawSiteTypeSignalGlyph,
 } from "./SiteTypeIcon";
 import {
@@ -68,22 +66,9 @@ const TYPE_IMAGE_NAMES = Object.fromEntries(
   Object.keys(TYPE_COLORS).map((type, index) => [type, `site-pin-${index}`]),
 );
 
-const STATUS_LABELS = {
-  RASCUNHO: "Rascunho",
-  PENDENTE: "Pendente",
-  "EM TRATATIVA": "Em tratativa",
-  "LEVANTAMENTO DE DOCUMENTOS": "Levantamento de documentos",
-  LIBERADO: "Liberado",
-  CANCELADO: "Cancelado",
-};
-
 function priorityRank(value) {
   const match = normalizedText(value).match(/NIVEL\s*(\d+)/);
   return match ? Number(match[1]) : Number.MAX_SAFE_INTEGER;
-}
-
-function valueOrMissing(value) {
-  return value || "Não informado";
 }
 
 function normalizedText(value) {
@@ -1117,158 +1102,13 @@ export default function SitesMapPage() {
       </aside>
 
       {selectedId && (
-        <aside
-          className="site-map-detail"
-          aria-label="Detalhes do site selecionado"
-        >
-          <header>
-            <div>
-              <span>Site selecionado</span>
-              <strong>{detail?.station || "Carregando…"}</strong>
-            </div>
-            <button
-              type="button"
-              onClick={() => updateParams({ site: "", foco: "" }, false)}
-              aria-label="Fechar detalhes"
-            >
-              <X size={19} />
-            </button>
-          </header>
-          {detailLoading && (
-            <div className="site-map-detail-loading">
-              <span />
-              <span />
-              <span />
-              <span />
-            </div>
-          )}
-          {detailError && (
-            <div className="site-map-detail-error">
-              <CircleAlert size={20} />
-              <p>{detailError}</p>
-            </div>
-          )}
-          {detail && !detailLoading && (
-            <div className="site-map-detail-body">
-              <div className="site-map-detail-identity">
-                <span
-                  style={{
-                    background:
-                      TYPE_COLORS[detail.station_type_normalized] ||
-                      TYPE_COLORS.Outras,
-                  }}
-                >
-                  <SiteTypeIcon
-                    type={detail.station_type_normalized}
-                    family="signal"
-                    size={20}
-                  />
-                </span>
-                <div>
-                  <h2>{detail.station}</h2>
-                  <p>{valueOrMissing(detail.municipality)}</p>
-                </div>
-              </div>
-              <dl>
-                <div>
-                  <dt>Nome completo</dt>
-                  <dd>
-                    {valueOrMissing(
-                      detail.full_station || detail.smart_plan_name,
-                    )}
-                  </dd>
-                </div>
-                <div className="wide">
-                  <dt>Endereço</dt>
-                  <dd>
-                    {valueOrMissing(detail.address)}
-                    {detail.postal_code ? ` · CEP ${detail.postal_code}` : ""}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Tipologia</dt>
-                  <dd>{valueOrMissing(detail.station_type_normalized)}</dd>
-                </div>
-                <div>
-                  <dt>Tipologia original</dt>
-                  <dd>{valueOrMissing(detail.station_type)}</dd>
-                </div>
-                <div>
-                  <dt>Detentora</dt>
-                  <dd>{valueOrMissing(detail.holder)}</dd>
-                </div>
-                <div>
-                  <dt>Cluster EQS</dt>
-                  <dd>{valueOrMissing(detail.eqs_cluster)}</dd>
-                </div>
-                <div>
-                  <dt>Prioridade</dt>
-                  <dd>{valueOrMissing(detail.priority_level)}</dd>
-                </div>
-                <div>
-                  <dt>Estações que carrega</dt>
-                  <dd>{valueOrMissing(detail.loaded_station_count)}</dd>
-                </div>
-                <div>
-                  <dt>Coordenadas</dt>
-                  <dd>
-                    {Number(detail.latitude).toFixed(6)},{" "}
-                    {Number(detail.longitude).toFixed(6)}
-                  </dd>
-                </div>
-              </dl>
-              <section
-                className="site-map-responsible-team"
-                aria-labelledby="site-map-responsible-team-title"
-              >
-                <div className="site-map-responsible-team-heading">
-                  <UsersRound size={17} aria-hidden="true" />
-                  <strong id="site-map-responsible-team-title">
-                    Técnicos responsáveis
-                  </strong>
-                </div>
-                <dl>
-                  <div>
-                    <dt>Técnico 1</dt>
-                    <dd>{valueOrMissing(detail.energy_technician_1)}</dd>
-                  </div>
-                  <div>
-                    <dt>Técnico 2</dt>
-                    <dd>{valueOrMissing(detail.energy_technician_2)}</dd>
-                  </div>
-                  <div className="wide">
-                    <dt>Técnico 3</dt>
-                    <dd>{valueOrMissing(detail.energy_technician_3)}</dd>
-                  </div>
-                </dl>
-              </section>
-              <section className="site-map-related-cases">
-                <div>
-                  <Building2 size={17} />
-                  <strong>Casos vinculados</strong>
-                  <span>{detail.cases?.length || 0}</span>
-                </div>
-                {detail.cases?.length ? (
-                  <ul>
-                    {detail.cases.map((caseItem) => (
-                      <li key={caseItem.id}>
-                        <span>
-                          <strong>{caseItem.display_name}</strong>
-                          <small>
-                            {STATUS_LABELS[caseItem.status] || caseItem.status}
-                          </small>
-                        </span>
-                        <Link to={`/casos/${caseItem.id}`}>Ver caso</Link>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>Nenhum caso de acesso está vinculado a este site.</p>
-                )}
-              </section>
-            </div>
-          )}
-        </aside>
+        <SiteMapDetailPanel
+          key={selectedId}
+          detail={detail}
+          loading={detailLoading}
+          error={detailError}
+          onClose={() => updateParams({ site: "", foco: "" }, false)}
+        />
       )}
     </section>
   );
